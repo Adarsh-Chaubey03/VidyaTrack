@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Home() {
+function CourseDetails() {
     return (
         <div>
             <h1>Home Page</h1>
@@ -8,4 +8,4 @@ function Home() {
     )
 }
 
-export default Home
+export default CourseDetails

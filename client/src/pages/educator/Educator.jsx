@@ -1,11 +1,12 @@
 import React from 'react'
-
-function AddCourse() {
+import { Outlet } from 'react-router-dom'
+function Educator() {
     return (
-       <div>
-        <h1>add course</h1>
-        </div> 
+        <div>
+            <h1>Educator Page</h1>
+            <div>{<Outlet />}</div>
+        </div>
     )
 }
 
-export default AddCourse
+export default Educator

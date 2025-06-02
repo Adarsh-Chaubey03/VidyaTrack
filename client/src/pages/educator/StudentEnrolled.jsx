@@ -1,11 +1,11 @@
 import React from 'react'
 
-function AddCourse() {
+function StudentEnrolled() {
     return (
        <div>
-        <h1>add course</h1>
+        <h1>StudentEnrolled</h1>
         </div> 
     )
 }
 
-export default AddCourse
+export default StudentEnrolled
