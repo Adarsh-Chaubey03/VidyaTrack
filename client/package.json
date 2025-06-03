@@ -12,7 +12,9 @@
   "dependencies": {
     "@clerk/clerk-react": "^5.31.8",
     "@tailwindcss/vite": "^4.1.8",
+    "framer-motion": "^12.15.0",
     "humanize-duration": "^3.32.2",
+    "lucide-react": "^0.511.0",
     "quill": "^2.0.3",
     "rc-progress": "^4.0.0",
     "react": "^19.1.0",
