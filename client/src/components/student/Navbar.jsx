@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useClerk, UserButton, useUser } from '@clerk/clerk-react';
-import { Menu, Bell, Search, Sun, Moon, X } from 'lucide-react';
+import { Menu, Bell, Sun, Moon, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { assets } from '../../assets/assets';
 
@@ -15,59 +15,69 @@ function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
 
+  const notifRef = useRef(null);
+  const bellRef = useRef(null);
+
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
     localStorage.setItem('theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        notifRef.current &&
+        !notifRef.current.contains(e.target) &&
+        bellRef.current &&
+        !bellRef.current.contains(e.target)
+      ) {
+        setNotifOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
-  const toggleNotif = () => setNotifOpen(!notifOpen);
+  const toggleNotif = () => setNotifOpen(prev => !prev);
 
   return (
     <div className={`sticky top-0 z-50 border-b py-4 px-4 sm:px-10 md:px-14 lg:px-36 flex items-center justify-between transition-all duration-300 ${isCourseListPage ? 'bg-white dark:bg-gray-900' : 'bg-cyan-100/70 dark:bg-gray-800'}`}>
-      {/* Logo */}
+      
       <Link to="/">
         <img src={assets.logo} alt="Logo" className='w-28 lg:w-32 cursor-pointer' />
       </Link>
 
-      {/* Center Features */}
       <div className='hidden md:flex items-center gap-6 text-gray-700 dark:text-gray-300'>
-        <button onClick={toggleNotif} className='relative hover:text-blue-600'>
-          <Bell />
-          <span className='absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full'></span>
-        </button>
-        <div className='relative'>
-          <input
-            type="text"
-            placeholder="Search..."
-            className="px-4 py-2 rounded-full border dark:border-gray-600 focus:outline-none focus:ring dark:bg-gray-700 dark:text-white"
-          />
-          <Search className='absolute right-3 top-2.5 text-gray-400 dark:text-gray-300' size={16} />
-        </div>
-        <button onClick={() => setDarkMode(!darkMode)} className='hover:text-blue-600'>
-          {darkMode ? <Sun /> : <Moon />}
-        </button>
         {user && <Link to="/my-enrollement">My Enrollment</Link>}
         {user && <button>Become Educator</button>}
       </div>
 
-      {/* Auth Buttons + User */}
       <div className='hidden md:flex items-center gap-4'>
-        {user ? <UserButton /> : (
+        <button ref={bellRef} onClick={toggleNotif} className='relative hover:text-blue-600'>
+          <Bell />
+          <span className='absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full'></span>
+        </button>
+
+        <button onClick={() => setDarkMode(!darkMode)} className='hover:text-blue-600'>
+          {darkMode ? <Sun /> : <Moon />}
+        </button>
+
+        {user ? (
+          <UserButton />
+        ) : (
           <button onClick={() => openSignIn()} className='bg-blue-600 px-5 py-2 rounded-full text-white hover:bg-blue-700'>
             Get Started
           </button>
         )}
       </div>
 
-      {/* Mobile Toggle */}
       <div className='md:hidden flex items-center gap-2'>
         <button onClick={toggleMobileMenu}>
           {mobileMenuOpen ? <X /> : <Menu />}
         </button>
       </div>
 
-      {/* Mobile Sidebar */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -88,10 +98,10 @@ function Navbar() {
         )}
       </AnimatePresence>
 
-      {/* Notification Dropdown */}
       <AnimatePresence>
         {notifOpen && (
           <motion.div
+            ref={notifRef}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
