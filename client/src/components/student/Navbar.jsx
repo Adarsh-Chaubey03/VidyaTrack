@@ -45,7 +45,7 @@ function Navbar() {
     <div className={`sticky top-0 z-50 border-b py-4 px-4 sm:px-10 md:px-14 lg:px-36 flex items-center justify-between transition-all duration-300 ${isCourseListPage ? 'bg-white dark:bg-gray-900' : 'bg-emerald-100 dark:bg-gray-800'}`}>
       
       <Link to="/">
-        <img src={assets.logo} alt="Logo" className='w-28 lg:w-32 cursor-pointer' />
+        <img src={assets.logo} alt="Logo" className='w-32 lg:w-40 cursor-pointer' />
       </Link>
 
       <div className='hidden md:flex items-center gap-6 text-gray-700 dark:text-gray-300'>

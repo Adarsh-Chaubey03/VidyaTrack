@@ -1,4 +1,4 @@
-import logo from './logo.svg'
+import logo from './logo.png'
 import logo_dark from './logo_dark.svg'
 import search_icon from './search_icon.svg'
 import cross_icon from './cross_icon.svg'
