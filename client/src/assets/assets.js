@@ -4,6 +4,7 @@ import search_icon from './search_icon.svg'
 import cross_icon from './cross_icon.svg'
 import upload_area from './upload_area.svg'
 import sketch from './sktech.svg'
+import learning from'./learning.png'
 import microsoft_logo from './microsoft_logo.svg'
 import walmart_logo from './walmart_logo.svg'
 import accenture_logo from './accenture_logo.svg'
@@ -88,7 +89,8 @@ export const assets = {
     profile_img3,
     play_icon,
     blue_tick_icon,
-    lesson_icon
+    lesson_icon,
+    learning
 }
 
 export const dummyEducatorData = {

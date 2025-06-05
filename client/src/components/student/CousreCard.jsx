@@ -4,10 +4,16 @@ import { assets } from '../../assets/assets';
 import { AppContext } from '../../context/AppContext';
 
 function CourseCard({ course }) {
-  const { currency } = useContext(AppContext);
+  const { currency, calculateRate } = useContext(AppContext);
+
   const discountedPrice = (
     course.coursePrice - (course.coursePrice * course.discount) / 100
   ).toFixed(2);
+
+  const rating = calculateRate(course);
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating - fullStars >= 0.5;
+  const totalRatings = course?.courseRating?.length || 0;
 
   return (
     <Link
@@ -56,20 +62,20 @@ function CourseCard({ course }) {
           {course.educator.name}
         </p>
 
-        {/* Rating shown on all screen sizes with improved styling */}
         <div className="flex items-center gap-2 mt-3 text-sm text-gray-700 dark:text-gray-300">
-          <span className="text-red-600 font-semibold">4.5</span>
+          <span className="text-red-600 font-semibold">{rating.toFixed(1)}</span>
           <div className="flex gap-1">
-            {[...Array(5)].map((_, i) => (
-              <img
-                key={i}
-                src={assets.star}
-                alt="star"
-                className="w-4 h-4"
-              />
-            ))}
+            {[...Array(5)].map((_, i) => {
+              if (i < fullStars) {
+                return <img key={i} src={assets.star} alt="star" className="w-4 h-4" />;
+              } else if (i === fullStars && hasHalfStar) {
+                return <img key={i} src={assets.star_half} alt="half star" className="w-4 h-4" />;
+              } else {
+                return <img key={i} src={assets.star_blank} alt="empty star" className="w-4 h-4" />;
+              }
+            })}
           </div>
-          <span className="text-gray-600 dark:text-gray-400">(22)</span>
+          <span className="text-gray-600 dark:text-gray-400">({totalRatings})</span>
         </div>
 
         <p className="
