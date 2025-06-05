@@ -1,11 +1,87 @@
-import React from 'react'
+import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
+import { assets } from '../../assets/assets';
+import { AppContext } from '../../context/AppContext';
 
-function CouusreCard() {
-    return (
-       <div>
-      <h1>CouusreCard</h1>
-       </div> 
-    )
+function CourseCard({ course }) {
+  const { currency } = useContext(AppContext);
+  const discountedPrice = (
+    course.coursePrice - (course.coursePrice * course.discount) / 100
+  ).toFixed(2);
+
+  return (
+    <Link
+      to={`/course/${course._id}`}
+      onClick={() => scrollTo(0, 0)}
+      className="
+        w-full max-w-[300px] 
+        bg-white dark:bg-gray-800 
+        rounded-xl overflow-hidden 
+        transition-all duration-300 
+        mx-auto
+        group
+      "
+    >
+      <div className="relative">
+        <img
+          src={course.courseThumbnail}
+          alt="Course Thumbnail"
+          className="
+            w-full h-48 object-cover 
+            transition-transform duration-300 
+            group-hover:scale-105
+          "
+        />
+        <div className="
+          absolute inset-0 
+          bg-gradient-to-t from-black/40 to-transparent 
+          opacity-0 group-hover:opacity-100 
+          transition-opacity duration-300
+        " />
+      </div>
+      <div className="p-5">
+        <h3 className="
+          text-lg font-semibold 
+          text-gray-800 dark:text-white 
+          truncate
+          group-hover:text-emerald-600 
+          transition-colors duration-300
+        ">
+          {course.courseTitle}
+        </h3>
+        <p className="
+          text-sm text-gray-600 dark:text-gray-400 
+          mt-1 truncate
+        ">
+          {course.educator.name}
+        </p>
+
+        {/* Rating shown on all screen sizes with improved styling */}
+        <div className="flex items-center gap-2 mt-3 text-sm text-gray-700 dark:text-gray-300">
+          <span className="text-red-600 font-semibold">4.5</span>
+          <div className="flex gap-1">
+            {[...Array(5)].map((_, i) => (
+              <img
+                key={i}
+                src={assets.star}
+                alt="star"
+                className="w-4 h-4"
+              />
+            ))}
+          </div>
+          <span className="text-gray-600 dark:text-gray-400">(22)</span>
+        </div>
+
+        <p className="
+          mt-4 text-emerald-700 dark:text-emerald-400 
+          font-bold text-lg
+        ">
+          {currency}
+          {discountedPrice}
+        </p>
+      </div>
+    </Link>
+  );
 }
 
-export default CouusreCard
+export default CourseCard;

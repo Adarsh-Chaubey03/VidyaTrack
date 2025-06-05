@@ -3,7 +3,7 @@ import React from 'react'
 function CourseDetails() {
     return (
         <div>
-            <h1>Home Page</h1>
+            <h1>Course LIST</h1>
         </div>
     )
 }

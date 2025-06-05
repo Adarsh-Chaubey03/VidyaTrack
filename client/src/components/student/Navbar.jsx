@@ -42,7 +42,7 @@ function Navbar() {
   const toggleNotif = () => setNotifOpen(prev => !prev);
 
   return (
-    <div className={`sticky top-0 z-50 border-b py-4 px-4 sm:px-10 md:px-14 lg:px-36 flex items-center justify-between transition-all duration-300 ${isCourseListPage ? 'bg-white dark:bg-gray-900' : 'bg-cyan-100/70 dark:bg-gray-800'}`}>
+    <div className={`sticky top-0 z-50 border-b py-4 px-4 sm:px-10 md:px-14 lg:px-36 flex items-center justify-between transition-all duration-300 ${isCourseListPage ? 'bg-white dark:bg-gray-900' : 'bg-emerald-100 dark:bg-gray-800'}`}>
       
       <Link to="/">
         <img src={assets.logo} alt="Logo" className='w-28 lg:w-32 cursor-pointer' />
@@ -66,7 +66,7 @@ function Navbar() {
         {user ? (
           <UserButton />
         ) : (
-          <button onClick={() => openSignIn()} className='bg-blue-600 px-5 py-2 rounded-full text-white hover:bg-blue-700'>
+          <button onClick={() => openSignIn()} className='bg-emerald-600 px-5 py-2 rounded-full text-white hover:bg-emerald-700'>
             Get Started
           </button>
         )}
