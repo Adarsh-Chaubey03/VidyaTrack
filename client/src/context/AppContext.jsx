@@ -6,8 +6,9 @@ export const AppContext = createContext();
 export const AppContextProvider = (props) => {
     const [user, setUser] = useState(null);
     const [allCourses, setAllCourses] = useState([]);
-
+    const[isEducator,setIsEducator] = useState(true)
     const currency = import.meta.env.VITE_CURRENCY;
+    
 
     // Initialize course data from dummy list
     const loadDummyCourses = () => {

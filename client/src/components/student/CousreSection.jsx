@@ -47,8 +47,8 @@ const CourseSection = () => {
         className="
           inline-block mt-8 px-8 py-3 
           text-base font-semibold 
-          text-white bg-emerald-600
-          hover:bg-emerald-700
+          text-white bg-emerald-500
+          hover:bg-emerald-600
           rounded-full shadow-lg 
           transition-all duration-300 ease-in-out
         "
