@@ -8,7 +8,7 @@ export const AppContextProvider = (props) => {
     const [user, setUser] = useState(null);
     const [allCourses, setAllCourses] = useState([]);
     const [isEducator, setIsEducator] = useState(true);
-    const[filteredCourse,setFilteredCourse] = useState([])
+    const [filteredCourse, setFilteredCourse] = useState([]);
 
     const currency = import.meta.env.VITE_CURRENCY;
     const navigate = useNavigate();
@@ -28,19 +28,19 @@ export const AppContextProvider = (props) => {
         loadDummyCourses();
     }, []);
 
-useEffect(() => {
-    if (allCourses && allCourses.length > 0) {
-        const tempCourses = [...allCourses];
-        if (input) {
-            const filtered = tempCourses.filter((item) =>
-                item.courseTitle.toLowerCase().includes(input.toLowerCase())
-            );
-            setFilteredCourse(filtered);
-        } else {
-            setFilteredCourse(tempCourses);
+    useEffect(() => {
+        if (allCourses && allCourses.length > 0) {
+            const tempCourses = [...allCourses];
+            if (input) {
+                const filtered = tempCourses.filter((item) =>
+                    item.courseTitle.toLowerCase().includes(input.toLowerCase())
+                );
+                setFilteredCourse(filtered);
+            } else {
+                setFilteredCourse(tempCourses);
+            }
         }
-    }
-}, [allCourses, input]);
+    }, [allCourses, input]);
 
     const value = {
         user,
@@ -51,7 +51,8 @@ useEffect(() => {
         navigate,
         input,
         isEducator,
-        setIsEducator
+        setIsEducator,
+        filteredCourse, 
     };
 
     return (

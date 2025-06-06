@@ -4,7 +4,7 @@ import SearchBar from '../../components/student/SearchBar';
 import CourseCard from '../../components/student/CousreCard';
 
 function CourseList() {
-    const { navigate, input, allCourses } = useContext(AppContext); 
+    const { navigate, input, filteredCourse } = useContext(AppContext); 
 
     return (
         <div className="px-6 py-10">
@@ -32,8 +32,8 @@ function CourseList() {
 
             {/* Course Cards Grid */}
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 my-16 gap-6 '>
-                {filtered.map((course, index) => (
-                    <CourseCard key={index} course={course} />
+                {filteredCourse?.map((course, index) => (
+                    <CourseCard key={index} course={course}/>
                 ))}
             </div>
         </div>
