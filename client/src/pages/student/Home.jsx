@@ -12,9 +12,9 @@ function Home() {
             <Hero />
             <Company />
             <CousreSection />
-<TestimonialSection/>
-<CallToAction/>
-<Footer/>
+            <TestimonialSection />
+            <CallToAction />
+            <Footer />
         </div>
     )
 }
