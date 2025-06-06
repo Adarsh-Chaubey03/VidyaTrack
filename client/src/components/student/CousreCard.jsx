@@ -20,13 +20,12 @@ function CourseCard({ course }) {
       to={`/course/${course._id}`}
       onClick={() => scrollTo(0, 0)}
       className="
-        w-full max-w-[300px] 
-        bg-white dark:bg-gray-800 
-        rounded-xl overflow-hidden 
+        w-full max-w-[300px] dark:bg-gray-800 overflow-hidden 
         transition-all duration-300 
         mx-auto
         group
-      "
+        bg-white rounded-xl shadow-lg
+    "
     >
       <div className="relative">
         <img
@@ -45,7 +44,7 @@ function CourseCard({ course }) {
           transition-opacity duration-300
         " />
       </div>
-      <div className="p-5">
+      <div className="p-5 ">
         <h3 className="
           text-lg font-semibold 
           text-gray-800 dark:text-white 
