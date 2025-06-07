@@ -58,7 +58,7 @@ function CourseCard({ course }) {
           text-sm text-gray-600 dark:text-gray-400 
           mt-1 truncate
         ">
-          {course.educator.name}
+          VidyaTrack
         </p>
 
         <div className="flex items-center gap-2 mt-3 text-sm text-gray-700 dark:text-gray-300">
