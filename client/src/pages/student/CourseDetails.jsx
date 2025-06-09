@@ -2,12 +2,19 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
 import Loading from '../../components/student/Loading';
-import { assets } from '../../assets/assets'; // Make sure this path is correct
+import { assets } from '../../assets/assets';
 
 function CourseDetails() {
   const { id } = useParams();
   const [courseData, setCourseData] = useState(null);
-  const { allCourses, rating = 4.2, totalRatings = 189 } = useContext(AppContext); // Defaults if not passed
+  const {
+    allCourses,
+    rating = 4.2,
+    totalRatings = 189,
+    calculateChapterTime,
+    calculateCourseDuration,
+    calculateNoOfLectures
+  } = useContext(AppContext);
 
   useEffect(() => {
     const fetchCourseData = () => {
@@ -17,7 +24,6 @@ function CourseDetails() {
     fetchCourseData();
   }, [allCourses, id]);
 
-  // Rating logic
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating - fullStars >= 0.5;
 
@@ -25,20 +31,18 @@ function CourseDetails() {
     <>
       {courseData ? (
         <div className="flex md:flex-row flex-col-reverse gap-10 relative items-start justify-between md:px-36 px-8 md:pt-30 pt-20 text-left">
-          {/* Background Layer */}
           <div className="absolute top-0 left-0 w-full h-[500px] -z-10 bg-gradient-to-b from-emerald-100/70"></div>
 
-          {/* Left Column */}
-          <div className="max-w-3xl z-10 text-gray-700 space-y-6 bg-white/50 ">
+          <div className="max-w-3xl z-10 text-gray-700 space-y-6 bg-white/50">
             <h1 className="text-4xl font-bold text-gray-800 leading-tight tracking-tight">
               {courseData.courseTitle}
             </h1>
+
             <p
-              dangerouslySetInnerHTML={{ __html: courseData.courseDescription.slice(0,270) }}
+              dangerouslySetInnerHTML={{ __html: courseData.courseDescription.slice(0, 270) }}
               className="text-lg leading-relaxed tracking-wide text-gray-700"
             ></p>
 
-            {/* Rating Section */}
             <div className="flex items-center gap-2 pt-2 text-gray-700 text-sm">
               <span className="text-red-600 font-semibold">{rating.toFixed(1)}</span>
               <div className="flex gap-1">
@@ -53,12 +57,34 @@ function CourseDetails() {
                 })}
               </div>
               <span className="text-emerald-500">({totalRatings})</span>
-              <p >{courseData.enrolledStudents.length}{courseData.enrolledStudents.length>1 ? ' students' : ' student'}</p>
+              <p>
+                {courseData.enrolledStudents.length}
+                {courseData.enrolledStudents.length > 1 ? ' students' : ' student'}
+              </p>
             </div>
-            <p>Course By <span className='text-emerald-600 underline'>VidyaTrack</span></p>
+
+            <p>
+              Course By <span className="text-emerald-600 underline">VidyaTrack</span>
+            </p>
+
+            <div className="pt-8 text-gray-800">
+              <h2 className="text-xl font-semibold">Course Structure</h2>
+              <div className="pt-5">
+                {courseData.courseContent.map((chapter, index) => (
+                  <div key={index}>
+                    <div>
+                      <img src={assets.down_arrow_icon} alt="down_arrow" />
+                      <p>{chapter.chapterTitle}</p>
+                    </div>
+                    <p>
+                      {chapter.chapterContent.length} lectures - {calculateChapterTime(chapter)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
-          {/* Right Column */}
           <div>{/* Add sidebar, video preview, or any other component here */}</div>
         </div>
       ) : (
