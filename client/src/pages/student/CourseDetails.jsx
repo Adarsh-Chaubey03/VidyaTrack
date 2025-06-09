@@ -3,10 +3,13 @@ import { useParams } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
 import Loading from '../../components/student/Loading';
 import { assets } from '../../assets/assets';
+import humanizeDuration from 'humanize-duration';
+import Footer from '../../components/student/Footer';
 
 function CourseDetails() {
   const { id } = useParams();
   const [courseData, setCourseData] = useState(null);
+  const [openChapters, setOpenChapters] = useState({});
   const {
     allCourses,
     rating = 4.2,
@@ -17,80 +20,143 @@ function CourseDetails() {
   } = useContext(AppContext);
 
   useEffect(() => {
-    const fetchCourseData = () => {
-      const findCourse = allCourses.find(course => course._id === id);
-      setCourseData(findCourse);
-    };
-    fetchCourseData();
+    const course = allCourses.find(c => c._id === id);
+    setCourseData(course);
   }, [allCourses, id]);
 
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating - fullStars >= 0.5;
 
+  const toggleChapter = (index) => {
+    setOpenChapters(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
+  };
+
+  if (!courseData) return <Loading />;
+
   return (
-    <>
-      {courseData ? (
-        <div className="flex md:flex-row flex-col-reverse gap-10 relative items-start justify-between md:px-36 px-8 md:pt-30 pt-20 text-left">
-          <div className="absolute top-0 left-0 w-full h-[500px] -z-10 bg-gradient-to-b from-emerald-100/70"></div>
+     <>
+    <div className="flex md:flex-row flex-col-reverse gap-10 relative items-start justify-between md:px-36 px-6 md:pt-30 pt-20 text-left mb-15">
+      <div className="absolute top-0 left-0 w-full h-[500px] -z-10 bg-gradient-to-b from-emerald-100/70" />
 
-          <div className="max-w-3xl z-10 text-gray-700 space-y-6 bg-white/50">
-            <h1 className="text-4xl font-bold text-gray-800 leading-tight tracking-tight">
-              {courseData.courseTitle}
-            </h1>
+      {/* Main Content */}
+      <div className="max-w-3xl z-10 text-gray-700 space-y-6 bg-white/50 rounded-xl p-6 shadow-md backdrop-blur-sm">
+        <h1 className="text-4xl font-bold text-gray-800">{courseData.courseTitle}</h1>
 
-            <p
-              dangerouslySetInnerHTML={{ __html: courseData.courseDescription.slice(0, 270) }}
-              className="text-lg leading-relaxed tracking-wide text-gray-700"
-            ></p>
+        <p
+          className="text-lg text-gray-700"
+          dangerouslySetInnerHTML={{
+            __html: courseData.courseDescription.slice(0, 270)
+          }}
+        />
 
-            <div className="flex items-center gap-2 pt-2 text-gray-700 text-sm">
-              <span className="text-red-600 font-semibold">{rating.toFixed(1)}</span>
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => {
-                  if (i < fullStars) {
-                    return <img key={i} src={assets.star} alt="star" className="w-4 h-4" />;
-                  } else if (i === fullStars && hasHalfStar) {
-                    return <img key={i} src={assets.star_half} alt="half star" className="w-4 h-4" />;
-                  } else {
-                    return <img key={i} src={assets.star_blank} alt="empty star" className="w-4 h-4" />;
-                  }
-                })}
-              </div>
-              <span className="text-emerald-500">({totalRatings})</span>
-              <p>
-                {courseData.enrolledStudents.length}
-                {courseData.enrolledStudents.length > 1 ? ' students' : ' student'}
-              </p>
-            </div>
-
-            <p>
-              Course By <span className="text-emerald-600 underline">VidyaTrack</span>
-            </p>
-
-            <div className="pt-8 text-gray-800">
-              <h2 className="text-xl font-semibold">Course Structure</h2>
-              <div className="pt-5">
-                {courseData.courseContent.map((chapter, index) => (
-                  <div key={index}>
-                    <div>
-                      <img src={assets.down_arrow_icon} alt="down_arrow" />
-                      <p>{chapter.chapterTitle}</p>
-                    </div>
-                    <p>
-                      {chapter.chapterContent.length} lectures - {calculateChapterTime(chapter)}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
+        <div className="flex items-center gap-2 text-gray-700 text-sm">
+          <span className="text-red-600 font-semibold">{rating.toFixed(1)}</span>
+          <div className="flex gap-1">
+            {[...Array(5)].map((_, i) => (
+              <img
+                key={i}
+                src={
+                  i < fullStars
+                    ? assets.star
+                    : i === fullStars && hasHalfStar
+                      ? assets.star_half
+                      : assets.star_blank
+                }
+                alt=""
+                className="w-4 h-4"
+              />
+            ))}
           </div>
-
-          <div>{/* Add sidebar, video preview, or any other component here */}</div>
+          <span className="text-emerald-500">({totalRatings})</span>
+          <span>
+            {courseData.enrolledStudents.length}{' '}
+            {courseData.enrolledStudents.length > 1 ? 'students' : 'student'}
+          </span>
         </div>
-      ) : (
-        <Loading />
-      )}
-    </>
+
+        <p className="text-sm text-gray-600">
+          Course By <span className="text-emerald-600 underline font-medium">VidyaTrack</span>
+        </p>
+
+        {/* Course Structure */}
+        <section className="pt-8">
+          <h2 className="text-xl font-semibold mb-4">Course Structure</h2>
+          <div className="space-y-4">
+            {courseData.courseContent.map((chapter, index) => (
+              <div key={index} className="border border-gray-300 bg-white rounded-lg p-4 shadow-sm">
+                <div
+                  className="flex items-center justify-between cursor-pointer"
+                  onClick={() => toggleChapter(index)}
+                >
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={assets.down_arrow_icon}
+                      alt="arrow"
+                      className={`w-5 h-5 transform transition-transform duration-200 ${
+                        openChapters[index] ? 'rotate-180' : ''
+                      }`}
+                    />
+                    <h3 className="font-medium text-gray-800">{chapter.chapterTitle}</h3>
+                  </div>
+                  <span className="text-sm text-gray-500">
+                    {chapter.chapterContent.length} lectures • {calculateChapterTime(chapter)}
+                  </span>
+                </div>
+
+                {openChapters[index] && (
+                  <ul className="mt-3 space-y-2">
+                    {chapter.chapterContent.map((lecture, i) => (
+                      <li key={i} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded">
+                        <img src={assets.play_icon} alt="play" className="w-4 h-4" />
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-800">{lecture.lectureTitle}</p>
+                          <div className="flex items-center gap-4 text-xs text-gray-500">
+                            {lecture.isPreviewFree && (
+                              <span className="px-1.5 py-0.5 border border-emerald-500 text-emerald-500 rounded">
+                                Preview
+                              </span>
+                            )}
+                            <span>
+                              {humanizeDuration(lecture.lectureDuration * 60 * 1000, {
+                                units: ['h', 'm'],
+                                round: true,
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      {/* Sidebar */}
+      <aside className="w-full md:w-[320px] bg-white/60 backdrop-blur-sm rounded-xl shadow-md p-6 z-10 space-y-4">
+        <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
+          <img
+            src={courseData.thumbnail}
+            alt="Course Preview"
+            className="object-cover w-full h-full"
+          />
+        </div>
+        <p className="text-sm text-gray-600">
+          {calculateNoOfLectures(courseData)} lectures •{' '}
+          {calculateCourseDuration(courseData)}
+        </p>
+        <button className="w-full bg-emerald-500 text-white py-2 rounded-lg font-semibold hover:bg-emerald-600 transition">
+          Enroll Now
+        </button>
+      </aside>
+    </div>
+    <Footer/>
+   </>
   );
 }
 
