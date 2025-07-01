@@ -4,7 +4,7 @@ import SearchBar from './SearchBar'
 
 function Hero() {
   return (
-    <div className='flex flex-col items-center justify-center w-full md:pt-36 pt-20 px-7 md:px-0 space-y-7 text-center bg-gradient-to-b from-emerald-100 to-white'>
+    <div className='flex flex-col items-center justify-center w-full md:pt-20 pt-10 px-7 md:px-0 space-y-7 text-center bg-gradient-to-b from-emerald-100 to-white'>
       <h1 className='md:text-5xl text-3xl font-bold text-gray-800 max-w-3xl mx-auto relative'>
         Empower Your Future: <span className='text-green-600'>Personalized Growth & Career Tools</span>
       </h1>
