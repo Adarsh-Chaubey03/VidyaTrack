@@ -10,6 +10,7 @@ export const AppContextProvider = (props) => {
   const [allCourses, setAllCourses] = useState([]);
   const [isEducator, setIsEducator] = useState(true);
   const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
 
   const currency = import.meta.env.VITE_CURRENCY;
   const navigate = useNavigate();
@@ -61,6 +62,11 @@ export const AppContextProvider = (props) => {
     fetchUserEnrolledCourses();
   }, []);
 
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode);
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
+
   const value = {
     user,
     setUser,
@@ -77,6 +83,8 @@ export const AppContextProvider = (props) => {
     setEnrolledCourses,
     fetchUserEnrolledCourses,
     loadDummyCourses,
+    darkMode,
+    setDarkMode,
   };
 
   return <AppContext.Provider value={value}>{props.children}</AppContext.Provider>;

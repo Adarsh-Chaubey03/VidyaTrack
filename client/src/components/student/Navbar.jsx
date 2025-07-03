@@ -1,18 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useClerk, UserButton, useUser } from '@clerk/clerk-react';
 import { Menu, Bell, Sun, Moon, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { assets } from '../../assets/assets';
 import MyEnrollment from '../../pages/student/MyEnrollment';  
+import { AppContext } from '../../context/AppContext';
 
 function Navbar() {
   const { pathname } = useLocation();
   const isCourseListPage = pathname.includes('/course-list');
   const { openSignIn } = useClerk();
   const { user } = useUser();
+  const { darkMode, setDarkMode } = useContext(AppContext);
 
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
 
@@ -21,7 +22,6 @@ function Navbar() {
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
-    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);
 
   useEffect(() => {

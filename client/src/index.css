@@ -5,3 +5,12 @@
   font-family: Outfit;
 }
 
+html.dark, body.dark {
+  background-color: #18181b;
+  color: #f3f4f6;
+}
+
+body {
+  transition: background-color 0.3s, color 0.3s;
+}
+
