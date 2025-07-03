@@ -4,6 +4,7 @@ import { useClerk, UserButton, useUser } from '@clerk/clerk-react';
 import { Menu, Bell, Sun, Moon, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { assets } from '../../assets/assets';
+import MyEnrollment from '../../pages/student/MyEnrollment';  
 
 function Navbar() {
   const { pathname } = useLocation();
@@ -49,7 +50,7 @@ function Navbar() {
       </Link>
 
       <div className='hidden md:flex items-center gap-6 text-gray-700 dark:text-gray-300'>
-        {user && <Link to="/my-enrollement">My Enrollment</Link>}
+        {user && <Link to="/my-enrollment">My Enrollment</Link>}
         {user && <button>Become Educator</button>}
       </div>
 
@@ -88,7 +89,7 @@ function Navbar() {
             className='fixed top-0 right-0 w-64 h-full bg-white dark:bg-gray-900 shadow-xl p-6 z-50 flex flex-col gap-4'
           >
             <button onClick={toggleMobileMenu} className='self-end'><X /></button>
-            {user && <Link to="/my-enrollement" onClick={toggleMobileMenu}>My Enrollment</Link>}
+            {user && <Link to="/my-enrollment" onClick={toggleMobileMenu}>My Enrollment</Link>}
             {user && <button onClick={toggleMobileMenu}>Become Educator</button>}
             {user ? <UserButton afterSignOutUrl='/' /> : <button onClick={() => openSignIn()} className='text-blue-600'>Create Account</button>}
             <button onClick={() => setDarkMode(!darkMode)} className='mt-4 flex items-center gap-2'>
