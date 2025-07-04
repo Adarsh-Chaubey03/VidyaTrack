@@ -6,6 +6,16 @@ import humanizeDuration from 'humanize-duration';
 import ReactPlayer from 'react-player';
 import Footer from '../../components/student/Footer';
 
+// Mock data for similar courses
+const similarCourses = [
+  { id: 1, title: 'React Basics', img: assets.course_1 },
+  { id: 2, title: 'Advanced JS', img: assets.course_2 },
+  { id: 3, title: 'Node Mastery', img: assets.course_3 },
+  { id: 4, title: 'UI/UX Design', img: assets.course_4 },
+  { id: 5, title: 'Python Bootcamp', img: assets.course_1 },
+  { id: 6, title: 'Data Structures', img: assets.course_2 },
+];
+
 function Player() {
   const { courseId } = useParams();
   const { enrolledCourses, calculateChapterTime } = useContext(AppContext);
@@ -16,6 +26,8 @@ function Player() {
   const [currentLectureIndex, setCurrentLectureIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  const [expandedChapter, setExpandedChapter] = useState(null); // null or index
 
   useEffect(() => {
     getCourseData();
@@ -58,6 +70,32 @@ function Player() {
     setCurrentLectureIndex(lectureIndex);
   };
 
+  // Marquee should be in right column if a chapter is expanded or Read More is active
+  const isMarqueeInRightColumn = showFullDescription || expandedChapter !== null;
+
+  // Marquee component
+  const MarqueeRow = () => (
+    <div className="w-full overflow-hidden bg-white shadow mt-4 rounded-xl">
+      <div className="flex items-center animate-marquee whitespace-nowrap py-2">
+        {similarCourses.concat(similarCourses).map((course, idx) => (
+          <div key={idx} className="flex items-center mx-4 min-w-[180px]">
+            <img src={course.img} alt={course.title} className="w-12 h-12 rounded-lg object-cover mr-3" />
+            <span className="font-medium text-gray-700 text-sm">{course.title}</span>
+          </div>
+        ))}
+      </div>
+      <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 20s linear infinite;
+        }
+      `}</style>
+    </div>
+  );
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -97,7 +135,15 @@ function Player() {
           {/* Course Info */}
           <div className="mb-2">
             <h1 className="text-2xl font-bold text-gray-800 mb-1">{courseData.courseTitle}</h1>
-            <div className="text-gray-600 text-sm mb-2" dangerouslySetInnerHTML={{ __html: courseData.courseDescription.slice(0, 120) + (courseData.courseDescription.length > 120 ? '...' : '') }} />
+            <div className="text-gray-600 text-sm mb-2" dangerouslySetInnerHTML={{ __html: showFullDescription ? courseData.courseDescription : courseData.courseDescription.slice(0, 120) + (courseData.courseDescription.length > 120 ? '...' : '') }} />
+            {courseData.courseDescription.length > 120 && (
+              <button
+                className="text-emerald-600 text-xs underline mt-1"
+                onClick={() => setShowFullDescription((prev) => !prev)}
+              >
+                {showFullDescription ? 'Show Less' : 'Read More'}
+              </button>
+            )}
           </div>
           {/* Achievements/Stats */}
           <div className="flex flex-wrap gap-4 mb-2">
@@ -118,7 +164,7 @@ function Player() {
                 <div key={chapterIndex} className="border border-gray-200 bg-gray-50 rounded-lg">
                   <div
                     className="flex items-center justify-between px-3 py-2 cursor-pointer select-none"
-                    onClick={() => toggleChapter(chapterIndex)}
+                    onClick={() => setExpandedChapter(expandedChapter === chapterIndex ? null : chapterIndex)}
                   >
                     <div className="flex items-center gap-2">
                       <img
@@ -186,11 +232,15 @@ function Player() {
               </div>
             </div>
           </div>
+          {/* Marquee row inside right column if needed */}
+          {isMarqueeInRightColumn && <MarqueeRow />}
         </main>
 
       </div>
-     <Footer />
-     </div>
+      {/* Marquee row spanning both columns if not in right column */}
+      {!isMarqueeInRightColumn && <MarqueeRow />}
+      <Footer />
+    </div>
   );
 }
 
