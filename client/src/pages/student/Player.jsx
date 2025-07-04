@@ -89,16 +89,16 @@ function Player() {
           <Link
             key={idx}
             to={`/course/${course._id}`}
-            className="flex items-center mx-4 min-w-[180px] hover:bg-gray-100 rounded-lg transition"
+            className="flex flex-col items-center justify-center mx-8 mb-4 bg-white border border-gray-200 rounded-xl shadow-sm p-3 w-32 h-28 hover:shadow-md transition"
             style={{ textDecoration: 'none' }}
           >
             <img
               src={course.courseThumbnail || course.thumbnail || assets.course_1}
               alt={course.courseTitle + ' thumbnail'}
-              className="w-12 h-12 rounded-lg object-cover mr-3"
+              className="w-20 h-20 rounded-lg object-cover mb-1"
               onError={e => { e.target.src = assets.course_1; }}
             />
-            <span className="font-medium text-gray-700 text-sm">{course.courseTitle}</span>
+            <span className="font-semibold text-gray-800 text-xs text-center w-full leading-tight line-clamp-2 break-words overflow-hidden" style={{display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical'}}>{course.courseTitle}</span>
           </Link>
         ))}
       </div>
@@ -261,7 +261,7 @@ function Player() {
       </div>
       {/* Marquee row spanning both columns if not in right column */}
       {!isMarqueeInRightColumn && <MarqueeRow />}
-      <Footer />
+      <Footer className="mt-10"/>
     </div>
   );
 }
