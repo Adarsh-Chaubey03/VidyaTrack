@@ -53,7 +53,7 @@ const MyEnrollment = () => {
                                     <td className='px-6 py-4'>
                                         <button
                                             className='inline-block bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-semibold shadow-sm hover:bg-blue-600 transition'
-                                            onClick={() => navigate(`/player/${course.id || course.courseId}`)}
+                                            onClick={() => navigate(`/player/${course._id}`)}
                                         >
                                             On Going
                                         </button>
