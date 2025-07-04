@@ -78,7 +78,7 @@ function Player() {
 
   // Marquee component
   const MarqueeRow = () => (
-    <div className="w-full overflow-hidden bg-white shadow mt-4 rounded-xl m-4 mr-4">
+    <div className="w-full overflow-hidden bg-white shadow mt-4 rounded-xl mb-4">
       <div className="px-4 pt-3 pb-1">
         <h3 className="text-base font-semibold text-gray-700 mb-2">Similar Courses</h3>
       </div>
@@ -149,7 +149,7 @@ function Player() {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="flex flex-col lg:flex-row gap-6 md:gap-10 px-2 md:px-8 py-4 md:py-10 flex-1 items-stretch">
         {/* Left Column */}
-        <aside className="w-full md:w-96 xl:w-[28rem] flex flex-col gap-6 bg-white rounded-2xl shadow-md p-4 md:p-6">
+        <aside className="w-[26rem] mr-4 flex flex-col gap-6 bg-white rounded-2xl shadow-md p-4 md:p-6">
           {/* Course Info */}
           <div className="mb-2">
             <h1 className="text-2xl font-bold text-gray-800 mb-1">{courseData.courseTitle}</h1>
@@ -179,9 +179,12 @@ function Player() {
             <h2 className="text-lg font-semibold mb-2">Course Structure</h2>
             <div className="space-y-3">
               {courseData.courseContent.map((chapter, chapterIndex) => (
-                <div key={chapterIndex} className="border border-gray-200 bg-gray-50 rounded-lg">
+                <div
+                  key={chapterIndex}
+                  className={`border border-gray-200 ${openChapters[chapterIndex] ? 'bg-transparent' : 'bg-gray-50'} rounded-md w-full`}
+                >
                   <div
-                    className="flex items-center justify-between px-3 py-2 cursor-pointer select-none"
+                    className="flex items-center justify-between px-3 py-2 cursor-pointer select-none w-full"
                     onClick={() => toggleChapter(chapterIndex)}
                   >
                     <div className="flex items-center gap-2">
@@ -195,11 +198,11 @@ function Player() {
                     <span className="text-xs text-gray-500">{chapter.chapterContent.length} lectures • {calculateChapterTime(chapter)}</span>
                   </div>
                   {openChapters[chapterIndex] && (
-                    <ul className="mt-1 pb-2 space-y-1">
+                    <ul className="mt-1 pb-2 space-y-1 w-full">
                       {chapter.chapterContent.map((lecture, lectureIndex) => (
                         <li
                           key={lectureIndex}
-                          className={`flex items-center gap-2 px-6 py-1.5 rounded cursor-pointer transition-colors ${
+                          className={`flex items-center gap-2 px-6 py-1.5 rounded cursor-pointer transition-colors w-full ${
                             currentChapter === chapterIndex && currentLectureIndex === lectureIndex
                               ? 'bg-emerald-100 border-l-4 border-emerald-500'
                               : 'hover:bg-gray-100'
