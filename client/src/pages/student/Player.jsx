@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
 import { assets } from '../../assets/assets';
 import humanizeDuration from 'humanize-duration';
@@ -70,18 +70,33 @@ function Player() {
     setCurrentLectureIndex(lectureIndex);
   };
 
+  // Use real similar courses (enrolledCourses except current)
+  const similarCourses = (enrolledCourses || []).filter(c => c._id !== courseId);
+
   // Marquee should be in right column if a chapter is expanded or Read More is active
-  const isMarqueeInRightColumn = showFullDescription || expandedChapter !== null;
+  const isMarqueeInRightColumn = showFullDescription || Object.values(openChapters).some(Boolean);
 
   // Marquee component
   const MarqueeRow = () => (
     <div className="w-full overflow-hidden bg-white shadow mt-4 rounded-xl">
       <div className="flex items-center animate-marquee whitespace-nowrap py-2">
-        {similarCourses.concat(similarCourses).map((course, idx) => (
-          <div key={idx} className="flex items-center mx-4 min-w-[180px]">
-            <img src={course.img} alt={course.title} className="w-12 h-12 rounded-lg object-cover mr-3" />
-            <span className="font-medium text-gray-700 text-sm">{course.title}</span>
-          </div>
+        {similarCourses.length === 0 ? (
+          <span className="mx-4 text-gray-400 text-sm">No similar courses found.</span>
+        ) : similarCourses.concat(similarCourses).map((course, idx) => (
+          <Link
+            key={idx}
+            to={`/player/${course._id}`}
+            className="flex items-center mx-4 min-w-[180px] hover:bg-gray-100 rounded-lg transition"
+            style={{ textDecoration: 'none' }}
+          >
+            <img
+              src={course.thumbnail || assets.course_1}
+              alt={course.courseTitle}
+              className="w-12 h-12 rounded-lg object-cover mr-3"
+              onError={e => { e.target.src = assets.course_1; }}
+            />
+            <span className="font-medium text-gray-700 text-sm">{course.courseTitle}</span>
+          </Link>
         ))}
       </div>
       <style>{`
@@ -131,7 +146,7 @@ function Player() {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="flex flex-col lg:flex-row gap-6 md:gap-10 px-2 md:px-8 py-4 md:py-10 flex-1 items-stretch">
         {/* Left Column */}
-        <aside className="lg:w-1/3 w-full flex flex-col gap-6 bg-white rounded-2xl shadow-md p-4 md:p-6">
+        <aside className="w-full md:w-96 xl:w-[28rem] flex flex-col gap-6 bg-white rounded-2xl shadow-md p-4 md:p-6">
           {/* Course Info */}
           <div className="mb-2">
             <h1 className="text-2xl font-bold text-gray-800 mb-1">{courseData.courseTitle}</h1>
@@ -164,7 +179,7 @@ function Player() {
                 <div key={chapterIndex} className="border border-gray-200 bg-gray-50 rounded-lg">
                   <div
                     className="flex items-center justify-between px-3 py-2 cursor-pointer select-none"
-                    onClick={() => setExpandedChapter(expandedChapter === chapterIndex ? null : chapterIndex)}
+                    onClick={() => toggleChapter(chapterIndex)}
                   >
                     <div className="flex items-center gap-2">
                       <img
@@ -205,10 +220,10 @@ function Player() {
         </aside>
 
         {/* Right Column */}
-        <main className="flex-1 flex flex-col gap-6">
+        <main className="flex-1 flex flex-col gap-6 relative">
           {/* Video Player */}
-          <div className="bg-white rounded-2xl shadow-md p-0 md:p-4 flex flex-col md:flex-row gap-4 items-start min-h-[320px]">
-            <div className="w-full aspect-video md:w-2/3 rounded-xl overflow-hidden bg-black flex items-center justify-center">
+          <div className="bg-white rounded-2xl shadow-md p-0 md:p-4 flex flex-col md:flex-row gap-4 items-start">
+            <div className="w-full aspect-video max-w-3xl rounded-xl overflow-hidden bg-black flex items-center justify-center">
               {currentLecture && currentLecture.lectureUrl ? (
                 <ReactPlayer
                   url={currentLecture.lectureUrl}
@@ -233,7 +248,11 @@ function Player() {
             </div>
           </div>
           {/* Marquee row inside right column if needed */}
-          {isMarqueeInRightColumn && <MarqueeRow />}
+          {isMarqueeInRightColumn && (
+            <div className="w-full md:w-[calc(100%-1.5rem)] mx-auto mt-4">
+              <MarqueeRow />
+            </div>
+          )}
         </main>
 
       </div>
