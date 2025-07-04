@@ -78,7 +78,7 @@ function Player() {
 
   // Marquee component
   const MarqueeRow = () => (
-    <div className="w-full overflow-hidden bg-white shadow mt-4 rounded-xl">
+    <div className="w-full overflow-hidden bg-white shadow mt-4 rounded-xl m-4 mr-4">
       <div className="px-4 pt-3 pb-1">
         <h3 className="text-base font-semibold text-gray-700 mb-2">Similar Courses</h3>
       </div>
