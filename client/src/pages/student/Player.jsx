@@ -79,19 +79,22 @@ function Player() {
   // Marquee component
   const MarqueeRow = () => (
     <div className="w-full overflow-hidden bg-white shadow mt-4 rounded-xl">
+      <div className="px-4 pt-3 pb-1">
+        <h3 className="text-base font-semibold text-gray-700 mb-2">Similar Courses</h3>
+      </div>
       <div className="flex items-center animate-marquee whitespace-nowrap py-2">
         {similarCourses.length === 0 ? (
           <span className="mx-4 text-gray-400 text-sm">No similar courses found.</span>
         ) : similarCourses.concat(similarCourses).map((course, idx) => (
           <Link
             key={idx}
-            to={`/player/${course._id}`}
+            to={`/course/${course._id}`}
             className="flex items-center mx-4 min-w-[180px] hover:bg-gray-100 rounded-lg transition"
             style={{ textDecoration: 'none' }}
           >
             <img
-              src={course.thumbnail || assets.course_1}
-              alt={course.courseTitle}
+              src={course.courseThumbnail || course.thumbnail || assets.course_1}
+              alt={course.courseTitle + ' thumbnail'}
               className="w-12 h-12 rounded-lg object-cover mr-3"
               onError={e => { e.target.src = assets.course_1; }}
             />
