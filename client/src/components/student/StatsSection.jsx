@@ -75,7 +75,7 @@ const formatNumber = (num) => {
 
 const StatsSection = () => {
   return (
-    <section className="w-full py-16 bg-emerald-500 relative overflow-hidden mt-10">
+    <section className="w-full py-16 bg-emerald-500 relative overflow-hidden ">
       {/* Grid overlay */}
       <div className="absolute inset-0 pointer-events-none" style={{backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '40px 40px'}}></div>
       <div className="relative z-10 flex flex-col items-center justify-center">

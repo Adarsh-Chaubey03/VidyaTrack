@@ -27,7 +27,7 @@ const featureCards = [
 
 function CallToAction() {
     return (
-        <section className="w-full min-h-[60vh] bg-gradient-to-b from-emerald-50 to-white dark:from-gray-900 dark:to-gray-800 px-6 md:px-32 py-20 flex flex-col-reverse md:flex-row items-center justify-between gap-12">
+        <section className="mb-10 w-full min-h-[60vh] bg-gradient-to-b from-rose-100 via-emerald-50 to-white dark:from-gray-900 dark:to-gray-800 px-6 md:px-32 py-20 flex flex-col-reverse md:flex-row items-center justify-between gap-12">
 
             {/* LEFT - TEXT */}
             <div className="max-w-xl text-center md:text-left flex flex-col justify-center">

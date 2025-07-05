@@ -4,12 +4,12 @@ import { Facebook, Twitter, Linkedin, Mail } from 'lucide-react';
 
 function Footer() {
   return (
-    <footer className="w-full bg-gradient-to-br from-emerald-50 to-emerald-100 border-t border-gray-200 pt-12 pb-4 flex flex-col items-center">
-      <div className="w-full max-w-7xl px-1 md:px-1">
+    <footer className="w-full bg-gradient-to-br from-gray-100 via-emerald-100 to-emerald-200 border-t border-gray-200 pt-12 pb-4 flex flex-col items-center">
+      <div className="w-full mr-20 px-1 md:px-1">
         <div className="rounded-3xl bg-white shadow-2xl p-4 md:p-6 flex flex-col gap-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className=" pt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Section */}
-            <div className="flex flex-col items-center text-center">
+            <div className="pl-5 flex flex-col items-center text-center">
               <h2 className="text-2xl font-extrabold text-emerald-600 mb-2">VidyaTrack</h2>
               <p className="text-gray-600 mb-4 text-sm">
                 Empowering learners with world-class education anywhere, anytime.
@@ -72,8 +72,8 @@ function Footer() {
         </div>
       {/* Footer Bottom */}
           <div className="flex flex-col md:flex-row justify-between items-center border-t border-gray-200 pt-4">
-            <p className="text-sm text-gray-500">&copy; {new Date().getFullYear()} VidyaTrack. All rights reserved.</p>
-            <p className="text-sm text-gray-400 mt-2 md:mt-0">Made by Adarsh Chaubey</p>
+            <p className=" pl-15 text-sm text-gray-500">&copy; {new Date().getFullYear()} VidyaTrack. All rights reserved.</p>
+            <p className=" pr-20 text-sm text-gray-400 mt-2 md:mt-0">Made by <span className='text-emerald-600'>Adarsh Chaubey</span></p>
           </div>
         </div>
       </div>
