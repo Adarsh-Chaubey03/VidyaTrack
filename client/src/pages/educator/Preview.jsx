@@ -30,7 +30,7 @@ function Preview() {
             </div>
             <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
                 <div className="max-w-3xl w-full text-center">
-                    <img src={assets.eduLogo} alt="Educator Logo" className="mx-auto w-32 mb-6" />
+                    <img src={assets.eduLogo} alt="Educator Logo" className="mx-auto w-48 mb-6" />
                     <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Empower Learners. Build Your Career.</h1>
                     <p className="text-lg text-gray-600 mb-8">Join VidyaTrack as an educator and unlock a world of opportunities. Share your expertise, inspire students, and grow your professional brand with our powerful tools and supportive community.</p>
                     <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-10">
