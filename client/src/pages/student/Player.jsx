@@ -5,6 +5,7 @@ import { assets } from '../../assets/assets';
 import humanizeDuration from 'humanize-duration';
 import ReactPlayer from 'react-player';
 import Footer from '../../components/student/Footer';
+import Rating from '../../components/student/Rating';
 
 // Mock data for similar courses
 const similarCourses = [
@@ -28,6 +29,8 @@ function Player() {
   const [error, setError] = useState(null);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [expandedChapter, setExpandedChapter] = useState(null); // null or index
+  const [courseRating, setCourseRating] = useState(0);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     getCourseData();
@@ -147,9 +150,9 @@ function Player() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <div className="flex flex-col lg:flex-row gap-6 md:gap-10 px-2 md:px-8 py-4 md:py-10 flex-1 items-stretch">
-        {/* Left Column */}
-        <aside className="w-[26rem] mr-4 flex flex-col gap-6 bg-white rounded-2xl shadow-md p-4 md:p-6">
+      <div className="flex flex-col lg:flex-row gap-6 md:gap-10 px-2 md:px-8 py-4 md:py-10 flex-1 items-start">
+        {/* Left Column - Fixed Width */}
+        <aside className="w-80 lg:w-96 flex-shrink-0 flex flex-col gap-6 bg-white rounded-2xl shadow-md p-4 md:p-6">
           {/* Course Info */}
           <div className="mb-2">
             <h1 className="text-2xl font-bold text-gray-800 mb-1">{courseData.courseTitle}</h1>
@@ -226,11 +229,26 @@ function Player() {
             <div className='flex items-center gap-2 py-3 mt-10'>
               <h1 className='text-xl font-bold'>Rate This Course</h1>
             </div>
+            <div className='mb-4'>
+              <Rating 
+                initialRating={courseRating}
+                onRatingChange={(rating) => {
+                  setCourseRating(rating);
+                  // Here you can add API call to save the rating
+                  console.log(`Rating for course ${courseId}: ${rating} stars`);
+                }}
+              />
+              {courseRating > 0 && (
+                <p className='text-sm text-gray-600 mt-2'>
+                  You rated this course {courseRating} star{courseRating !== 1 ? 's' : ''}
+                </p>
+              )}
+            </div>
           </div>
         </aside>
 
-        {/* Right Column */}
-        <main className="flex-1 flex flex-col gap-6 relative">
+        {/* Right Column - Flexible Width */}
+        <main className="flex-1 min-w-0 flex flex-col gap-6 relative">
           {/* Video Player */}
           <div className="bg-white rounded-2xl shadow-md p-0 md:p-4 flex flex-col md:flex-row gap-4 items-start">
             <div className="w-full aspect-video max-w-3xl rounded-xl overflow-hidden bg-black flex items-center justify-center">
@@ -251,6 +269,25 @@ function Player() {
               <h3 className="text-lg font-semibold text-gray-800 mb-1">{currentLecture?.lectureTitle || 'Lecture Title'}</h3>
               <div className="text-xs text-gray-500 mb-2">Duration: {currentLecture ? humanizeDuration(currentLecture.lectureDuration * 60 * 1000, { units: ['m'], round: true }) : '--'}</div>
               <div className="text-xs text-gray-500">Chapter: {courseData.courseContent[currentChapter]?.chapterTitle}</div>
+              
+              {/* Mark as Completed Button */}
+              <div className="mt-4">
+                <button
+                  onClick={() => {
+                    setIsCompleted(!isCompleted);
+                    // Here you can add API call to mark lecture as completed
+                    console.log(`Lecture ${currentLecture?.lectureTitle} marked as ${!isCompleted ? 'completed' : 'incomplete'}`);
+                  }}
+                  className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
+                    isCompleted 
+                      ? 'bg-green-500 text-white hover:bg-green-600' 
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  {isCompleted ? '✓ Completed' : 'Mark as Completed'}
+                </button>
+              </div>
+              
               {/* Placeholder for chat/now watching */}
               <div className="mt-4">
                 <div className="bg-gray-100 rounded-lg p-2 text-xs text-gray-400 text-center">Chat & Now Watching coming soon...</div>

@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import { dummyCourses } from "../assets/assets";
+import { dummyCourses, dummyStudentEnrolled } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
 import humanizedDuration from "humanize-duration";
 
@@ -11,6 +11,8 @@ export const AppContextProvider = (props) => {
   const [isEducator, setIsEducator] = useState(true);
   const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
+  const [educatorCourses] = useState(dummyCourses);
+  const [educatorEnrolledStudents] = useState(dummyStudentEnrolled);
 
   const currency = import.meta.env.VITE_CURRENCY;
   const navigate = useNavigate();
@@ -85,6 +87,8 @@ export const AppContextProvider = (props) => {
     loadDummyCourses,
     darkMode,
     setDarkMode,
+    educatorCourses,
+    educatorEnrolledStudents,
   };
 
   return <AppContext.Provider value={value}>{props.children}</AppContext.Provider>;

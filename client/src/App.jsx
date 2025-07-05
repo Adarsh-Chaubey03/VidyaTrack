@@ -32,8 +32,8 @@ const App = () => {
 
         {/* Educator Nested Routes */}
         <Route path='/educator' element={<Educator />}>
-          <Route path='educator' element={<Dashboard />} />
-          <Route path='my-course' element={<MyCourses />} />
+          <Route path='/educator' element={<Dashboard />} />
+          <Route path='my-courses' element={<MyCourses />} />
           <Route path='add-course' element={<AddCourse />} />
           <Route path='student-enrolled' element={<StudentEnrolled />} />
         </Route>
