@@ -19,7 +19,7 @@ function CourseDetails() {
     calculateChapterTime,
     calculateCourseDuration,
     calculateNoOfLectures,
-    currency = '$' // assuming currency symbol available from context or define here
+    currency = '$'
   } = useContext(AppContext);
 
   useEffect(() => {

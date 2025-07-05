@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useClerk, UserButton, useUser } from '@clerk/clerk-react';
-import { Menu, Bell, Sun, Moon, X } from 'lucide-react';
+import { Menu, Bell, Sun, Moon, X, Home } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { assets } from '../../assets/assets';
 import MyEnrollment from '../../pages/student/MyEnrollment';  
@@ -16,6 +16,8 @@ function Navbar() {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [role, setRole] = useState('student'); // New: Educator/Student toggle
+  const [isWhiteBarFixed, setIsWhiteBarFixed] = useState(false);
 
   const notifRef = useRef(null);
   const bellRef = useRef(null);
@@ -23,6 +25,17 @@ function Navbar() {
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
   }, [darkMode]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      // Fix white bar when scrolled past the green bar height (approximately 60px)
+      setIsWhiteBarFixed(scrollTop > 60);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -42,45 +55,87 @@ function Navbar() {
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
   const toggleNotif = () => setNotifOpen(prev => !prev);
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // --- Start of new two-bar layout ---
   return (
-    <div className={`sticky top-0 z-50 border-b py-4 px-4 sm:px-10 md:px-14 lg:px-36 flex items-center justify-between transition-all duration-300 ${isCourseListPage ? 'bg-white dark:bg-gray-900' : 'bg-emerald-100 dark:bg-gray-800'}`}>
-      
-      <Link to="/">
-        <img src={assets.logo} alt="Logo" className='w-32 lg:w-40 cursor-pointer' />
-      </Link>
-
-      <div className='hidden md:flex items-center gap-6 text-gray-700 dark:text-gray-300'>
-        {user && <Link to="/my-enrollment">My Enrollment</Link>}
-        {user && <button>Become Educator</button>}
+    <>
+      {/* Top Bar: Logo + Student/Educator toggle, Login/Signup/UserButton */}
+      <div className="w-full flex items-center justify-between px-4 sm:px-10 md:px-14 lg:px-36 py-2 border-b bg-emerald-600 dark:bg-emerald-700">
+        <div className="flex items-center gap-4">
+          <Link to="/" onClick={scrollToTop}>
+            <img src={assets.logo} alt="VidyaTrack Logo" className='w-32 lg:w-40 cursor-pointer' />
+          </Link>
+          <div className="flex items-center gap-2 ml-2">
+            <button
+              className={`px-3 py-1 rounded-full text-sm font-semibold transition-colors duration-200 ${role === 'student' ? 'bg-white text-emerald-600' : 'bg-emerald-500 text-white'}`}
+              onClick={() => setRole('student')}
+            >
+              Student
+            </button>
+            <button
+              className={`px-3 py-1 rounded-full text-sm font-semibold transition-colors duration-200 ${role === 'educator' ? 'bg-white text-emerald-600' : 'bg-emerald-500 text-white'}`}
+              onClick={() => setRole('educator')}
+            >
+              Educator
+            </button>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          {!user && (
+            <>
+              <button onClick={() => openSignIn()} className="border border-white text-white font-bold text-base rounded-full px-6 py-1 cursor-pointer bg-transparent hover:bg-white hover:text-emerald-600 transition">Login</button>
+              <button onClick={() => openSignIn()} className="border border-white text-white font-bold text-base rounded-full px-6 py-1 cursor-pointer bg-transparent hover:bg-white hover:text-emerald-600 transition">Signup</button>
+            </>
+          )}
+        </div>
       </div>
 
-      <div className='hidden md:flex items-center gap-4'>
-        <button ref={bellRef} onClick={toggleNotif} className='relative hover:text-blue-600'>
-          <Bell />
-          <span className='absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full'></span>
-        </button>
-
-        <button onClick={() => setDarkMode(!darkMode)} className='hover:text-blue-600'>
-          {darkMode ? <Sun /> : <Moon />}
-        </button>
-
-        {user ? (
-          <UserButton />
-        ) : (
-          <button onClick={() => openSignIn()} className='bg-emerald-600 px-5 py-2 rounded-full text-white hover:bg-emerald-700'>
-            Get Started
-          </button>
-        )}
-      </div>
-
-      <div className='md:hidden flex items-center gap-2'>
-        <button onClick={toggleMobileMenu}>
-          {mobileMenuOpen ? <X /> : <Menu />}
-        </button>
-      </div>
+      {/* Bottom Bar: Main Navigation */}
+      {role === 'student' && (
+        <div className={`${isWhiteBarFixed ? 'fixed top-0 left-0 right-0 z-40' : ''} border-b py-3 px-4 sm:px-10 md:px-14 lg:px-36 flex items-center transition-all duration-300 bg-white dark:bg-gray-900`}>
+          <div className='flex items-center gap-4'>
+            <Link to="/" onClick={scrollToTop} className={`flex items-center gap-2 transition-colors ${pathname === '/' ? 'text-emerald-600 font-bold' : 'text-gray-700 dark:text-gray-300'}`}>
+              <Home size={20} />
+              <span className="hidden sm:inline text-sm font-medium">Home</span>
+            </Link>
+          </div>
+          <div className='hidden md:flex flex-1 justify-center items-center gap-6 text-gray-700 dark:text-gray-300'>
+            {user && <NavLink to="/my-enrollment" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>My Enrollment</NavLink>}
+            <NavLink to="/course-list" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Courses</NavLink>
+            <NavLink to="/mentor" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Mentor</NavLink>
+            <NavLink to="/resume" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Resume</NavLink>
+            <NavLink to="/interview" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Interview</NavLink>
+          </div>
+          <div className='hidden md:flex items-center gap-4'>
+            <button ref={bellRef} onClick={toggleNotif} className='relative hover:text-blue-600'>
+              <Bell />
+              <span className='absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full'></span>
+            </button>
+            <button onClick={() => setDarkMode(!darkMode)} className='hover:text-blue-600'>
+              {darkMode ? <Sun /> : <Moon />}
+            </button>
+            {user && <UserButton />}
+          </div>
+          <div className='hidden md:flex items-center gap-4'>
+            {/* No Login/Signup on white bar when not logged in */}
+          </div>
+          <div className='md:hidden flex items-center gap-2'>
+            <button onClick={toggleMobileMenu}>
+              {mobileMenuOpen ? <X /> : <Menu />}
+            </button>
+          </div>
+        </div>
+      )}
+      {role === 'educator' && (
+        <div style={{ width: '100%', height: '100vh', background: 'white' }}></div>
+      )}
+      {/* Mobile Menu and Notifications remain unchanged */}
 
       <AnimatePresence>
-        {mobileMenuOpen && (
+        {mobileMenuOpen && role === 'student' && (
           <motion.div
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
@@ -89,7 +144,15 @@ function Navbar() {
             className='fixed top-0 right-0 w-64 h-full bg-white dark:bg-gray-900 shadow-xl p-6 z-50 flex flex-col gap-4'
           >
             <button onClick={toggleMobileMenu} className='self-end'><X /></button>
+            <Link to="/" onClick={() => { toggleMobileMenu(); scrollToTop(); }} className="flex items-center gap-2 text-emerald-600">
+              <Home size={20} />
+              <span>Home</span>
+            </Link>
             {user && <Link to="/my-enrollment" onClick={toggleMobileMenu}>My Enrollment</Link>}
+            <Link to="/course-list" onClick={toggleMobileMenu}>Courses</Link>
+            <Link to="/mentor" onClick={toggleMobileMenu}>Mentor</Link>
+            <Link to="/resume" onClick={toggleMobileMenu}>Resume</Link>
+            <Link to="/interview" onClick={toggleMobileMenu}>Interview</Link>
             {user && <button onClick={toggleMobileMenu}>Become Educator</button>}
             {user ? <UserButton afterSignOutUrl='/' /> : <button onClick={() => openSignIn()} className='text-blue-600'>Create Account</button>}
             <button onClick={() => setDarkMode(!darkMode)} className='mt-4 flex items-center gap-2'>
@@ -117,7 +180,7 @@ function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }
 

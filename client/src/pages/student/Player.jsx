@@ -217,6 +217,7 @@ function Player() {
                           <span className="ml-auto text-[10px] text-gray-400">{humanizeDuration(lecture.lectureDuration * 60 * 1000, { units: ['m'], round: true })}</span>
                         </li>
                       ))}
+                       
                     </ul>
                   )}
                 </div>

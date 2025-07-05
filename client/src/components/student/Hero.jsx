@@ -12,13 +12,6 @@ function Hero() {
         Don't Journey Solo—Unlock Your Potential with 1:1 Mentorship and Career-Building Tools from Top Experts in Tech, Business, and Beyond!
       </p>
       <SearchBar/>
-      <div className="flex flex-row flex-wrap justify-center gap-3 mt-8">
-        {['EXPLORE COURSES', 'RESUME REVIEW', 'BLOG SECTION', 'INTERVIEW PREP', 'Connect mentor'].map((item) => (
-          <span key={item} className="bg-white border border-green-400 text-gray-500 px-5 py-2 rounded-full text-sm font-semibold cursor-pointer hover:bg-emerald-50 transition uppercase">
-            {item}
-          </span>
-        ))}
-      </div>
     </div>
   )
 }
