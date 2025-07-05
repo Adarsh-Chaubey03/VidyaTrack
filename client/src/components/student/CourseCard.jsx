@@ -20,71 +20,55 @@ function CourseCard({ course }) {
       to={`/course/${course._id}`}
       onClick={() => scrollTo(0, 0)}
       className="
-        w-full max-w-[300px] dark:bg-gray-800 overflow-hidden 
-        transition-all duration-300 
-        mx-auto
-        group
-        bg-white rounded-xl shadow-lg
+        w-full max-w-[300px] sm:max-w-[300px] max-w-[180px] min-w-[160px] sm:min-w-[220px] md:min-w-[320px] 
+        bg-transparent border border-gray-300 dark:border-gray-700 
+        shadow-emerald-200 hover:shadow-emerald-400
+        overflow-hidden transition-all duration-300 mx-auto group
+        rounded-xl
+        hover:scale-105
     "
     >
-      <div className="relative">
-        <img
-          src={course.courseThumbnail}
-          alt="Course Thumbnail"
-          className="
-            w-full h-48 object-cover 
-            transition-transform duration-300 
-            group-hover:scale-105
-          "
-        />
-        <div className="
-          absolute inset-0 
-          bg-gradient-to-t from-black/40 to-transparent 
-          opacity-0 group-hover:opacity-100 
-          transition-opacity duration-300
-        " />
-      </div>
-      <div className="p-5 ">
+      {/* Thumbnail at the top */}
+      <img
+        src={course.courseThumbnail}
+        alt="Course Thumbnail"
+        className="w-full h-32 sm:h-48 object-cover rounded-t-xl"
+      />
+      <div className="border-t border-gray-200 dark:border-gray-700 w-full" />
+      <div className="p-3 sm:p-5 ">
         <h3 className="
-          text-lg font-semibold 
+          text-base sm:text-lg font-semibold 
           text-gray-800 dark:text-white 
-          truncate
+          line-clamp-2
           group-hover:text-emerald-600 
           transition-colors duration-300
         ">
           {course.courseTitle}
         </h3>
         <p className="
-          text-sm text-gray-600 dark:text-gray-400 
+          text-xs sm:text-sm text-gray-600 dark:text-gray-400 
           mt-1 truncate
         ">
           VidyaTrack
         </p>
 
-        <div className="flex items-center gap-2 mt-3 text-sm text-gray-700 dark:text-gray-300">
+        <div className="flex items-center gap-2 mt-2 sm:mt-3 text-xs sm:text-sm text-gray-700 dark:text-gray-300">
           <span className="text-red-600 font-semibold">{rating.toFixed(1)}</span>
           <div className="flex gap-1">
             {[...Array(5)].map((_, i) => {
               if (i < fullStars) {
-                return <img key={i} src={assets.star} alt="star" className="w-4 h-4" />;
+                return <img key={i} src={assets.star} alt="star" className="w-3 h-3 sm:w-4 sm:h-4" />;
               } else if (i === fullStars && hasHalfStar) {
-                return <img key={i} src={assets.star_half} alt="half star" className="w-4 h-4" />;
+                return <img key={i} src={assets.star_half} alt="half star" className="w-3 h-3 sm:w-4 sm:h-4" />;
               } else {
-                return <img key={i} src={assets.star_blank} alt="empty star" className="w-4 h-4" />;
+                return <img key={i} src={assets.star_blank} alt="empty star" className="w-3 h-3 sm:w-4 sm:h-4" />;
               }
             })}
           </div>
           <span className="text-gray-600 dark:text-gray-400">({totalRatings})</span>
         </div>
-
-        <p className="
-          mt-4 text-emerald-700 dark:text-emerald-400 
-          font-bold text-lg
-        ">
-          {currency}
-          {discountedPrice}
-        </p>
       </div>
+      <div className="border-b border-gray-200 dark:border-gray-700 w-full" />
     </Link>
   );
 }

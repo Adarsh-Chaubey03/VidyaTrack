@@ -637,7 +637,7 @@ export const dummyCourses = [
     },
     {
         "_id": "605c72efb3f1c2b1f8e4e1aa",
-        "courseTitle": "Data Science and Machine Learning",
+        "courseTitle": "Data Science And ML",
         "courseDescription": "<h2>Unlock the Power of Data</h2><p>This course provides a comprehensive introduction to data science and machine learning. You will learn how to analyze data, build predictive models, and apply machine learning algorithms to real-world problems.</p><p>By the end of this course, you will have a solid understanding of data manipulation, visualization, and machine learning techniques, enabling you to make data-driven decisions.</p><ul><li>Understand data analysis and visualization</li><li>Learn machine learning algorithms and their applications</li><li>Work with popular data science libraries like Pandas and Scikit-Learn</li></ul>",
         "coursePrice": 89.99,
         "isPublished": true,
