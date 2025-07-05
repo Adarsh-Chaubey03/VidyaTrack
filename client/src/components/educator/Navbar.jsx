@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { assets, dummyEducatorData } from '../../assets/assets'
 import { UserButton, useUser } from '@clerk/clerk-react'
 
-function Navbar() {
+function Navbar({ afterSignOutUrl }) {
     const educatorData = dummyEducatorData
     const { user } = useUser()
     const location = useLocation();
@@ -32,7 +32,7 @@ function Navbar() {
         </div>
         <div className='flex items-center gap-5 text-gray-500'>
             <p>Hi! {user ? user.fullName : 'Educator'}</p>
-            {user ? <UserButton/> : <img src={assets.profile_img} className='w-10 h-10 rounded-full' alt="Profile" />}
+            {user ? <UserButton afterSignOutUrl={afterSignOutUrl || '/'} /> : <img src={assets.profile_img} className='w-10 h-10 rounded-full' alt="Profile" />}
         </div>
        </div> 
     )
