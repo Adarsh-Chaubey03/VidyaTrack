@@ -21,7 +21,7 @@ const features = [
   {
     key: 'courses',
     title: 'Courses',
-    desc: 'Explore a wide range of courses designed to boost your skills and knowledge. Find the perfect course for your goals!',
+    desc: 'Explore courses to boost your skills.\nFind the perfect fit for your goals!',
     icon: <BookOpen size={32} className="text-emerald-600" />, // Replace with your icon
     bg: 'bg-emerald-50',
   },
@@ -35,7 +35,7 @@ const features = [
   {
     key: 'interview',
     title: 'Interview Prep',
-    desc: 'Prepare for interviews with curated questions, mock interviews, and expert advice.',
+    desc: 'Practice with curated questions.\nGet advice and boost confidence.',
     icon: <GraduationCap size={32} className="text-purple-500" />, // Replace with your icon
     bg: 'bg-purple-50',
   },

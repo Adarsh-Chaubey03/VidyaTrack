@@ -3,7 +3,7 @@ import { assets, dummyTestimonial } from '../../assets/assets';
 
 function TestimonialSection() {
     return (
-        <div className='pb-14 px-8 md:px-20'>
+        <div className='pb-14 px-8 md:px-20 mt-10'>
             <h2 className='text-3xl font-semibold text-gray-800 dark:text-white'>Testimonials</h2>
         
                 <p className='md:text-base text-sm text-gray-600 dark:text-gray-400 mt-3 max-w-2xl mx-auto text-center'>

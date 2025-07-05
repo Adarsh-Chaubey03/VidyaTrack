@@ -5,7 +5,6 @@ import Feature from '../../components/student/Feature'
 import CousreSection from '../../components/student/CousreSection'
 import TestimonialSection from '../../components/student/TestimonialSection'
 import CallToAction from '../../components/student/CallToAction'
-import Company from '../../components/student/Company'
 import Footer from '../../components/student/Footer'
 import Mentor from '../../components/student/Mentor'
 import ResumeReview from '../../components/student/ResumeReview'
@@ -32,9 +31,10 @@ function Home() {
         }
     };
     return (
-        <div className='flex flex-col items-center space-y-7 text-center'>
+        <div className='flex flex-col items-center  text-center'>
             <Hero />
             <Feature />
+            <StatsSection />
             <CousreSection />
             {/* Consistent section for extra features with shared bg and circle arrow */}
             <div className="relative py-16 bg-gray-50 overflow-hidden flex flex-col items-center w-full">
@@ -55,10 +55,10 @@ function Home() {
                   className="w-full flex overflow-x-hidden gap-8 px-8 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-emerald-200 scrollbar-track-gray-100"
                   style={{ scrollBehavior: 'smooth' }}
                 >
-                  <div className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-gray-300/40 bg-white"><Mentor /></div>
-                  <div className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-gray-300/40 bg-white"><ResumeReview /></div>
-                  <div className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-gray-300/40 bg-white"><InterviewPrep /></div>
-                  <div className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-gray-300/40 bg-white"><TestSeries /></div>
+                  <div className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-orange-200 border border-orange-200 bg-white/60 backdrop-blur-md"><Mentor /></div>
+                  <div className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-blue-200 border border-blue-200 bg-white/60 backdrop-blur-md"><ResumeReview /></div>
+                  <div className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-purple-200 border border-purple-200 bg-white/60 backdrop-blur-md"><InterviewPrep /></div>
+                  <div className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-yellow-200 border border-yellow-200 bg-white/60 backdrop-blur-md"><TestSeries /></div>
                 </div>
                 {/* Right Arrow */}
                 <button
@@ -71,10 +71,10 @@ function Home() {
                 </button>
               </div>
             </div>
-            <StatsSection />
+           
             <TestimonialSection />
             <CallToAction />
-            <Company />
+   
             <Footer />
         </div>
     )
