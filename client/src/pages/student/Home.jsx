@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useRef } from 'react'
+import { useState } from 'react';
 import Hero from '../../components/student/Hero'
 import Feature from '../../components/student/Feature'
 import CousreSection from '../../components/student/CousreSection'
@@ -11,8 +12,25 @@ import ResumeReview from '../../components/student/ResumeReview'
 import InterviewPrep from '../../components/student/InterviewPrep'
 import TestSeries from '../../components/student/TestSeries'
 import arrowIcon from '../../assets/arrow_icon.svg';
+import StatsSection from '../../components/student/StatsSection';
 
 function Home() {
+    const scrollRef = useRef(null);
+    const [scrollPos, setScrollPos] = useState(0);
+    const cardWidth = 500 + 32; // 500px card + 2rem (32px) gap
+
+    const scrollLeft = () => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+            setScrollPos(scrollRef.current.scrollLeft - cardWidth);
+        }
+    };
+    const scrollRight = () => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollBy({ left: cardWidth, behavior: 'smooth' });
+            setScrollPos(scrollRef.current.scrollLeft + cardWidth);
+        }
+    };
     return (
         <div className='flex flex-col items-center space-y-7 text-center'>
             <Hero />
@@ -20,18 +38,40 @@ function Home() {
             <CousreSection />
             {/* Consistent section for extra features with shared bg and circle arrow */}
             <div className="relative py-16 bg-gray-50 overflow-hidden flex flex-col items-center w-full">
-              {/* Circle arrow background */}
-              <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/3 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-emerald-100 via-orange-100 to-yellow-100 opacity-60 z-0 flex items-center justify-center">
-                <img src={arrowIcon} alt="arrow background" className="w-40 h-40 opacity-40 rotate-[-30deg]" />
-              </div>
               {/* Horizontally scrollable cards */}
-              <div className="relative z-10 w-full max-w-6xl flex overflow-x-auto gap-8 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-emerald-200 scrollbar-track-gray-100 justify-center cursor-grab active:cursor-grabbing">
-                <div className="snap-center shrink-0 w-[500px] h-[350px] flex items-center justify-center rounded-3xl shadow-xl bg-white"><Mentor /></div>
-                <div className="snap-center shrink-0 w-[500px] h-[350px] flex items-center justify-center rounded-3xl shadow-xl bg-white"><ResumeReview /></div>
-                <div className="snap-center shrink-0 w-[500px] h-[350px] flex items-center justify-center rounded-3xl shadow-xl bg-white"><InterviewPrep /></div>
-                <div className="snap-center shrink-0 w-[500px] h-[350px] flex items-center justify-center rounded-3xl shadow-xl bg-white"><TestSeries /></div>
+              <div className="relative w-full">
+                {/* Left Arrow */}
+                <button
+                  onClick={scrollLeft}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white shadow-lg rounded-full p-2 hover:bg-gray-100"
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  aria-label="Scroll Left"
+                >
+                  <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                {/* Cards */}
+                <div
+                  ref={scrollRef}
+                  className="w-full flex overflow-x-hidden gap-8 px-8 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-emerald-200 scrollbar-track-gray-100"
+                  style={{ scrollBehavior: 'smooth' }}
+                >
+                  <div className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-gray-300/40 bg-white"><Mentor /></div>
+                  <div className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-gray-300/40 bg-white"><ResumeReview /></div>
+                  <div className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-gray-300/40 bg-white"><InterviewPrep /></div>
+                  <div className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-gray-300/40 bg-white"><TestSeries /></div>
+                </div>
+                {/* Right Arrow */}
+                <button
+                  onClick={scrollRight}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white shadow-lg rounded-full p-2 hover:bg-gray-100"
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  aria-label="Scroll Right"
+                >
+                  <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
               </div>
             </div>
+            <StatsSection />
             <TestimonialSection />
             <CallToAction />
             <Company />
