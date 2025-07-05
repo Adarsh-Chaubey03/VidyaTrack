@@ -5,7 +5,7 @@ import SearchBar from './SearchBar'
 function Hero() {
   return (
     <div 
-      className='flex flex-col items-center justify-center w-full md:pt-20 pt-10 px-7 md:px-0 space-y-7 text-center relative min-h-screen'
+      className='flex flex-col items-center justify-center w-full md:pt-15 pt-10 px-7 md:px-0 space-y-7 text-center relative min-h-[80vh]'
       style={{
         backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${assets.hero_bg})`,
         backgroundSize: 'cover',
