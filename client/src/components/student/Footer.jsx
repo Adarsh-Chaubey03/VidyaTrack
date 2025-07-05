@@ -173,7 +173,7 @@ function Footer() {
               © {new Date().getFullYear()} VidyaTrack. All rights reserved.
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-500">
-              Made with ❤️ for learners worldwide
+              Made by Adarsh Chaubey
             </p>
           </div>
         </div>
