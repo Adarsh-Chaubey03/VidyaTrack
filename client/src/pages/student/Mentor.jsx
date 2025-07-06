@@ -48,6 +48,10 @@ function Mentor() {
     return () => clearInterval(timerRef.current);
   }, [isManuallyChanged, filteredMentors.length]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col">
       {/* Hero Section */}

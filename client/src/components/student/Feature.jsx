@@ -59,11 +59,12 @@ function Feature() {
             <p className="mb-4 text-left text-gray-700">{feature.desc}</p>
             {feature.key === 'courses' ? (
               <Link to="/course-list" className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 w-fit text-center">Know More</Link>
+            ) : feature.key === 'mentor' ? (
+              <Link to="/mentor" className="bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded w-fit text-white">Know More</Link>
             ) : feature.key === 'testseries' ? (
               <button className="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded w-fit text-white">Know More</button>
             ) : (
               <button className={`px-4 py-2 rounded w-fit text-white ${
-                feature.key === 'mentor' ? 'bg-orange-500 hover:bg-orange-600' :
                 feature.key === 'resume' ? 'bg-blue-500 hover:bg-blue-600' :
                 feature.key === 'blog' ? 'bg-pink-500 hover:bg-pink-600' :
                 feature.key === 'interview' ? 'bg-purple-500 hover:bg-purple-600' :

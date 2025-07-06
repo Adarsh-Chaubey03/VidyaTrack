@@ -7,6 +7,7 @@ import TestimonialSection from '../../components/student/TestimonialSection'
 import CallToAction from '../../components/student/CallToAction'
 import Footer from '../../components/student/Footer'
 import Mentor from '../../components/student/Mentor'
+import { Link } from 'react-router-dom';
 import ResumeReview from '../../components/student/ResumeReview'
 import InterviewPrep from '../../components/student/InterviewPrep'
 import TestSeries from '../../components/student/TestSeries'
@@ -55,7 +56,9 @@ function Home() {
                   className="w-full flex overflow-x-hidden gap-8 px-8 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-emerald-200 scrollbar-track-gray-100"
                   style={{ scrollBehavior: 'smooth' }}
                 >
-                  <div className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-orange-200 border border-orange-200 bg-white/60 backdrop-blur-md"><Mentor /></div>
+                  <Link to="/mentor" className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-orange-200 border border-orange-200 bg-white/60 backdrop-blur-md">
+                    <Mentor />
+                  </Link>
                   <div className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-blue-200 border border-blue-200 bg-white/60 backdrop-blur-md"><ResumeReview /></div>
                   <div className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-purple-200 border border-purple-200 bg-white/60 backdrop-blur-md"><InterviewPrep /></div>
                   <div className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-yellow-200 border border-yellow-200 bg-white/60 backdrop-blur-md"><TestSeries /></div>
