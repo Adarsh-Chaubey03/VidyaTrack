@@ -17,17 +17,17 @@ function Navbar({ afterSignOutUrl }) {
           </Link>
           <div className="flex items-center gap-2 ml-2">
             <Link
-              to="/"
-              className={`px-3 py-1 rounded-full text-sm font-semibold transition-colors duration-200 ${!isEducator ? 'bg-white text-emerald-600' : 'bg-emerald-400 text-white'}`}
-            >
-              Student
-            </Link>
-            <Link
               to="/educator"
               className={`px-3 py-1 rounded-full text-sm font-semibold transition-colors duration-200 ${isEducator ? 'bg-emerald-500 text-white' : 'bg-white text-emerald-600'}`}
             >
               Educator
-      </Link>
+            </Link>
+            <Link
+              to="/"
+              className={`px-3 py-1 rounded-full text-sm font-semibold border border-gray-400 transition-colors duration-200 ${!isEducator ? 'text-gray-700 bg-white hover:bg-emerald-500 hover:text-white' : 'text-gray-700 bg-white hover:bg-emerald-500 hover:text-white'}`}
+            >
+              Student
+            </Link>
           </div>
         </div>
         <div className='flex items-center gap-5 text-gray-500'>
