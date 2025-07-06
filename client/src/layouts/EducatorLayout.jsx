@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '../components/educator/Navbar';
 import Sidebar from '../components/educator/Sidebar';
 import { Outlet } from 'react-router-dom';
+import Footer from '../components/educator/Footer';
 
 export default function EducatorLayout() {
   return (
@@ -11,8 +12,10 @@ export default function EducatorLayout() {
         <Sidebar />
         <main className="flex-1 p-4">
           <Outlet />
+         
         </main>
       </div>
+      <Footer/>
     </div>
   );
 } 
