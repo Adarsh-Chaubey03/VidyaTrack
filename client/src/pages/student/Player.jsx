@@ -255,16 +255,27 @@ function Player() {
           </div>
 
           {/* Feedback Form */}
-          <div className="flex flex-col flex-grow justify-end bg-white rounded-2xl shadow-md p-6 mt-6">
-            <form className="flex flex-col gap-3">
-              <textarea className="border border-gray-300 rounded-lg p-2 min-h-[80px] resize-vertical" placeholder="Your feedback..." />
-              <button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-lg transition">Submit</button>
-            </form>
-          </div>
+          <FeedbackForm />
         </div>
       </div>
       <Footer className="mt-10"/>
     </div>
+  );
+}
+
+// FeedbackForm component
+function FeedbackForm() {
+  const [mood, setMood] = React.useState(null);
+  const emojis = [
+    { label: 'sad', icon: '😞' },
+    { label: 'normal', icon: '😐' },
+    { label: 'happy', icon: '🙂' },
+  ];
+  return (
+    <form className="flex flex-col gap-3 items-stretch">
+      <textarea className="border border-gray-300 rounded-lg p-2 min-h-[80px] resize-vertical" placeholder="Your feedback..." />
+      <button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-lg transition w-full">Submit</button>
+    </form>
   );
 }
 
