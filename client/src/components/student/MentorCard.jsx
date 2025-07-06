@@ -20,7 +20,7 @@ function MentorCard({ mentor }) {
         <div className="flex items-center gap-1 mb-2 min-h-[32px]">
           <span className="text-emerald-600 font-bold">{mentor.rating.toFixed(1)}</span>
           {[...Array(5)].map((_, i) => (
-            <Star key={i} className={`inline w-4 h-4 ${i < Math.round(mentor.rating) ? 'fill-emerald-500 text-emerald-500' : 'text-gray-300'}`} />
+            <Star key={i} className={`inline w-4 h-4 ${i < Math.round(mentor.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
           ))}
           <span className="text-gray-500 text-sm ml-1">({mentor.reviews} reviews)</span>
         </div>
@@ -38,8 +38,8 @@ function MentorCard({ mentor }) {
         {/* Price and Badges */}
         <div className="flex items-center gap-4 mt-2 min-h-[36px]">
           <span className="text-2xl font-extrabold text-gray-900">${mentor.price} <span className="text-base font-normal text-gray-500">/month</span></span>
-          {mentor.freeTrial && <span className="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full text-xs font-bold">7 Day Free Trial</span>}
-          {mentor.spotsLeft <= 5 && <span className="bg-emerald-50 text-emerald-700 px-2 py-1 rounded-full text-xs font-bold">Only {mentor.spotsLeft} Spot{mentor.spotsLeft > 1 ? 's' : ''} Left</span>}
+          {mentor.freeTrial && <span className="bg-rose-100 text-rose-700 px-2 py-1 rounded-full text-xs font-bold">7 Day Free Trial</span>}
+          {mentor.spotsLeft <= 5 && <span className="bg-rose-100 text-rose-700 px-2 py-1 rounded-full text-xs font-bold">Only {mentor.spotsLeft > 1 ? 's' : ''} Left</span>}
         </div>
         {/* View Profile Button */}
         <div className="flex w-full justify-center mt-4">

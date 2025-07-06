@@ -76,47 +76,6 @@ function Player() {
   // Use real similar courses (enrolledCourses except current)
   const similarCourses = (enrolledCourses || []).filter(c => c._id !== courseId);
 
-  // Marquee should be in right column if a chapter is expanded or Read More is active
-  const isMarqueeInRightColumn = showFullDescription || Object.values(openChapters).some(Boolean);
-
-  // Marquee component
-  const MarqueeRow = () => (
-    <div className="w-full overflow-hidden bg-white shadow mt-4 rounded-xl mb-4">
-      <div className="px-4 pt-3 pb-1">
-        <h3 className="text-base font-semibold text-gray-700 mb-2">Similar Courses</h3>
-      </div>
-      <div className="flex items-center animate-marquee whitespace-nowrap py-2">
-        {similarCourses.length === 0 ? (
-          <span className="mx-4 text-gray-400 text-sm">No similar courses found.</span>
-        ) : similarCourses.concat(similarCourses).map((course, idx) => (
-          <Link
-            key={idx}
-            to={`/course/${course._id}`}
-            className="flex flex-col items-center justify-center mx-8 mb-4 bg-white border border-gray-200 rounded-xl shadow-sm p-3 w-32 h-28 hover:shadow-md transition"
-            style={{ textDecoration: 'none' }}
-          >
-            <img
-              src={course.courseThumbnail || course.thumbnail || assets.course_1}
-              alt={course.courseTitle + ' thumbnail'}
-              className="w-20 h-20 rounded-lg object-cover mb-1"
-              onError={e => { e.target.src = assets.course_1; }}
-            />
-            <span className="font-semibold text-gray-800 text-xs text-center w-full leading-tight line-clamp-2 break-words overflow-hidden" style={{display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical'}}>{course.courseTitle}</span>
-          </Link>
-        ))}
-      </div>
-      <style>{`
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-          animation: marquee 20s linear infinite;
-        }
-      `}</style>
-    </div>
-  );
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -247,8 +206,8 @@ function Player() {
           </div>
         </aside>
 
-        {/* Right Column - Flexible Width */}
-        <main className="flex-1 min-w-0 flex flex-col gap-6 relative">
+        {/* Right Column - Video and Feedback */}
+        <div className="flex-1 flex flex-col gap-6 min-h-full">
           {/* Video Player */}
           <div className="bg-white rounded-2xl shadow-md p-0 md:p-4 flex flex-col md:flex-row gap-4 items-start">
             <div className="w-full aspect-video max-w-3xl rounded-xl overflow-hidden bg-black flex items-center justify-center">
@@ -294,17 +253,17 @@ function Player() {
               </div>
             </div>
           </div>
-          {/* Marquee row inside right column if needed */}
-          {isMarqueeInRightColumn && (
-            <div className="w-full md:w-[calc(100%-1.5rem)] mx-auto mt-4">
-              <MarqueeRow />
-            </div>
-          )}
-        </main>
 
+          {/* Feedback Form */}
+          <div className="flex flex-col flex-grow justify-end bg-white rounded-2xl shadow-md p-6 mt-6">
+            <h2 className="text-lg font-semibold mb-2">Submit Feedback</h2>
+            <form className="flex flex-col gap-3">
+              <textarea className="border border-gray-300 rounded-lg p-2 min-h-[80px] resize-vertical" placeholder="Your feedback..." />
+              <button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-lg transition">Submit</button>
+            </form>
+          </div>
+        </div>
       </div>
-      {/* Marquee row spanning both columns if not in right column */}
-      {!isMarqueeInRightColumn && <MarqueeRow />}
       <Footer className="mt-10"/>
     </div>
   );
