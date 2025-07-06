@@ -27,7 +27,7 @@ function Navbar({ afterSignOutUrl }) {
               className={`px-3 py-1 rounded-full text-sm font-semibold transition-colors duration-200 ${isEducator ? 'bg-emerald-500 text-white' : 'bg-white text-emerald-600'}`}
             >
               Educator
-            </Link>
+      </Link>
           </div>
         </div>
         <div className='flex items-center gap-5 text-gray-500'>

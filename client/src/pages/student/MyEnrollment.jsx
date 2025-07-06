@@ -14,16 +14,16 @@ function MyEnrollment() {
             <div className="overflow-x-auto rounded-lg shadow mt-8">
                 <table className='min-w-full bg-white border border-gray-200 rounded-lg'>
                     <thead className='bg-gray-100'>
-                        <tr>
-                            <th className='px-6 py-4 font-semibold text-left text-gray-700'>Course</th>
-                            <th className='px-6 py-4 font-semibold text-left text-gray-700'>Duration</th>
+                            <tr>
+                                <th className='px-6 py-4 font-semibold text-left text-gray-700'>Course</th>
+                                <th className='px-6 py-4 font-semibold text-left text-gray-700'>Duration</th>
                             <th className='px-6 py-4 font-semibold text-left text-gray-700'>Chapters</th>
                             <th className='px-6 py-4 font-semibold text-left text-gray-700'>Progress</th>
-                            <th className='px-6 py-4 font-semibold text-left text-gray-700'>Status</th>
+                                <th className='px-6 py-4 font-semibold text-left text-gray-700'>Status</th>
                             <th className='px-6 py-4 font-semibold text-left text-gray-700'>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody className='text-gray-700'>
+                            </tr>
+                        </thead>
+                        <tbody className='text-gray-700'>
                         {enrolledCourses.map((course, index) => {
                             const progress = course.progress || { completedLectures: 0, totalLectures: 0 };
                             const percent = progress.totalLectures > 0 ? (progress.completedLectures / progress.totalLectures) * 100 : 0;
@@ -61,10 +61,10 @@ function MyEnrollment() {
                                 </tr>
                             )
                         })}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
     )
 }
 

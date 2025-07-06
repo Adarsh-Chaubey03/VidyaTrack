@@ -25,13 +25,13 @@ function Dashboard() {
                         <div className="bg-blue-100 rounded-lg p-3 flex items-center justify-center">
                             <img src={stat.icon} alt="" className="w-10 h-10" />
                         </div>
-                        <div>
+                <div>
                             <p className="text-xl font-bold">{stat.value}</p>
                             <p className="text-gray-500 text-sm">{stat.label}</p>
                         </div>
-                    </div>
+                </div>
                 ))}
-            </div>
+                </div>
             {/* End Stats Row */}
 
             {/* Latest Enrollments Table */}
