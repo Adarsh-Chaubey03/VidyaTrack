@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
-import { mentors } from '../../assets/assets';
+import { mentors, assets } from '../../assets/assets';
 import Footer from '../../components/student/Footer';
 import { ArrowLeft, ArrowRight, Star } from 'lucide-react';
 
 const categories = [
   'Engineering Mentors',
-  'Design Mentors',
   'Startup Mentors',
-  'AI Mentors',
-  'Product Managers',
-  'Marketing Coaches',
   'Leadership Mentors',
   'Career Coaches',
 ];
@@ -24,40 +20,25 @@ function Mentor() {
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col">
-      {/* Top Category Nav */}
-      <div className="w-full bg-white border-b sticky top-0 z-20 overflow-x-auto">
-        <div className="flex whitespace-nowrap justify-center gap-4 px-2 py-3 text-[15px] font-medium">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => { setSelectedCategory(cat); setCurrent(0); }}
-              className={`px-3 py-1 rounded-full transition-all duration-200 ${selectedCategory === cat ? 'bg-emerald-100 text-emerald-700 font-bold' : 'hover:bg-gray-100 text-gray-700'}`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Hero Section */}
-      <section className="flex flex-col md:flex-row items-center justify-between gap-8 px-4 md:px-20 py-12 bg-gradient-to-b from-emerald-50 to-white">
+      <section className="flex flex-col md:flex-row items-center justify-between gap-8 px-4 md:px-20 py-12 bg-gradient-to-b from-emerald-50 to-white mt-0">
         <div className="flex-1 text-center md:text-left">
           <div className="inline-flex items-center mb-4">
-            <span className="bg-emerald-100 text-emerald-700 font-bold px-3 py-1 rounded-full text-sm mr-2">Just in!</span>
-            <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">New mentors this month</span>
+            <span className="bg-emerald-100 text-emerald-700 font-bold px-3 py-1 rounded-full text-sm mr-2">Top Rated</span>
+            <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">Trusted by 10,000+ learners</span>
           </div>
           <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
-            Find online mentors and career coaches <br className="hidden md:block" /> based in India
+            Connect with World-Class Mentors for Your Career Growth
           </h1>
           <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl">
-            Stuck in making the next step in your career? Make the life-changing decision & get mentoring from a trained expert in India. Get that knowledge, accountability & support you need.
+            Accelerate your journey with personalized guidance from industry leaders. Get expert advice, accountability, and support to reach your professional goals—no matter where you are.
           </p>
           <button className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-8 py-3 rounded-full text-lg shadow-lg transition">
-            Find a mentor in India →
+            Find a mentor
           </button>
         </div>
         <div className="flex-1 flex justify-center md:justify-end">
-          <img src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=facearea&w=400&h=400&q=80" alt="Mentor Hero" className="rounded-2xl shadow-xl w-64 h-64 object-cover border-4 border-emerald-100" />
+          <img src={assets.mentor_bg} alt="Mentor Hero" className="rounded-2xl shadow-xl w-64 h-64 object-cover border-4 border-emerald-100" />
         </div>
       </section>
 
