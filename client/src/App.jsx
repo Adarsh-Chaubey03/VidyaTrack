@@ -12,6 +12,7 @@ import MyCourses from './pages/educator/MyCourses';
 import AddCourse from './pages/educator/AddCourse';
 import StudentEnrolled from './pages/educator/StudentEnrolled';
 import Navbar from './components/student/Navbar';
+import EducatorLayout from './layouts/EducatorLayout';
 
 const App = () => {
   const location = useLocation();
@@ -30,9 +31,9 @@ const App = () => {
         <Route path='/player/:courseId' element={<Player />} />
         <Route path='/loading/:path' element={<Loading />} />
 
-        {/* Educator Nested Routes */}
-        <Route path='/educator' element={<Educator />}>
-          <Route path='/educator' element={<Dashboard />} />
+        {/* Educator Nested Routes with Layout */}
+        <Route path='/educator' element={<EducatorLayout />}>
+          <Route index element={<Dashboard />} />
           <Route path='my-courses' element={<MyCourses />} />
           <Route path='add-courses' element={<AddCourse />} />
           <Route path='student-enrolled' element={<StudentEnrolled />} />
