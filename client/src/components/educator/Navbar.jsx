@@ -32,7 +32,7 @@ function Navbar({ afterSignOutUrl }) {
         </div>
         <div className='flex items-center gap-5 text-gray-500'>
             <p>Hi! {user ? user.fullName : 'Educator'}</p>
-            {user ? <UserButton afterSignOutUrl={afterSignOutUrl || '/'} /> : <img src={assets.profile_img} className='w-10 h-10 rounded-full' alt="Profile" />}
+            {user ? <UserButton afterSignOutUrl="/educator" /> : <img src={assets.profile_img} className='w-10 h-10 rounded-full' alt="Profile" />}
         </div>
        </div> 
     )

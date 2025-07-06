@@ -31,12 +31,14 @@ const App = () => {
         <Route path='/player/:courseId' element={<Player />} />
         <Route path='/loading/:path' element={<Loading />} />
 
-        {/* Educator Nested Routes with Layout */}
-        <Route path='/educator' element={<EducatorLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path='my-courses' element={<MyCourses />} />
-          <Route path='add-courses' element={<AddCourse />} />
-          <Route path='student-enrolled' element={<StudentEnrolled />} />
+        {/* Educator Routes with Authentication Check */}
+        <Route path='/educator' element={<Educator />}>
+          <Route element={<EducatorLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path='my-courses' element={<MyCourses />} />
+            <Route path='add-courses' element={<AddCourse />} />
+            <Route path='student-enrolled' element={<StudentEnrolled />} />
+          </Route>
         </Route>
       </Routes>
     </div>
