@@ -14,6 +14,9 @@ import StudentEnrolled from './pages/educator/StudentEnrolled';
 import Navbar from './components/student/Navbar';
 import EducatorLayout from './layouts/EducatorLayout';
 import Mentor from './pages/student/Mentor';
+import ResumeReview from './pages/student/ResumeReview';
+import Interview from './pages/student/Interview';
+import TestSeries from './pages/student/TestSeries';
 
 const App = () => {
   const location = useLocation();
@@ -32,6 +35,9 @@ const App = () => {
         <Route path='/player/:courseId' element={<Player />} />
         <Route path='/loading/:path' element={<Loading />} />
         <Route path='/mentor' element={<Mentor />} />
+        <Route path='/resumereview' element={<ResumeReview />} />
+        <Route path='/interview' element={<Interview />} />
+        <Route path='/testseries' element={<TestSeries />} />
 
         {/* Educator Routes with Authentication Check */}
         <Route path='/educator' element={<Educator />}>
