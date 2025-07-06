@@ -38,7 +38,7 @@ function Mentor() {
           </button>
         </div>
         <div className="flex-1 flex justify-center md:justify-end">
-          <img src={assets.mentor_bg} alt="Mentor Hero" className="rounded-2xl shadow-xl w-64 h-64 object-cover border-4 border-emerald-100" />
+          <img src={assets.mentor_bg} alt="Mentor Hero" className="rounded-2xl w-80 h-80 object-contain md:mr-12" />
         </div>
       </section>
 
