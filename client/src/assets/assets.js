@@ -46,6 +46,10 @@ import lesson_icon from './lesson_icon.svg'
 import hero_bg from './hero_bg.jpg'
 import eduLogo from './edu_logo.png'
 import mentor_bg from './mentor_bg.png'
+import b1 from './b1.jpg';
+import b2 from './b2.jpg';
+import g1 from './g1.jpg';
+import g2 from './g2.jpg';
 
 
 export const assets = {
@@ -779,7 +783,7 @@ export const mentors = [
   {
     id: 1,
     name: 'Priya Sharma',
-    image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=facearea&w=400&h=400&q=80',
+    image: g1,
     title: 'Developer Advocate',
     company: 'Microsoft',
     rating: 4.3,
@@ -794,7 +798,7 @@ export const mentors = [
   {
     id: 2,
     name: 'Amit Verma',
-    image: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=facearea&w=400&h=400&q=80',
+    image: b1,
     title: 'AI Product Manager',
     company: 'Google',
     rating: 4.8,
@@ -809,7 +813,7 @@ export const mentors = [
   {
     id: 3,
     name: 'Neha Singh',
-    image: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=facearea&w=400&h=400&q=80',
+    image: g2,
     title: 'Startup Coach',
     company: 'Airbnb',
     rating: 4.6,
@@ -824,7 +828,7 @@ export const mentors = [
   {
     id: 4,
     name: 'Rahul Desai',
-    image: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=facearea&w=400&h=400&q=80',
+    image: b2,
     title: 'Marketing Coach',
     company: 'Netflix',
     rating: 4.9,
