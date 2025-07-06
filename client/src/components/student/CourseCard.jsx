@@ -11,12 +11,12 @@ function CourseCard({ course }) {
   ).toFixed(2);
 
   // Calculate rating directly here
-  const rating = course?.courseRating?.length
-    ? course.courseRating.reduce((acc, curr) => acc + curr.rating, 0) / course.courseRating.length
+  const rating = course?.courseRatings?.length
+    ? course.courseRatings.reduce((acc, curr) => acc + curr.rating, 0) / course.courseRatings.length
     : 0;
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating - fullStars >= 0.5;
-  const totalRatings = course?.courseRating?.length || 0;
+  const totalRatings = course?.courseRatings?.length || 0;
 
   return (
     <Link

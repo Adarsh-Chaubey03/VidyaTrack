@@ -43,12 +43,20 @@ export const AppContextProvider = ({ children }) => {
     return { completedLectures, totalLectures };
   };
 
+  const calculateNoOfLectures = (course) => {
+    if (!course || !course.courseContent) return 0;
+    return course.courseContent.reduce((total, chapter) => {
+      return total + (chapter.chapterContent ? chapter.chapterContent.length : 0);
+    }, 0);
+  };
+
   const contextValue = {
     enrolledCourses,
     setEnrolledCourses,
     calculateChapterTime,
     calculateCourseDuration,
     calculateCourseProgress,
+    calculateNoOfLectures,
     currency,
     educatorCourses,
     educatorEnrolledStudents,
