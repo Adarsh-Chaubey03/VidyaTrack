@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const SearchBar = ({ data = '', inputClassName = '' }) => {
+const SearchBar = ({ data = '', inputClassName = '', textColor = 'text-white' }) => {
   const navigate = useNavigate();
   const [input, setInput] = useState(data);
 
@@ -20,7 +20,7 @@ const SearchBar = ({ data = '', inputClassName = '' }) => {
         value={input}
         type="text"
         placeholder="Search for courses, topics, or educators..."
-        className={`text-white w-full px-8 py-3 pr-20 text-xl rounded-full border-2 border-gray-300 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-transparent text-white placeholder:text-gray-200 transition ${inputClassName}`}
+        className={`${textColor} w-full px-8 py-3 pr-20 text-xl rounded-full border-2 border-gray-300 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-transparent placeholder:text-gray-200 transition ${inputClassName}`}
       />
       <button type="submit">
         <Search
