@@ -7,7 +7,8 @@ import Footer from '../../components/student/Footer';
 import { useParams, useNavigate } from 'react-router-dom';
 
 function CourseList() {
-    const { allCourses } = useContext(AppContext);
+    const { educatorCourses } = useContext(AppContext);
+    const allCourses = educatorCourses;
     const navigate = useNavigate();
     const { input } = useParams();
     const [filteredCourse, setFilteredCourse] = useState([]);

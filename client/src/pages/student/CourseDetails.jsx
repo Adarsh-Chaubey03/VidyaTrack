@@ -13,7 +13,7 @@ function CourseDetails() {
   const [showFullDesc, setShowFullDesc] = useState(false);
 
   const {
-    allCourses,
+    educatorCourses,
     rating = 4.2,
     totalRatings = 189,
     calculateChapterTime,
@@ -21,6 +21,7 @@ function CourseDetails() {
     calculateNoOfLectures,
     currency = '$'
   } = useContext(AppContext);
+  const allCourses = educatorCourses;
 
   useEffect(() => {
     const course = allCourses.find(c => c._id === id);

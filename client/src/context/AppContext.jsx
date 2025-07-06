@@ -6,7 +6,7 @@ import humanizedDuration from "humanize-duration";
 export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
-  const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const [enrolledCourses, setEnrolledCourses] = useState(dummyCourses);
   const [educatorCourses] = useState(dummyCourses);
   const [educatorEnrolledStudents] = useState(dummyStudentEnrolled);
 
