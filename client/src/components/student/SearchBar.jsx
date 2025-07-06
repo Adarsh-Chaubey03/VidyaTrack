@@ -20,12 +20,12 @@ const SearchBar = ({ data = '', inputClassName = '' }) => {
         value={input}
         type="text"
         placeholder="Search for courses, topics, or educators..."
-        className={`text-white w-full px-8 py-3 pr-20 text-xl rounded-full border border-gray-300 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-800 border-gray-600 text-white placeholder:text-gray-200 transition ${inputClassName}`}
+        className={`text-white w-full px-8 py-3 pr-20 text-xl rounded-full border-2 border-gray-300 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-transparent text-white placeholder:text-gray-200 transition ${inputClassName}`}
       />
       <button type="submit">
         <Search
           size={24}
-          className="absolute right-5 top-1/2 transform -translate-y-1/2 text-white"
+          className="absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-300"
         />
       </button>
     </form>
