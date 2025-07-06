@@ -19,7 +19,7 @@ function Sidebar(){
     to={item.path}
     key={item.name}
     end={item.path==='/educator'}
-    className={({isActive})=> `flex items-center md:flex-row flex-col md:justify-start justify-center py-3.5 md:px-10 gap-3 ${isActive ? 'bg-emerald-100 text-emerald-700 font-bold' : 'text-gray-700 dark:text-gray-200'}`}
+    className={({isActive})=> `flex items-center md:flex-row flex-col md:justify-start justify-center py-3.5 md:px-10 gap-3 ${isActive ? 'bg-emerald-100 text-emerald-700 font-bold' : 'text-gray-700'}`}
     >
         <img src={item.icon} alt="" className='w-6 h-6' />
         <p className='md:block hidden text-center'>{item.name}</p>

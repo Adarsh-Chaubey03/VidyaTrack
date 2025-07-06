@@ -10,7 +10,7 @@ function Navbar({ afterSignOutUrl }) {
     const isEducator = location.pathname.startsWith('/educator');
     
     return (
-       <div className='flex justify-between items-center px-4 md:px-8 border-b border-gray-500 py-3 bg-white dark:bg-gray-900'>
+       <div className='flex justify-between items-center px-4 md:px-8 border-b border-gray-500 py-3 bg-white'>
         <div className="flex items-center gap-4">
           <Link to='/educator'>
             <img src={assets.eduLogo} alt="VidyaTrack Educator Logo" className='w-32 lg:w-40 cursor-pointer' />

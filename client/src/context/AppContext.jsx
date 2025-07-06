@@ -5,91 +5,58 @@ import humanizedDuration from "humanize-duration";
 
 export const AppContext = createContext();
 
-export const AppContextProvider = (props) => {
-  const [user, setUser] = useState(null);
-  const [allCourses, setAllCourses] = useState([]);
-  const [isEducator, setIsEducator] = useState(true);
+export const AppContextProvider = ({ children }) => {
   const [enrolledCourses, setEnrolledCourses] = useState([]);
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
   const [educatorCourses] = useState(dummyCourses);
   const [educatorEnrolledStudents] = useState(dummyStudentEnrolled);
 
   const currency = import.meta.env.VITE_CURRENCY;
-  const navigate = useNavigate();
-
-  const loadDummyCourses = () => {
-    setAllCourses(dummyCourses);
-  };
-
-  const calculateRate = (course) => {
-    if (!course?.courseRating?.length) return 0;
-    const total = course.courseRating.reduce((acc, curr) => acc + curr.rating, 0);
-    return total / course.courseRating.length;
-  };
 
   const calculateChapterTime = (chapter) => {
-    let time = 0;
-    chapter.chapterContent.forEach((lecture) => {
-      time += lecture.lectureDuration;
-    });
-    return humanizedDuration(time * 60 * 1000, { units: ["h", "m"] });
+    if (!chapter || !chapter.chapterContent) return "0 min";
+    const totalSeconds = chapter.chapterContent.reduce((total, lecture) => total + (lecture.lectureDuration || 0), 0);
+    return humanizedDuration(totalSeconds * 60 * 1000, { units: ['h', 'm'], round: true });
   };
 
   const calculateCourseDuration = (course) => {
-    let time = 0;
-    course.courseContent.forEach((chapter) => {
-      chapter.chapterContent.forEach((lecture) => {
-        time += lecture.lectureDuration;
-      });
-    });
-    return humanizedDuration(time * 60 * 1000, { units: ["h", "m"] });
+    if (!course || !course.courseContent) return "0 min";
+    const totalSeconds = course.courseContent.reduce((total, chapter) => {
+      return total + (chapter.chapterContent ? chapter.chapterContent.reduce((chapterTotal, lecture) => chapterTotal + (lecture.lectureDuration || 0), 0) : 0);
+    }, 0);
+    return humanizedDuration(totalSeconds * 60 * 1000, { units: ['h', 'm'], round: true });
   };
 
-  const calculateNoOfLectures = (course) => {
-    let totalLecture = 0;
-    course.courseContent.forEach((chapter) => {
-      if (Array.isArray(chapter.chapterContent)) {
-        totalLecture += chapter.chapterContent.length;
+  const calculateCourseProgress = (course) => {
+    if (!course || !course.courseContent) return { completedLectures: 0, totalLectures: 0 };
+    let totalLectures = 0;
+    let completedLectures = 0;
+    course.courseContent.forEach(chapter => {
+      if (chapter.chapterContent) {
+        chapter.chapterContent.forEach(lecture => {
+          totalLectures++;
+          if (lecture.isCompleted) {
+            completedLectures++;
+          }
+        });
       }
     });
-    return totalLecture;
+    return { completedLectures, totalLectures };
   };
 
-  const fetchUserEnrolledCourses = async () => {
-    setEnrolledCourses(dummyCourses);
-  };
-
-  useEffect(() => {
-    loadDummyCourses();
-    fetchUserEnrolledCourses();
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode);
-    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
-  }, [darkMode]);
-
-  const value = {
-    user,
-    setUser,
-    currency,
-    allCourses,
-    calculateRate,
-    navigate,
-    isEducator,
-    setIsEducator,
-    calculateChapterTime,
-    calculateCourseDuration,
-    calculateNoOfLectures,
+  const contextValue = {
     enrolledCourses,
     setEnrolledCourses,
-    fetchUserEnrolledCourses,
-    loadDummyCourses,
-    darkMode,
-    setDarkMode,
+    calculateChapterTime,
+    calculateCourseDuration,
+    calculateCourseProgress,
+    currency,
     educatorCourses,
     educatorEnrolledStudents,
   };
 
-  return <AppContext.Provider value={value}>{props.children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={contextValue}>
+      {children}
+    </AppContext.Provider>
+  );
 };

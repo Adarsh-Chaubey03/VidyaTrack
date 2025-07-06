@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useClerk, UserButton, useUser } from '@clerk/clerk-react';
-import { Menu, Bell, Sun, Moon, X, Home } from 'lucide-react';
+import { Menu, Bell, X, Home } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { assets } from '../../assets/assets';
 import MyEnrollment from '../../pages/student/MyEnrollment';  
@@ -14,19 +14,13 @@ function Navbar() {
   const isCourseListPage = pathname.includes('/course-list');
   const { openSignIn } = useClerk();
   const { user } = useUser();
-  const { darkMode, setDarkMode } = useContext(AppContext);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
-  // Remove role state since navigation now controls educator/student section
   const [isWhiteBarFixed, setIsWhiteBarFixed] = useState(false);
 
   const notifRef = useRef(null);
   const bellRef = useRef(null);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode);
-  }, [darkMode]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -62,7 +56,7 @@ function Navbar() {
   return (
     <>
       {/* Top Bar: Logo + Student/Educator toggle, Login/Signup/UserButton */}
-      <div className="w-full flex items-center justify-between px-4 sm:px-10 md:px-14 lg:px-36 py-2 border-b bg-emerald-600 dark:bg-emerald-700">
+      <div className="w-full flex items-center justify-between px-4 sm:px-10 md:px-14 lg:px-36 py-2 border-b bg-emerald-600">
         <div className="flex items-center gap-4">
           <Link to="/" onClick={scrollToTop}>
             <img src={assets.logo} alt="VidyaTrack Logo" className='w-32 lg:w-40 cursor-pointer' />
@@ -93,14 +87,14 @@ function Navbar() {
       </div>
 
       {/* Bottom Bar: Main Navigation */}
-      <div className={`${isWhiteBarFixed ? 'fixed top-0 left-0 right-0 z-40' : ''} border-b py-3 px-4 sm:px-10 md:px-14 lg:px-36 flex items-center transition-all duration-300 bg-white dark:bg-gray-900`}>
+      <div className={`${isWhiteBarFixed ? 'fixed top-0 left-0 right-0 z-40' : ''} border-b py-3 px-4 sm:px-10 md:px-14 lg:px-36 flex items-center transition-all duration-300 bg-white`}>
         <div className='flex items-center gap-4'>
-          <Link to="/" onClick={scrollToTop} className={`flex items-center gap-2 transition-colors ${pathname === '/' ? 'text-emerald-600 font-bold' : 'text-gray-700 dark:text-gray-300'}`}>
+          <Link to="/" onClick={scrollToTop} className={`flex items-center gap-2 transition-colors ${pathname === '/' ? 'text-emerald-600 font-bold' : 'text-gray-700'}`}>
             <Home size={20} />
             <span className="hidden sm:inline text-sm font-medium">Home</span>
           </Link>
         </div>
-        <div className='hidden md:flex flex-1 justify-center items-center gap-6 text-gray-700 dark:text-gray-300'>
+        <div className='hidden md:flex flex-1 justify-center items-center gap-6 text-gray-700'>
           {user && <NavLink to="/my-enrollment" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>My Enrollment</NavLink>}
           <NavLink to="/course-list" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Courses</NavLink>
           <NavLink to="/mentor" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Mentor</NavLink>
@@ -111,9 +105,6 @@ function Navbar() {
           <button ref={bellRef} onClick={toggleNotif} className='relative hover:text-blue-600'>
             <Bell />
             <span className='absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full'></span>
-          </button>
-          <button onClick={() => setDarkMode(!darkMode)} className='hover:text-blue-600'>
-            {darkMode ? <Sun /> : <Moon />}
           </button>
           {user && <UserButton />}
         </div>
@@ -134,7 +125,7 @@ function Navbar() {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ duration: 0.3 }}
-            className='fixed top-0 right-0 w-64 h-full bg-white dark:bg-gray-900 shadow-xl p-6 z-50 flex flex-col gap-4'
+            className='fixed top-0 right-0 w-64 h-full bg-white shadow-xl p-6 z-50 flex flex-col gap-4'
           >
             <button onClick={toggleMobileMenu} className='self-end'><X /></button>
             <Link to="/" onClick={() => { toggleMobileMenu(); scrollToTop(); }} className="flex items-center gap-2 text-emerald-600">
@@ -148,9 +139,6 @@ function Navbar() {
             <Link to="/interview" onClick={toggleMobileMenu}>Interview</Link>
             {user && <button onClick={toggleMobileMenu}>Become Educator</button>}
             {user ? <UserButton afterSignOutUrl='/' /> : <button onClick={() => openSignIn()} className='text-blue-600'>Create Account</button>}
-            <button onClick={() => setDarkMode(!darkMode)} className='mt-4 flex items-center gap-2'>
-              {darkMode ? <Sun /> : <Moon />} {darkMode ? 'Light Mode' : 'Dark Mode'}
-            </button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -161,10 +149,10 @@ function Navbar() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className='absolute top-16 right-10 w-72 bg-white dark:bg-gray-800 shadow-xl rounded-xl p-4 text-sm z-40'
+            className='absolute top-16 right-10 w-72 bg-white shadow-xl rounded-xl p-4 text-sm z-40'
           >
-            <p className='font-semibold mb-2 dark:text-white'>Notifications</p>
-            <ul className='space-y-2 text-gray-700 dark:text-gray-300'>
+            <p className='font-semibold mb-2'>Notifications</p>
+            <ul className='space-y-2 text-gray-700'>
               <li>🎉 New course added</li>
               <li>📢 System maintenance at 10 PM</li>
               <li>📥 New enrollment approved</li>

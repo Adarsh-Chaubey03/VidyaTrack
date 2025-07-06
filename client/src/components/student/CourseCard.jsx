@@ -4,13 +4,16 @@ import { assets } from '../../assets/assets';
 import { AppContext } from '../../context/AppContext';
 
 function CourseCard({ course }) {
-  const { currency, calculateRate } = useContext(AppContext);
+  const { currency } = useContext(AppContext);
 
   const discountedPrice = (
     course.coursePrice - (course.coursePrice * course.discount) / 100
   ).toFixed(2);
 
-  const rating = calculateRate(course);
+  // Calculate rating directly here
+  const rating = course?.courseRating?.length
+    ? course.courseRating.reduce((acc, curr) => acc + curr.rating, 0) / course.courseRating.length
+    : 0;
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating - fullStars >= 0.5;
   const totalRatings = course?.courseRating?.length || 0;
