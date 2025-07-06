@@ -98,7 +98,7 @@ function Navbar() {
           {user && <NavLink to="/my-enrollment" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>My Enrollment</NavLink>}
           <NavLink to="/course-list" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Courses</NavLink>
           <NavLink to="/mentor" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Mentor</NavLink>
-          <NavLink to="/resume" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Resume</NavLink>
+          <NavLink to="/resumereview" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Resume</NavLink>
           <NavLink to="/interview" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Interview</NavLink>
         </div>
         <div className='hidden md:flex items-center gap-4'>
@@ -132,7 +132,7 @@ function Navbar() {
             {user && <Link to="/my-enrollment" onClick={toggleMobileMenu}>My Enrollment</Link>}
             <Link to="/course-list" onClick={toggleMobileMenu}>Courses</Link>
             <Link to="/mentor" onClick={toggleMobileMenu}>Mentor</Link>
-            <Link to="/resume" onClick={toggleMobileMenu}>Resume</Link>
+            <Link to="/resumereview" onClick={toggleMobileMenu}>Resume</Link>
             <Link to="/interview" onClick={toggleMobileMenu}>Interview</Link>
             {user ? <UserButton afterSignOutUrl='/' /> : <button onClick={() => openSignIn()} className='text-blue-600'>Create Account</button>}
           </motion.div>
