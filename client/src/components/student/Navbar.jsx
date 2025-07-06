@@ -56,7 +56,7 @@ function Navbar() {
   return (
     <>
       {/* Top Bar: Logo + Student/Educator toggle, Login/Signup/UserButton */}
-      <div className="w-full flex items-center justify-between px-4 sm:px-10 md:px-14 lg:px-36 py-2 border-b bg-gradient-to-r from-emerald-600 via-emerald-500 to-gray-500">
+      <div className="w-full flex items-center justify-between px-4 sm:px-10 md:px-14 lg:px-36 py-2 border-b bg-gradient-to-r from-emerald-600 via-emerald-700 to-gray-500">
         <div className="flex items-center gap-2">
           <Link to="/" onClick={scrollToTop}>
             <img src={assets.logo} alt="VidyaTrack Logo" className='w-32 lg:w-40 cursor-pointer' />
