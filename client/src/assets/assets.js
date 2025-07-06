@@ -778,8 +778,8 @@ export const dummyCourses = [
 export const mentors = [
   {
     id: 1,
-    name: 'Kamal S',
-    image: 'https://randomuser.me/api/portraits/women/44.jpg',
+    name: 'Priya Sharma',
+    image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=facearea&w=400&h=400&q=80',
     title: 'Developer Advocate',
     company: 'Microsoft',
     rating: 4.3,
@@ -793,8 +793,8 @@ export const mentors = [
   },
   {
     id: 2,
-    name: 'Rohan Mehta',
-    image: 'https://randomuser.me/api/portraits/men/32.jpg',
+    name: 'Amit Verma',
+    image: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=facearea&w=400&h=400&q=80',
     title: 'AI Product Manager',
     company: 'Google',
     rating: 4.8,
@@ -808,8 +808,8 @@ export const mentors = [
   },
   {
     id: 3,
-    name: 'Priya Sharma',
-    image: 'https://randomuser.me/api/portraits/women/68.jpg',
+    name: 'Neha Singh',
+    image: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=facearea&w=400&h=400&q=80',
     title: 'Startup Coach',
     company: 'Airbnb',
     rating: 4.6,
@@ -823,8 +823,8 @@ export const mentors = [
   },
   {
     id: 4,
-    name: 'Ankit Verma',
-    image: 'https://randomuser.me/api/portraits/men/45.jpg',
+    name: 'Rahul Desai',
+    image: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=facearea&w=400&h=400&q=80',
     title: 'Marketing Coach',
     company: 'Netflix',
     rating: 4.9,

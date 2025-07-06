@@ -71,11 +71,11 @@ function Mentor() {
 
 function MentorCard({ mentor }) {
   return (
-    <div className="bg-white rounded-2xl shadow-xl border p-6 flex flex-col md:flex-row gap-6 items-center max-w-2xl mx-auto min-w-[320px]">
-      <div className="flex-shrink-0">
-        <img src={mentor.image} alt={mentor.name} className="w-32 h-32 rounded-xl object-cover border-2 border-emerald-100" />
+    <div className="bg-white rounded-2xl shadow-xl border p-8 flex flex-col md:flex-row gap-8 items-center max-w-3xl min-w-[340px] min-h-[320px] mx-auto">
+      <div className="flex-shrink-0 flex items-center justify-center h-full">
+        <img src={mentor.image} alt={mentor.name} className="w-36 h-36 rounded-xl object-cover" />
       </div>
-      <div className="flex-1 w-full">
+      <div className="flex-1 w-full flex flex-col justify-center">
         <div className="flex items-center gap-2 mb-1">
           <h2 className="text-2xl font-bold text-gray-900">{mentor.name}</h2>
           <span className="text-xs text-gray-500 font-bold">IN</span>
@@ -89,6 +89,7 @@ function MentorCard({ mentor }) {
           <span className="text-gray-500 text-sm ml-1">({mentor.reviews} reviews)</span>
         </div>
         <div className="text-gray-600 mb-2 line-clamp-3">{mentor.description}</div>
+        <div className="my-2" />
         <div className="flex flex-wrap gap-2 mb-2">
           {mentor.tags.map(tag => (
             <span key={tag} className="bg-emerald-50 text-emerald-700 px-2 py-1 rounded-full text-xs font-semibold">{tag}</span>
