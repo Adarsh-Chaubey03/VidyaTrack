@@ -256,7 +256,6 @@ function Player() {
 
           {/* Feedback Form */}
           <div className="flex flex-col flex-grow justify-end bg-white rounded-2xl shadow-md p-6 mt-6">
-            <h2 className="text-lg font-semibold mb-2">Submit Feedback</h2>
             <form className="flex flex-col gap-3">
               <textarea className="border border-gray-300 rounded-lg p-2 min-h-[80px] resize-vertical" placeholder="Your feedback..." />
               <button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-lg transition">Submit</button>
