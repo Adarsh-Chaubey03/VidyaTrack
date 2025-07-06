@@ -48,7 +48,7 @@ function CourseList() {
 
                     {/* Search Bar */}
                     <div className="w-full md:w-96">
-                        <SearchBar data={input || ''} />
+                        <SearchBar data={input || ''} textColor="text-gray-500" inputClassName="placeholder:text-gray-500" />
                     </div>
                 </div>
 
