@@ -13,6 +13,7 @@ import AddCourse from './pages/educator/AddCourse';
 import StudentEnrolled from './pages/educator/StudentEnrolled';
 import Navbar from './components/student/Navbar';
 import EducatorLayout from './layouts/EducatorLayout';
+import Mentor from './pages/student/Mentor';
 
 const App = () => {
   const location = useLocation();
@@ -30,6 +31,7 @@ const App = () => {
         <Route path='/my-enrollment' element={<MyEnrollment/>}/>
         <Route path='/player/:courseId' element={<Player />} />
         <Route path='/loading/:path' element={<Loading />} />
+        <Route path='/mentor' element={<Mentor />} />
 
         {/* Educator Routes with Authentication Check */}
         <Route path='/educator' element={<Educator />}>
