@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { mentors, assets } from '../../assets/assets';
 import Footer from '../../components/student/Footer';
 import { ArrowLeft, ArrowRight, Star } from 'lucide-react';
@@ -12,11 +12,40 @@ const categories = [
 
 function Mentor() {
   const [current, setCurrent] = useState(0);
+  const timerRef = useRef();
+  const [isManuallyChanged, setIsManuallyChanged] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
   const filteredMentors = mentors.filter(m => m.tags.some(tag => selectedCategory.toLowerCase().includes(tag.toLowerCase().split(' ')[0])) || selectedCategory === categories[0]);
 
-  const handlePrev = () => setCurrent((prev) => (prev === 0 ? filteredMentors.length - 1 : prev - 1));
-  const handleNext = () => setCurrent((prev) => (prev === filteredMentors.length - 1 ? 0 : prev + 1));
+  const handlePrev = () => {
+    setCurrent((prev) => (prev === 0 ? filteredMentors.length - 1 : prev - 1));
+    setIsManuallyChanged(true);
+  };
+  const handleNext = () => {
+    setCurrent((prev) => (prev === filteredMentors.length - 1 ? 0 : prev + 1));
+    setIsManuallyChanged(true);
+  };
+
+  // Auto-advance logic
+  useEffect(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setCurrent((prev) => (prev === filteredMentors.length - 1 ? 0 : prev + 1));
+    }, 10000);
+    return () => clearInterval(timerRef.current);
+  }, [filteredMentors.length]);
+
+  // Reset timer if user clicks next/prev
+  useEffect(() => {
+    if (isManuallyChanged) {
+      if (timerRef.current) clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => {
+        setCurrent((prev) => (prev === filteredMentors.length - 1 ? 0 : prev + 1));
+      }, 10000);
+      setIsManuallyChanged(false);
+    }
+    return () => clearInterval(timerRef.current);
+  }, [isManuallyChanged, filteredMentors.length]);
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col">
