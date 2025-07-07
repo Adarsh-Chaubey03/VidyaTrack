@@ -6,7 +6,7 @@ const connectDB = async () => {
     try {
         mongoose.connection.on('connected', () => 
             console.log('MongoDB Database Connected'));
-        await mongoose.connect(process.env.MONGODB_URI); // Remove the extra /vidyatrack here
+        await mongoose.connect(process.env.MONGODB_URI); 
     } catch (error) {
         console.error('MongoDB connection error:', error);
     }
