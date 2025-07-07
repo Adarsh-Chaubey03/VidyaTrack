@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 import { dummyCourses, dummyStudentEnrolled } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
 import humanizedDuration from "humanize-duration";
+import { useAuth, useUser } from '@clerk/clerk-react'
 
 export const AppContext = createContext();
 
@@ -11,6 +12,11 @@ export const AppContextProvider = ({ children }) => {
   const [educatorEnrolledStudents] = useState(dummyStudentEnrolled);
 
   const currency = import.meta.env.VITE_CURRENCY;
+
+
+  const { getToken } = useAuth()
+  const { user } = useUser()
+
 
   const calculateChapterTime = (chapter) => {
     if (!chapter || !chapter.chapterContent) return "0 min";
@@ -49,6 +55,22 @@ export const AppContextProvider = ({ children }) => {
       return total + (chapter.chapterContent ? chapter.chapterContent.length : 0);
     }, 0);
   };
+
+  useEffect(() => {
+    fetchAllCourses(),
+      fetchUserEnrollementCourses()
+  }, [])
+
+  const logToken = async () => {
+    console.log(await getToken());
+
+  }
+
+  useEffect(() => {
+    if (user) {
+logToken()
+    }
+  }, [user])
 
   const contextValue = {
     enrolledCourses,
