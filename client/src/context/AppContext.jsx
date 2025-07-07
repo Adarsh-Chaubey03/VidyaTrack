@@ -17,7 +17,14 @@ export const AppContextProvider = ({ children }) => {
   const { getToken } = useAuth()
   const { user } = useUser()
 
+const fetchAllCourses = async () => {
+  setEnrolledCourses(dummyCourses);
+};
 
+const fetchUserEnrollementCourses = async () => {
+  // TODO: Replace with real API call
+  setEnrolledCourses(dummyCourses);
+};
   const calculateChapterTime = (chapter) => {
     if (!chapter || !chapter.chapterContent) return "0 min";
     const totalSeconds = chapter.chapterContent.reduce((total, lecture) => total + (lecture.lectureDuration || 0), 0);
@@ -57,9 +64,9 @@ export const AppContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchAllCourses(),
-      fetchUserEnrollementCourses()
-  }, [])
+    fetchAllCourses();
+    fetchUserEnrollementCourses();
+  }, []);
 
   const logToken = async () => {
     console.log(await getToken());
