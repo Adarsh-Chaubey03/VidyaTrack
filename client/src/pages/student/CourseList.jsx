@@ -28,8 +28,8 @@ function CourseList() {
     }, [allCourses, input]);
 
     return (
-        <>
-            <div className="px-6 py-10">
+        <div className="bg-gradient-to-b from-emerald-50 to-rose-50 min-h-screen flex flex-col">
+            <div className="px-6 py-10 flex-1">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
                     {/* Title & Breadcrumb */}
                     <div>
@@ -77,7 +77,7 @@ function CourseList() {
                 </div>
             </div>
             <Footer />
-        </>
+        </div>
     );
 }
 

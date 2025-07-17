@@ -17,6 +17,9 @@ import Mentor from './pages/student/Mentor';
 import ResumeReview from './pages/student/ResumeReview';
 import Interview from './pages/student/Interview';
 import TestSeries from './pages/student/TestSeries';
+import GenerateResume from './pages/student/GenerateResume';
+import GetReviewed from './pages/student/GetReviewed';
+import ExploreProfessionals from './pages/student/ExploreProfessionals';
 
 const App = () => {
   const location = useLocation();
@@ -36,8 +39,11 @@ const App = () => {
         <Route path='/loading/:path' element={<Loading />} />
         <Route path='/mentor' element={<Mentor />} />
         <Route path='/resumereview' element={<ResumeReview />} />
+        <Route path='/generateresume' element={<GenerateResume />} />
         <Route path='/interview' element={<Interview />} />
         <Route path='/testseries' element={<TestSeries />} />
+        <Route path='/getreviewed/:id' element={<GetReviewed />} />
+        <Route path='/getreviewed' element={<ExploreProfessionals />} />
 
         {/* Educator Routes with Authentication Check */}
         <Route path='/educator' element={<Educator />}>

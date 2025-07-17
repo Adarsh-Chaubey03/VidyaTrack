@@ -54,6 +54,10 @@ import g2 from './g2.jpg';
 
 export const assets = {
     logo,
+    b1,
+    b2,
+    g1,
+    g2,
     hero_bg,
     search_icon,
     sketch,
