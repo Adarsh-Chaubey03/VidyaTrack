@@ -18,11 +18,35 @@ function AddCourse() {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setSuccess(true);
-        setTimeout(() => setSuccess(false), 3000);
-        // Here you would send form data to backend
+        const formData = new FormData();
+        const courseData = {
+            courseTitle: form.title,
+            courseDescription: form.description,
+            coursePrice: Number(form.price),
+            discount: 0, // Default, or add a field if needed
+            courseContent: [], // Default, or add a field if needed
+        };
+        formData.append('courseData', JSON.stringify(courseData));
+        formData.append('thumbnail', form.thumbnail);
+        try {
+            const res = await fetch('http://localhost:5000/api/educator/add-course', {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            });
+            const data = await res.json();
+            if (data.success) {
+                setSuccess(true);
+                setForm({ title: '', description: '', price: '', thumbnail: null });
+                setTimeout(() => setSuccess(false), 3000);
+            } else {
+                alert(data.message || 'Failed to add course');
+            }
+        } catch (err) {
+            alert('Error adding course: ' + err.message);
+        }
     };
 
     return (

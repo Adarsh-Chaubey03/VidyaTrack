@@ -11,9 +11,6 @@ function MyEnrollment() {
         <div className='bg-gradient-to-b from-emerald-50 to-rose-50 min-h-screen flex flex-col'>
             <div className='md:px-36 px-2 sm:px-8 pt-10 flex-1'>
                 <h1 className='text-3xl font-bold text-center mb-8'>My Enrolled Courses</h1>
-                <div className='absolute top-0 right-0 mt-2 mr-2 p-2 rounded-full bg-gray-200 text-gray-800 shadow hover:bg-gray-300 transition'>
-                    <span className='text-sm font-medium'>Total: {enrolledCourses.length}</span>
-                </div>
                 <div className="overflow-x-auto rounded-lg shadow mt-8">
                     <table className='min-w-full bg-white border border-gray-200 rounded-lg'>
                         <thead className='bg-gray-100'>

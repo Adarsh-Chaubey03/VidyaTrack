@@ -16,13 +16,17 @@ await connectDB()
 await connectCloudinary()
 
 //middleware
-app.use(cors())
+app.use(cors({
+  origin: 'http://localhost:5174',
+  credentials: true
+}))
 app.use(clerkMiddleware())
+app.use(express.json()); // global JSON parser
 
 //routes
 app.get('/', (req, res) => { res.send("API Working") })
 app.post('/clerk', express.json(), clerkWebhooks)
-app.use('/api/educator', express.json(), educatorRouter)
+app.use('/api/educator', educatorRouter)
 
 //server port
 const PORT = process.env.PORT || 5000
