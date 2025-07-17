@@ -129,12 +129,15 @@ function Navbar() {
             className='fixed top-0 right-0 w-64 h-full bg-white shadow-xl p-6 z-50 flex flex-col gap-4'
           >
             <button onClick={toggleMobileMenu} className='self-end'><X /></button>
+            {/* Centered profile icon on mobile */}
+            <div className='flex justify-center mb-4'>
+              {user ? <UserButton afterSignOutUrl='/' /> : <div className='w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-lg'>I</div>}
+            </div>
             {user && <Link to="/my-enrollment" onClick={toggleMobileMenu}>My Enrollment</Link>}
             <Link to="/course-list" onClick={toggleMobileMenu}>Courses</Link>
             <Link to="/mentor" onClick={toggleMobileMenu}>Mentor</Link>
             <Link to="/resumereview" onClick={toggleMobileMenu}>Resume</Link>
             <Link to="/interview" onClick={toggleMobileMenu}>Interview</Link>
-            {user ? <UserButton afterSignOutUrl='/' /> : <button onClick={() => openSignIn()} className='text-blue-600'>Create Account</button>}
           </motion.div>
         )}
       </AnimatePresence>
