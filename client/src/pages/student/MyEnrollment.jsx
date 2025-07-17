@@ -2,11 +2,12 @@ import React, { useContext } from 'react'
 import { AppContext } from '../../context/AppContext'
 import { assets } from '../../assets/assets'
 import { Link } from 'react-router-dom'
-import Footer from '../../components/Footer'
+import Footer from '../../components/student/Footer'
 
 function MyEnrollment() {
     const { enrolledCourses, calculateCourseDuration } = useContext(AppContext)
     return (
+        <>
         <div className='bg-gradient-to-b from-emerald-50 to-rose-50 min-h-screen flex flex-col'>
             <div className='md:px-36 px-2 sm:px-8 pt-10 flex-1'>
                 <h1 className='text-3xl font-bold text-center mb-8'>My Enrolled Courses</h1>
@@ -69,7 +70,8 @@ function MyEnrollment() {
                 </div>
             </div>
             <Footer />
-        </div>
+        
+        </>
     )
 }
 

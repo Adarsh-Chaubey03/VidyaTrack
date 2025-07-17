@@ -6,7 +6,7 @@ function Footer() {
   return (
     <footer className="w-full bg-gradient-to-br from-emerald-50 to-emerald-100 border-t border-gray-200 pt-12 pb-4 flex flex-col items-center justify-center">
       <div className="w-full flex justify-center items-center px-1 md:px-2">
-        <div className="rounded-3xl bg-white shadow-2xl p-6 md:p-6 flex flex-col gap-8 max-w-7xl w-full mx-auto">
+        <div className="rounded-3xl bg-white shadow-2xl p-6 md:p-6 flex flex-col gap-8 max-w-8xl w-full mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Section */}
             <div className="flex flex-col items-center text-center">
@@ -50,7 +50,7 @@ function Footer() {
             </ul>
           </div>
             {/* Newsletter Section */}
-            <div className="flex flex-col items-center text-center">
+            <div className="flex flex-col items-center text-center mr-1">
               <h3 className="text-lg font-bold text-emerald-600 mb-4">Stay Updated</h3>
               <p className="text-gray-600 mb-4 text-sm">
                 Join our newsletter for the latest updates and offers.
