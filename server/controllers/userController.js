@@ -1,5 +1,5 @@
-import Course from "../models/Course"
-import User from "../models/User"
+import Course from "../models/Course.js"
+import User from "../models/User.js"
 import Purchase from "../models/Purchase.js"
 import stripe from "../configs/stripe.js"
 

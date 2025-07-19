@@ -14,17 +14,35 @@ import { stripeWebhook } from './controllers/userController.js';
 //initialize express app
 const app = express()
 
-// connecting to database
+console.log('🚀 Starting VidyaTrack Server...');
 
-await connectDB()
-await connectCloudinary()
+// connecting to database
+try {
+    await connectDB()
+} catch (error) {
+    console.log('⚠️  Database connection failed, but server will continue...');
+}
+
+// connecting to cloudinary
+try {
+    await connectCloudinary()
+} catch (error) {
+    console.log('⚠️  Cloudinary connection failed, but server will continue...');
+}
 
 //middleware
 app.use(cors({
-  origin: 'http://localhost:5174',
+  origin: process.env.CORS_ORIGIN || 'http://localhost:5174',
   credentials: true
 }))
-app.use(clerkMiddleware())
+
+// Clerk middleware (only if CLERK_SECRET_KEY is available)
+if (process.env.CLERK_SECRET_KEY) {
+    app.use(clerkMiddleware())
+    console.log('✅ Clerk authentication configured');
+} else {
+    console.warn('⚠️  CLERK_SECRET_KEY not found. Authentication will be disabled.');
+}
 
 // Stripe webhook route (needs raw body)
 app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), stripeWebhook)
@@ -33,7 +51,14 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), strip
 app.use(express.json());
 
 //routes
-app.get('/', (req, res) => { res.send("API Working") })
+app.get('/', (req, res) => { 
+    res.json({ 
+        message: "VidyaTrack API Working", 
+        status: "success",
+        timestamp: new Date().toISOString()
+    }) 
+})
+
 app.post('/clerk', express.json(), clerkWebhooks)
 app.use('/api/educator', educatorRouter)
 app.use('/api/course', courseRouter)
@@ -45,5 +70,8 @@ const PORT = process.env.PORT || 5000
 
 // listening
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`)
+    console.log(`✅ Server is running on port ${PORT}`)
+    console.log(`🌐 API Base URL: http://localhost:${PORT}`)
+    console.log(`📚 Course Progress API: http://localhost:${PORT}/api/progress`)
+    console.log(`📖 Courses API: http://localhost:${PORT}/api/course`)
 })

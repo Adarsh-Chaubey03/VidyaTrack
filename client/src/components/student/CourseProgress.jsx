@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react';
+import { apiService } from '../../services/api.js';
 
 const CourseProgress = ({ courseId, onProgressUpdate }) => {
     const [progress, setProgress] = useState(null);
@@ -10,25 +11,19 @@ const CourseProgress = ({ courseId, onProgressUpdate }) => {
     const fetchProgress = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`/api/progress/${userId}/${courseId}`, {
-                headers: {
-                    'Authorization': `Bearer ${await getToken()}`,
-                    'Content-Type': 'application/json'
-                }
-            });
+            const result = await apiService.progress.get(userId, courseId);
             
-            const data = await response.json();
-            
-            if (data.success) {
-                setProgress(data.progress);
+            if (result.success) {
+                setProgress(result.progress);
                 if (onProgressUpdate) {
-                    onProgressUpdate(data.progress);
+                    onProgressUpdate(result.progress);
                 }
             } else {
-                setError(data.message);
+                setError(result.message);
             }
         } catch (err) {
             setError('Failed to fetch progress');
+            console.error('Error fetching progress:', err);
         } finally {
             setLoading(false);
         }
@@ -36,48 +31,40 @@ const CourseProgress = ({ courseId, onProgressUpdate }) => {
 
     const updateLectureProgress = async (chapterId, lectureId, isCompleted) => {
         try {
-            const response = await fetch(`/api/progress/${userId}/${courseId}/${chapterId}/${lectureId}`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${await getToken()}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ isCompleted })
-            });
+            const result = await apiService.progress.updateLecture(
+                userId, 
+                courseId, 
+                chapterId, 
+                lectureId, 
+                { isCompleted }
+            );
             
-            const data = await response.json();
-            
-            if (data.success) {
-                setProgress(data.progress);
+            if (result.success) {
+                setProgress(result.progress);
                 if (onProgressUpdate) {
-                    onProgressUpdate(data.progress);
+                    onProgressUpdate(result.progress);
                 }
             } else {
-                setError(data.message);
+                setError(result.message);
             }
         } catch (err) {
             setError('Failed to update progress');
+            console.error('Error updating progress:', err);
         }
     };
 
     const updateWatchTime = async (chapterId, lectureId, watchTime, totalWatchTime) => {
         try {
-            await fetch(`/api/progress/${userId}/${courseId}/${chapterId}/${lectureId}/watchtime`, {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': `Bearer ${await getToken()}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ watchTime, totalWatchTime })
-            });
+            await apiService.progress.updateWatchTime(
+                userId, 
+                courseId, 
+                chapterId, 
+                lectureId, 
+                { watchTime, totalWatchTime }
+            );
         } catch (err) {
             console.error('Failed to update watch time:', err);
         }
-    };
-
-    const getToken = async () => {
-        // This would be implemented based on your Clerk setup
-        return localStorage.getItem('clerk-token') || '';
     };
 
     useEffect(() => {

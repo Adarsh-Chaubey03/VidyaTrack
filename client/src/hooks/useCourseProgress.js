@@ -1,16 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@clerk/clerk-react';
+import { apiService } from '../services/api.js';
 
 export const useCourseProgress = (courseId) => {
     const [progress, setProgress] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { userId } = useAuth();
-
-    const getToken = useCallback(async () => {
-        // This would be implemented based on your Clerk setup
-        return localStorage.getItem('clerk-token') || '';
-    }, []);
 
     const fetchProgress = useCallback(async () => {
         if (!userId || !courseId) return;
@@ -19,26 +15,20 @@ export const useCourseProgress = (courseId) => {
             setLoading(true);
             setError(null);
             
-            const response = await fetch(`/api/progress/${userId}/${courseId}`, {
-                headers: {
-                    'Authorization': `Bearer ${await getToken()}`,
-                    'Content-Type': 'application/json'
-                }
-            });
+            const result = await apiService.progress.get(userId, courseId);
             
-            const data = await response.json();
-            
-            if (data.success) {
-                setProgress(data.progress);
+            if (result.success) {
+                setProgress(result.progress);
             } else {
-                setError(data.message);
+                setError(result.message);
             }
         } catch (err) {
             setError('Failed to fetch progress');
+            console.error('Error fetching progress:', err);
         } finally {
             setLoading(false);
         }
-    }, [userId, courseId, getToken]);
+    }, [userId, courseId]);
 
     const updateLectureProgress = useCallback(async (chapterId, lectureId, isCompleted) => {
         if (!userId || !courseId) return;
@@ -46,57 +36,52 @@ export const useCourseProgress = (courseId) => {
         try {
             setError(null);
             
-            const response = await fetch(`/api/progress/${userId}/${courseId}/${chapterId}/${lectureId}`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${await getToken()}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ isCompleted })
-            });
+            const result = await apiService.progress.updateLecture(
+                userId, 
+                courseId, 
+                chapterId, 
+                lectureId, 
+                { isCompleted }
+            );
             
-            const data = await response.json();
-            
-            if (data.success) {
-                setProgress(data.progress);
-                return { success: true, progress: data.progress };
+            if (result.success) {
+                setProgress(result.progress);
+                return { success: true, progress: result.progress };
             } else {
-                setError(data.message);
-                return { success: false, error: data.message };
+                setError(result.message);
+                return { success: false, error: result.message };
             }
         } catch (err) {
             const errorMsg = 'Failed to update progress';
             setError(errorMsg);
+            console.error('Error updating lecture progress:', err);
             return { success: false, error: errorMsg };
         }
-    }, [userId, courseId, getToken]);
+    }, [userId, courseId]);
 
     const updateWatchTime = useCallback(async (chapterId, lectureId, watchTime, totalWatchTime) => {
         if (!userId || !courseId) return;
 
         try {
-            const response = await fetch(`/api/progress/${userId}/${courseId}/${chapterId}/${lectureId}/watchtime`, {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': `Bearer ${await getToken()}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ watchTime, totalWatchTime })
-            });
+            const result = await apiService.progress.updateWatchTime(
+                userId, 
+                courseId, 
+                chapterId, 
+                lectureId, 
+                { watchTime, totalWatchTime }
+            );
             
-            const data = await response.json();
-            
-            if (data.success) {
-                setProgress(data.progress);
-                return { success: true, progress: data.progress };
+            if (result.success) {
+                setProgress(result.progress);
+                return { success: true, progress: result.progress };
             } else {
-                return { success: false, error: data.message };
+                return { success: false, error: result.message };
             }
         } catch (err) {
             console.error('Failed to update watch time:', err);
             return { success: false, error: 'Failed to update watch time' };
         }
-    }, [userId, courseId, getToken]);
+    }, [userId, courseId]);
 
     const resetProgress = useCallback(async () => {
         if (!userId || !courseId) return;
@@ -104,29 +89,22 @@ export const useCourseProgress = (courseId) => {
         try {
             setError(null);
             
-            const response = await fetch(`/api/progress/${userId}/${courseId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${await getToken()}`,
-                    'Content-Type': 'application/json'
-                }
-            });
+            const result = await apiService.progress.reset(userId, courseId);
             
-            const data = await response.json();
-            
-            if (data.success) {
-                setProgress(data.progress);
-                return { success: true, progress: data.progress };
+            if (result.success) {
+                setProgress(result.progress);
+                return { success: true, progress: result.progress };
             } else {
-                setError(data.message);
-                return { success: false, error: data.message };
+                setError(result.message);
+                return { success: false, error: result.message };
             }
         } catch (err) {
             const errorMsg = 'Failed to reset progress';
             setError(errorMsg);
+            console.error('Error resetting progress:', err);
             return { success: false, error: errorMsg };
         }
-    }, [userId, courseId, getToken]);
+    }, [userId, courseId]);
 
     const getUserAllProgress = useCallback(async () => {
         if (!userId) return;
@@ -135,29 +113,23 @@ export const useCourseProgress = (courseId) => {
             setLoading(true);
             setError(null);
             
-            const response = await fetch(`/api/progress/user/${userId}`, {
-                headers: {
-                    'Authorization': `Bearer ${await getToken()}`,
-                    'Content-Type': 'application/json'
-                }
-            });
+            const result = await apiService.progress.getUserProgress(userId);
             
-            const data = await response.json();
-            
-            if (data.success) {
-                return { success: true, progress: data.progress };
+            if (result.success) {
+                return { success: true, progress: result.progress };
             } else {
-                setError(data.message);
-                return { success: false, error: data.message };
+                setError(result.message);
+                return { success: false, error: result.message };
             }
         } catch (err) {
             const errorMsg = 'Failed to fetch user progress';
             setError(errorMsg);
+            console.error('Error fetching user progress:', err);
             return { success: false, error: errorMsg };
         } finally {
             setLoading(false);
         }
-    }, [userId, getToken]);
+    }, [userId]);
 
     useEffect(() => {
         if (userId && courseId) {
