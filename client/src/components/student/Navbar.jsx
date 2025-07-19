@@ -12,7 +12,7 @@ function Navbar() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const isCourseListPage = pathname.includes('/course-list');
-  const { openSignIn } = useClerk();
+  const { openSignIn, openSignUp } = useClerk();
   const { user } = useUser();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -80,7 +80,7 @@ function Navbar() {
           {!user && (
             <>
               <button onClick={() => openSignIn()} className="border border-white text-white font-bold text-sm sm:text-base rounded-full px-3 py-1 sm:px-6 sm:py-1 cursor-pointer bg-transparent hover:bg-white hover:text-emerald-600 transition">Login</button>
-              <button onClick={() => openSignIn()} className="border border-white text-white font-bold text-sm sm:text-base rounded-full px-3 py-1 sm:px-6 sm:py-1 cursor-pointer bg-transparent hover:bg-white hover:text-emerald-600 transition">Signup</button>
+              <button onClick={() => openSignUp()} className="border border-white text-white font-bold text-sm sm:text-base rounded-full px-3 py-1 sm:px-6 sm:py-1 cursor-pointer bg-transparent hover:bg-white hover:text-emerald-600 transition">Signup</button>
             </>
           )}
         </div>
