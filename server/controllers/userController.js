@@ -127,18 +127,18 @@ export const createPaymentIntent = async (req, res) => {
 // Confirm payment and enroll user
 export const confirmPayment = async (req, res) => {
     try {
-        const { paymentIntentId } = req.body
+        const { sessionId } = req.body
         const userId = req.auth?.userId || req.auth?.()?.userId
 
-        if (!paymentIntentId) {
-            return res.status(400).json({ success: false, message: "paymentIntentId is required" })
+        if (!sessionId) {
+            return res.status(400).json({ success: false, message: "sessionId is required" })
         }
 
-        // Retrieve payment intent from Stripe
-        const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId)
+        // Retrieve checkout session from Stripe
+        const session = await stripe.checkout.sessions.retrieve(sessionId)
 
-        if (paymentIntent.status === 'succeeded') {
-            const courseId = paymentIntent.metadata.courseId
+        if (session.payment_status === 'paid') {
+            const courseId = session.metadata.courseId
 
             // Update purchase status
             await Purchase.findOneAndUpdate(

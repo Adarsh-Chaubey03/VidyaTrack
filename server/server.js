@@ -65,6 +65,7 @@ app.get('/api/test', (req, res) => {
         message: "API is working",
         timestamp: new Date().toISOString(),
         auth: req.auth ? "Auth available" : "No auth",
+        authUserId: req.auth?.userId || req.auth?.()?.userId || "No user ID",
         headers: req.headers,
         url: req.url
     })
@@ -90,6 +91,18 @@ app.get('/api/debug/courses', async (req, res) => {
             error: error.message
         });
     }
+})
+
+// Test authentication endpoint (no middleware)
+app.get('/api/auth-test', (req, res) => {
+    res.json({
+        message: "Auth test endpoint",
+        timestamp: new Date().toISOString(),
+        auth: req.auth ? "Auth available" : "No auth",
+        authUserId: req.auth?.userId || req.auth?.()?.userId || "No user ID",
+        cookies: req.headers.cookie ? "Cookies present" : "No cookies",
+        userAgent: req.headers['user-agent']
+    })
 })
 
 app.post('/clerk', express.json(), clerkWebhooks)

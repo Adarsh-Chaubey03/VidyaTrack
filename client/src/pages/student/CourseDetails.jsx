@@ -5,7 +5,9 @@ import Loading from '../../components/student/Loading';
 import { assets } from '../../assets/assets';
 import humanizeDuration from 'humanize-duration';
 import Footer from '../../components/student/Footer';
-import { useAuth } from '@clerk/clerk-react';
+import { useAuth, SignInButton } from '@clerk/clerk-react';
+import PaymentModal from '../../components/student/PaymentModal';
+import AuthStatus from '../../components/student/AuthStatus';
 
 function CourseDetails() {
   const { id } = useParams();
@@ -16,6 +18,7 @@ function CourseDetails() {
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [enrolling, setEnrolling] = useState(false);
   const [enrollmentMessage, setEnrollmentMessage] = useState('');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const {
     allCourses,
@@ -58,26 +61,19 @@ function CourseDetails() {
       return;
     }
 
-    setEnrolling(true);
-    setEnrollmentMessage('');
+    // Show payment modal instead of direct enrollment
+    setShowPaymentModal(true);
+  };
 
-    try {
-      const result = await enrollInCourse(id);
-      
-      if (result.success) {
-        setEnrollmentMessage('Successfully enrolled! Redirecting to course...');
-        setTimeout(() => {
-          navigate(`/player/${id}`);
-        }, 1500);
-      } else {
-        setEnrollmentMessage(result.message || 'Failed to enroll in course');
-      }
-    } catch (error) {
-      console.error('Enrollment error in component:', error);
-      setEnrollmentMessage(`An error occurred while enrolling: ${error.message}`);
-    } finally {
-      setEnrolling(false);
-    }
+  const handleSignIn = () => {
+    // This will be handled by the SignInButton component
+  };
+
+  const handlePaymentSuccess = () => {
+    setEnrollmentMessage('Successfully enrolled! Redirecting to course...');
+    setTimeout(() => {
+      navigate(`/player/${id}`);
+    }, 1500);
   };
 
   return (
@@ -186,22 +182,38 @@ function CourseDetails() {
             </div>
           )}
 
-          <button 
-            onClick={handleEnroll}
-            disabled={enrolling}
-            className={`w-full py-2 rounded-lg font-semibold transition ${
-              isEnrolled 
-                ? 'bg-blue-500 hover:bg-blue-600 text-white' 
-                : 'bg-emerald-500 hover:bg-emerald-600 text-white'
-            } ${enrolling ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            {enrolling ? 'Enrolling...' : isEnrolled ? 'Continue Learning' : 'Enroll Now'}
-          </button>
-
-
+          {!userId ? (
+            <SignInButton mode="modal">
+              <button className="w-full py-2 rounded-lg font-semibold transition bg-emerald-500 hover:bg-emerald-600 text-white">
+                Sign In to Enroll
+              </button>
+            </SignInButton>
+          ) : (
+            <button 
+              onClick={handleEnroll}
+              disabled={enrolling}
+              className={`w-full py-2 rounded-lg font-semibold transition ${
+                isEnrolled 
+                  ? 'bg-blue-500 hover:bg-blue-600 text-white' 
+                  : 'bg-emerald-500 hover:bg-emerald-600 text-white'
+              } ${enrolling ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              {isEnrolled ? 'Continue Learning' : 'Enroll Now'}
+            </button>
+          )}
         </aside>
       </div>
+
+      {/* Payment Modal */}
+      <PaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        course={courseData}
+        onSuccess={handlePaymentSuccess}
+      />
+
       <Footer />
+      <AuthStatus />
     </>
   );
 }

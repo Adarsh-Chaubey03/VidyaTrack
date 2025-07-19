@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { apiService } from '../../services/api.js';
+import { useAuth } from '@clerk/clerk-react';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const PaymentModal = ({ isOpen, onClose, course, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { userId } = useAuth();
 
   const handlePayment = async () => {
     if (!course) return;
+    if (!userId) {
+      setError('Please sign in to make a payment');
+      return;
+    }
 
     setLoading(true);
     setError('');
@@ -46,6 +52,10 @@ const PaymentModal = ({ isOpen, onClose, course, onSuccess }) => {
 
   const handleTestPayment = async () => {
     if (!course) return;
+    if (!userId) {
+      setError('Please sign in to make a payment');
+      return;
+    }
 
     setLoading(true);
     setError('');
@@ -135,6 +145,23 @@ const PaymentModal = ({ isOpen, onClose, course, onSuccess }) => {
             className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Processing...' : 'Test Payment (Demo)'}
+          </button>
+
+          <button
+            onClick={async () => {
+              try {
+                const response = await fetch('/api/auth-test');
+                const data = await response.json();
+                console.log('Auth test:', data);
+                alert(`Auth: ${data.auth}, User ID: ${data.authUserId}`);
+              } catch (error) {
+                console.error('Auth test error:', error);
+                alert('Auth test failed: ' + error.message);
+              }
+            }}
+            className="w-full bg-yellow-500 text-white py-3 rounded-lg font-semibold hover:bg-yellow-600"
+          >
+            Test Authentication
           </button>
 
           <button

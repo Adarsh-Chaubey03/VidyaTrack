@@ -13,8 +13,9 @@ const api = axios.create({
 // Request interceptor to add auth token
 api.interceptors.request.use(
   async (config) => {
-    // For Clerk, we don't need to manually add tokens as they're handled by the session
-    // The withCredentials: true will automatically include the session cookie
+    // For Clerk, we need to ensure the session cookie is included
+    // The withCredentials: true should handle this, but let's make sure
+    config.withCredentials = true;
     return config;
   },
   (error) => {

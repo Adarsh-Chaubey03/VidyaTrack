@@ -20,6 +20,7 @@ import TestSeries from './pages/student/TestSeries';
 import GenerateResume from './pages/student/GenerateResume';
 import GetReviewed from './pages/student/GetReviewed';
 import ExploreProfessionals from './pages/student/ExploreProfessionals';
+import PaymentSuccess from './pages/student/PaymentSuccess';
 
 const App = () => {
   const location = useLocation();
@@ -46,6 +47,7 @@ const App = () => {
         <Route path='/testseries' element={<TestSeries />} />
         <Route path='/getreviewed/:id' element={<GetReviewed />} />
         <Route path='/getreviewed' element={<ExploreProfessionals />} />
+        <Route path='/payment-success' element={<PaymentSuccess />} />
 
         {/* Educator Routes with Authentication Check */}
         <Route path='/educator' element={<Educator />}>
