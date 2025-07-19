@@ -59,6 +59,39 @@ app.get('/', (req, res) => {
     }) 
 })
 
+// Test endpoint for debugging
+app.get('/api/test', (req, res) => {
+    res.json({
+        message: "API is working",
+        timestamp: new Date().toISOString(),
+        auth: req.auth ? "Auth available" : "No auth",
+        headers: req.headers,
+        url: req.url
+    })
+})
+
+// Test endpoint to check courses in database
+app.get('/api/debug/courses', async (req, res) => {
+    try {
+        const Course = (await import('./models/Course.js')).default;
+        const allCourses = await Course.find({});
+        const publishedCourses = await Course.find({ isPublished: true });
+        
+        res.json({
+            message: "Courses debug info",
+            totalCourses: allCourses.length,
+            publishedCourses: publishedCourses.length,
+            allCourses: allCourses,
+            publishedCoursesList: publishedCourses
+        });
+    } catch (error) {
+        res.json({
+            message: "Error checking courses",
+            error: error.message
+        });
+    }
+})
+
 app.post('/clerk', express.json(), clerkWebhooks)
 app.use('/api/educator', educatorRouter)
 app.use('/api/course', courseRouter)

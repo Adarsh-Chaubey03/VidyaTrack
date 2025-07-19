@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.31.8",
+    "@stripe/stripe-js": "^7.5.0",
     "@tailwindcss/vite": "^4.1.8",
     "axios": "^1.10.0",
     "framer-motion": "^12.15.0",

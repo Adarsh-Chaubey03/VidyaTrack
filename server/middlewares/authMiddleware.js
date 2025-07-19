@@ -4,7 +4,7 @@ import Course from '../models/Course.js'
 // General authentication middleware
 export const protect = async (req, res, next) => {
     try {
-        const userId = req.auth.userId
+        const userId = req.auth?.userId || req.auth?.()?.userId
         if (!userId) {
             return res.status(401).json({ success: false, message: 'Not authorized, no token' })
         }
@@ -20,7 +20,7 @@ export const protect = async (req, res, next) => {
 // Middleware (Protect Educator Routes)
 export const protectEducator = async (req,res,next)=>{
     try{
-        const userId = req.auth.userId
+        const userId = req.auth?.userId || req.auth?.()?.userId
         const response = await clerkClient.users.getUser(userId)
 
          if(response.publicMetadata.role !== 'educator'){

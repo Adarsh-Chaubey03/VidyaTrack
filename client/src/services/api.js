@@ -13,11 +13,8 @@ const api = axios.create({
 // Request interceptor to add auth token
 api.interceptors.request.use(
   async (config) => {
-    // Get token from localStorage or Clerk
-    const token = localStorage.getItem('clerk-token') || await getClerkToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // For Clerk, we don't need to manually add tokens as they're handled by the session
+    // The withCredentials: true will automatically include the session cookie
     return config;
   },
   (error) => {
@@ -32,24 +29,16 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized access
-      localStorage.removeItem('clerk-token');
-      window.location.href = '/';
+      // Handle unauthorized access - don't redirect automatically
+      console.warn('Unauthorized access detected, but not redirecting');
+      // Only redirect if explicitly needed
+      // window.location.href = '/';
     }
     return Promise.reject(error);
   }
 );
 
-// Helper function to get Clerk token
-const getClerkToken = async () => {
-  try {
-    // This would be implemented based on your Clerk setup
-    return localStorage.getItem('clerk-token') || '';
-  } catch (error) {
-    console.error('Error getting Clerk token:', error);
-    return '';
-  }
-};
+
 
 // API endpoints
 export const API_ENDPOINTS = {
@@ -73,8 +62,10 @@ export const API_ENDPOINTS = {
   
   // User endpoints
   USER: {
-    PROFILE: '/user/profile',
+    PROFILE: '/user/data',
     UPDATE: '/user/update',
+    PURCHASE_COURSE: '/user/purchase-course',
+    CREATE_PAYMENT_INTENT: '/user/create-payment-intent',
   },
   
   // Educator endpoints
@@ -149,6 +140,16 @@ export const apiService = {
     
     updateProfile: async (data) => {
       const response = await api.put(API_ENDPOINTS.USER.UPDATE, data);
+      return response.data;
+    },
+
+    purchaseCourse: async (data) => {
+      const response = await api.post(API_ENDPOINTS.USER.PURCHASE_COURSE, data);
+      return response.data;
+    },
+
+    createPaymentIntent: async (data) => {
+      const response = await api.post(API_ENDPOINTS.USER.CREATE_PAYMENT_INTENT, data);
       return response.data;
     },
   },

@@ -1,40 +1,84 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
 import Loading from '../../components/student/Loading';
 import { assets } from '../../assets/assets';
 import humanizeDuration from 'humanize-duration';
 import Footer from '../../components/student/Footer';
+import { useAuth } from '@clerk/clerk-react';
 
 function CourseDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { userId } = useAuth();
   const [courseData, setCourseData] = useState(null);
   const [openChapters, setOpenChapters] = useState({});
   const [showFullDesc, setShowFullDesc] = useState(false);
+  const [enrolling, setEnrolling] = useState(false);
+  const [enrollmentMessage, setEnrollmentMessage] = useState('');
 
   const {
-    educatorCourses,
-    rating = 4.2,
-    totalRatings = 189,
+    allCourses,
+    enrolledCourses,
+    loading,
     calculateChapterTime,
     calculateCourseDuration,
     calculateNoOfLectures,
+    enrollInCourse,
     currency = '$'
   } = useContext(AppContext);
-  const allCourses = educatorCourses;
 
   useEffect(() => {
     const course = allCourses.find(c => c._id === id);
     setCourseData(course);
   }, [allCourses, id]);
 
+  if (loading) return <Loading />;
   if (!courseData) return <Loading />;
 
+  const rating = 4.2;
+  const totalRatings = 189;
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating - fullStars >= 0.5;
   const toggleChapter = index => setOpenChapters(prev => ({ ...prev, [index]: !prev[index] }));
 
   const discountedPrice = (courseData.coursePrice - (courseData.discount * courseData.coursePrice) / 100).toFixed(2);
+
+  // Check if user is already enrolled
+  const isEnrolled = enrolledCourses.some(course => course._id === id);
+
+  const handleEnroll = async () => {
+    if (!userId) {
+      setEnrollmentMessage('Please sign in to enroll in this course');
+      return;
+    }
+
+    if (isEnrolled) {
+      navigate(`/player/${id}`);
+      return;
+    }
+
+    setEnrolling(true);
+    setEnrollmentMessage('');
+
+    try {
+      const result = await enrollInCourse(id);
+      
+      if (result.success) {
+        setEnrollmentMessage('Successfully enrolled! Redirecting to course...');
+        setTimeout(() => {
+          navigate(`/player/${id}`);
+        }, 1500);
+      } else {
+        setEnrollmentMessage(result.message || 'Failed to enroll in course');
+      }
+    } catch (error) {
+      console.error('Enrollment error in component:', error);
+      setEnrollmentMessage(`An error occurred while enrolling: ${error.message}`);
+    } finally {
+      setEnrolling(false);
+    }
+  };
 
   return (
     <>
@@ -69,7 +113,7 @@ function CourseDetails() {
               ))}
             </div>
             <span className="text-emerald-500">({totalRatings})</span>
-            <span>{courseData.enrolledStudents.length} {courseData.enrolledStudents.length > 1 ? 'students' : 'student'}</span>
+            <span>{courseData.enrolledStudents?.length || 0} {(courseData.enrolledStudents?.length || 0) > 1 ? 'students' : 'student'}</span>
           </div>
 
           <p className="text-sm text-gray-600">
@@ -80,7 +124,7 @@ function CourseDetails() {
           <section className="pt-8">
             <h2 className="text-xl font-semibold mb-4">Course Structure</h2>
             <div className="space-y-4">
-              {courseData.courseContent.map((chapter, index) => (
+              {courseData.courseContent?.map((chapter, index) => (
                 <div key={index} className="border border-gray-300 bg-white rounded-lg p-4 shadow-sm">
                   <div className="flex items-center justify-between cursor-pointer" onClick={() => toggleChapter(index)}>
                     <div className="flex items-center gap-3">
@@ -132,7 +176,29 @@ function CourseDetails() {
           <p className="text-sm text-emerald-600 font-semibold">{courseData.discount}% OFF</p>
           <p className="text-xl font-semibold text-emerald-700">Price: {currency}{discountedPrice}</p>
 
-          <button className="w-full bg-emerald-500 text-white py-2 rounded-lg font-semibold hover:bg-emerald-600 transition">Enroll Now</button>
+          {enrollmentMessage && (
+            <div className={`p-3 rounded-lg text-sm ${
+              enrollmentMessage.includes('Successfully') 
+                ? 'bg-green-100 text-green-700' 
+                : 'bg-red-100 text-red-700'
+            }`}>
+              {enrollmentMessage}
+            </div>
+          )}
+
+          <button 
+            onClick={handleEnroll}
+            disabled={enrolling}
+            className={`w-full py-2 rounded-lg font-semibold transition ${
+              isEnrolled 
+                ? 'bg-blue-500 hover:bg-blue-600 text-white' 
+                : 'bg-emerald-500 hover:bg-emerald-600 text-white'
+            } ${enrolling ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            {enrolling ? 'Enrolling...' : isEnrolled ? 'Continue Learning' : 'Enroll Now'}
+          </button>
+
+
         </aside>
       </div>
       <Footer />

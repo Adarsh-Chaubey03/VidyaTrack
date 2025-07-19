@@ -6,6 +6,7 @@ import humanizeDuration from 'humanize-duration';
 import ReactPlayer from 'react-player';
 import Footer from '../../components/student/Footer';
 import Rating from '../../components/student/Rating';
+import CourseProgress from '../../components/student/CourseProgress';
 
 // Mock data for similar courses
 const similarCourses = [
@@ -206,7 +207,7 @@ function Player() {
           </div>
         </aside>
 
-        {/* Right Column - Video and Feedback */}
+        {/* Right Column - Video and Progress */}
         <div className="flex-1 flex flex-col gap-6 min-h-full">
           {/* Video Player */}
           <div className="bg-white rounded-2xl shadow-md p-0 md:p-4 flex flex-col md:flex-row gap-4 items-start">
@@ -252,6 +253,11 @@ function Player() {
                 <div className="bg-gray-100 rounded-lg p-2 text-xs text-gray-400 text-center">Chat & Now Watching coming soon...</div>
               </div>
             </div>
+          </div>
+
+          {/* Course Progress Component */}
+          <div className="bg-white rounded-2xl shadow-md p-4">
+            <CourseProgress courseId={courseId} />
           </div>
 
           {/* Feedback Form */}

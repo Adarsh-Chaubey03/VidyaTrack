@@ -12,10 +12,7 @@ if (!PUBLISHABLE_KEY) {
 }
 
 createRoot(document.getElementById('root')).render(
-  <ClerkProvider
-    publishableKey={PUBLISHABLE_KEY}
-    navigate={(to) => window.history.pushState(null, '', to)}
-  >
+  <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
     <BrowserRouter>
       <AppContextProvider>
         <App />

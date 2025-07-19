@@ -5,10 +5,10 @@ import CourseCard from '../../components/student/CourseCard';
 import { assets } from '../../assets/assets';
 import Footer from '../../components/student/Footer';
 import { useParams, useNavigate } from 'react-router-dom';
+import Loading from '../../components/student/Loading';
 
 function CourseList() {
-    const { educatorCourses } = useContext(AppContext);
-    const allCourses = educatorCourses;
+    const { allCourses, loading } = useContext(AppContext);
     const navigate = useNavigate();
     const { input } = useParams();
     const [filteredCourse, setFilteredCourse] = useState([]);
@@ -26,6 +26,10 @@ function CourseList() {
             }
         }
     }, [allCourses, input]);
+
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <div className="bg-gradient-to-b from-emerald-50 to-rose-50 min-h-screen flex flex-col">
@@ -65,6 +69,8 @@ function CourseList() {
                     </div>
                 )}
 
+                
+
                 {/* Course Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 my-16 gap-6">
                     {filteredCourse.length > 0 ? (
@@ -72,7 +78,17 @@ function CourseList() {
                             <CourseCard key={index} course={course} />
                         ))
                     ) : (
-                        <p className="col-span-full text-center text-gray-500">No courses found.</p>
+                        <div className="col-span-full text-center py-12">
+                            <p className="text-gray-500 text-lg mb-4">No courses found.</p>
+                            {input && (
+                                <button 
+                                    onClick={() => navigate("/course-list")}
+                                    className="text-emerald-600 hover:underline"
+                                >
+                                    Clear search and view all courses
+                                </button>
+                            )}
+                        </div>
                     )}
                 </div>
             </div>
