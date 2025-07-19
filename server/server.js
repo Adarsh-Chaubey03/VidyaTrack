@@ -38,7 +38,11 @@ app.use(cors({
 
 // Clerk middleware (only if CLERK_SECRET_KEY is available)
 if (process.env.CLERK_SECRET_KEY) {
-    app.use(clerkMiddleware())
+    app.use(clerkMiddleware({
+        secretKey: process.env.CLERK_SECRET_KEY,
+        publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+        jwtKey: process.env.CLERK_JWT_KEY
+    }))
     console.log('✅ Clerk authentication configured');
 } else {
     console.warn('⚠️  CLERK_SECRET_KEY not found. Authentication will be disabled.');
@@ -101,11 +105,41 @@ app.get('/api/auth-test', (req, res) => {
         auth: req.auth ? "Auth available" : "No auth",
         authUserId: req.auth?.userId || req.auth?.()?.userId || "No user ID",
         cookies: req.headers.cookie ? "Cookies present" : "No cookies",
+        authorization: req.headers.authorization ? "Authorization header present" : "No authorization header",
         userAgent: req.headers['user-agent']
     })
 })
 
 app.post('/clerk', express.json(), clerkWebhooks)
+
+// Test endpoint to manually verify Clerk token
+app.get('/api/test-token', async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.json({
+                success: false,
+                message: 'No Bearer token provided',
+                authHeader: authHeader ? 'Present but not Bearer' : 'Not present'
+            });
+        }
+
+        const token = authHeader.substring(7);
+        res.json({
+            success: true,
+            message: 'Token received',
+            tokenLength: token.length,
+            tokenStart: token.substring(0, 10) + '...'
+        });
+    } catch (error) {
+        res.json({
+            success: false,
+            message: 'Error processing token',
+            error: error.message
+        });
+    }
+});
+
 app.use('/api/educator', educatorRouter)
 app.use('/api/course', courseRouter)
 app.use('/api/progress', courseProgressRouter)

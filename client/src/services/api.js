@@ -14,8 +14,18 @@ const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     // For Clerk, we need to ensure the session cookie is included
-    // The withCredentials: true should handle this, but let's make sure
     config.withCredentials = true;
+    
+    // Add Authorization header with Bearer token if available
+    try {
+      const token = await window.Clerk?.session?.getToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch (error) {
+      console.log('No Clerk token available');
+    }
+    
     return config;
   },
   (error) => {
