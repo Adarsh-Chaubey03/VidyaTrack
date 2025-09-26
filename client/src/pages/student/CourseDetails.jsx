@@ -7,7 +7,6 @@ import humanizeDuration from 'humanize-duration';
 import Footer from '../../components/student/Footer';
 import { useAuth, SignInButton } from '@clerk/clerk-react';
 import PaymentModal from '../../components/student/PaymentModal';
-import AuthStatus from '../../components/student/AuthStatus';
 
 function CourseDetails() {
   const { id } = useParams();
@@ -213,7 +212,6 @@ function CourseDetails() {
       />
 
       <Footer />
-      <AuthStatus />
     </>
   );
 }

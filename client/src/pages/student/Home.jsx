@@ -14,7 +14,6 @@ import TestSeries from '../../components/student/TestSeries'
 import arrowIcon from '../../assets/arrow_icon.svg';
 import StatsSection from '../../components/student/StatsSection';
 import ExtraFeaturesSection from '../../components/student/ExtraFeaturesSection';
-import ConnectionTest from '../../components/student/ConnectionTest';
 
 function Home() {
     const scrollRef = useRef(null);
@@ -40,12 +39,6 @@ function Home() {
             <StatsSection />
             <CousreSection />
             <ExtraFeaturesSection />
-            
-            {/* Connection Test - Remove this after interview */}
-            <div className="w-full max-w-6xl mx-auto px-4 py-8">
-                <ConnectionTest />
-            </div>
-           
             <TestimonialSection />
             <CallToAction />
    
