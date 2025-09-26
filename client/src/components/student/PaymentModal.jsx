@@ -148,40 +148,6 @@ const PaymentModal = ({ isOpen, onClose, course, onSuccess }) => {
           </button>
 
           <button
-            onClick={async () => {
-              try {
-                const response = await fetch('/api/auth-test');
-                const data = await response.json();
-                console.log('Auth test:', data);
-                alert(`Auth: ${data.auth}, User ID: ${data.authUserId}, Auth Header: ${data.authorization}`);
-              } catch (error) {
-                console.error('Auth test error:', error);
-                alert('Auth test failed: ' + error.message);
-              }
-            }}
-            className="w-full bg-yellow-500 text-white py-3 rounded-lg font-semibold hover:bg-yellow-600"
-          >
-            Test Authentication
-          </button>
-
-          <button
-            onClick={async () => {
-              try {
-                const response = await fetch('/api/test-token');
-                const data = await response.json();
-                console.log('Token test:', data);
-                alert(`Token test: ${data.success ? 'Success' : 'Failed'} - ${data.message}`);
-              } catch (error) {
-                console.error('Token test error:', error);
-                alert('Token test failed: ' + error.message);
-              }
-            }}
-            className="w-full bg-purple-500 text-white py-3 rounded-lg font-semibold hover:bg-purple-600"
-          >
-            Test Token
-          </button>
-
-          <button
             onClick={onClose}
             disabled={loading}
             className="w-full bg-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"

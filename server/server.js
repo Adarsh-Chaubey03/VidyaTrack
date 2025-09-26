@@ -32,7 +32,14 @@ try {
 
 //middleware
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5174',
+  origin: [
+    'http://localhost:5174',
+    'http://localhost:5175', 
+    'http://localhost:5176',
+    'http://localhost:5177',
+    'http://localhost:3000',
+    'http://localhost:5173'
+  ],
   credentials: true
 }))
 
@@ -40,8 +47,7 @@ app.use(cors({
 if (process.env.CLERK_SECRET_KEY) {
     app.use(clerkMiddleware({
         secretKey: process.env.CLERK_SECRET_KEY,
-        publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
-        jwtKey: process.env.CLERK_JWT_KEY
+        publishableKey: process.env.CLERK_PUBLISHABLE_KEY
     }))
     console.log('✅ Clerk authentication configured');
 } else {

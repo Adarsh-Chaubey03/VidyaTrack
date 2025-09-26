@@ -86,6 +86,7 @@ export const API_ENDPOINTS = {
     ADD_COURSE: '/educator/add-course',
     STUDENTS: '/educator/students',
   },
+  
 };
 
 // API service functions
