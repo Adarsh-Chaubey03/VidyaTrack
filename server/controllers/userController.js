@@ -238,6 +238,55 @@ export const purchaseCourse = async (req, res) => {
             return res.status(400).json({ success: false, message: "courseId is required" })
         }
 
+        // Check if course is free
+        const courseData = await Course.findById(courseId)
+        if (!courseData) {
+            return res.status(404).json({ success: false, message: "Course not found" })
+        }
+
+        // For free courses, allow enrollment without authentication
+        if (courseData.coursePrice === 0 || courseData.isFree) {
+            // Use a demo user ID for free course enrollment
+            const demoUserId = userId || 'demo-user-free-course'
+            
+            // get user data
+            let userData = await User.findById(demoUserId)
+            if (!userData) {
+                // Create demo user for free course enrollment
+                userData = new User({
+                    _id: demoUserId,
+                    name: 'Demo User',
+                    email: 'demo@example.com',
+                    imageUrl: 'https://via.placeholder.com/150',
+                    enrolledCourses: []
+                });
+                await userData.save();
+                console.log('Created demo user for free course enrollment:', demoUserId);
+            }
+
+            // Check if already enrolled
+            if (userData.enrolledCourses && userData.enrolledCourses.includes(courseId)) {
+                return res.status(400).json({ success: false, message: "Already enrolled in this course" })
+            }
+
+            // Enroll in free course
+            userData.enrolledCourses = userData.enrolledCourses || []
+            userData.enrolledCourses.push(courseId)
+            await userData.save()
+
+            return res.json({ 
+                success: true, 
+                message: "Successfully enrolled in free course!",
+                courseId: courseId,
+                userId: demoUserId
+            })
+        }
+
+        // For paid courses, require authentication
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "Authentication required for paid courses" })
+        }
+
         // get user data
         let userData = await User.findById(userId)
         if (!userData) {
@@ -259,11 +308,7 @@ export const purchaseCourse = async (req, res) => {
             }
         }
 
-        // get course data
-        const courseData = await Course.findById(courseId)
-        if (!courseData) {
-            return res.status(404).json({ success: false, message: "Course not found" })
-        }
+        // Course data already fetched above for free course check
 
         // Check if already enrolled
         if (userData.enrolledCourses && userData.enrolledCourses.includes(courseId)) {

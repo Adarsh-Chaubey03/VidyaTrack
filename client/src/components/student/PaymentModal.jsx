@@ -104,7 +104,9 @@ const PaymentModal = ({ isOpen, onClose, course, onSuccess }) => {
             />
             <div>
               <h3 className="font-medium text-gray-800">{course.courseTitle}</h3>
-              <p className="text-sm text-gray-500">{course.courseDescription?.slice(0, 50)}...</p>
+              <p className="text-sm text-gray-500">
+                {course.courseDescription?.replace(/<[^>]*>/g, '').slice(0, 50)}...
+              </p>
             </div>
           </div>
 

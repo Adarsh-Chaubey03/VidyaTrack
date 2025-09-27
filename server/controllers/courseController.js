@@ -29,6 +29,70 @@ const createDemoCourses = async () => {
     try {
         const demoCourses = [
             {
+                courseTitle: "Natural Learning Process",
+                courseDescription: "Master the Art of Natural Learning - Discover the science behind how humans naturally acquire knowledge and skills. This comprehensive course explores cognitive psychology, memory techniques, and learning strategies that align with how your brain naturally processes information.",
+                courseThumbnail: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=250&fit=crop&crop=center",
+                coursePrice: 0,
+                discount: 0,
+                isPublished: true,
+                educator: "demo-educator-1",
+                enrolledStudents: [],
+                courseContent: [
+                    {
+                        chapterTitle: "Understanding Natural Learning",
+                        chapterContent: [
+                            {
+                                lectureTitle: "Introduction to Natural Learning",
+                                lectureDuration: 18,
+                                isPreviewFree: true
+                            },
+                            {
+                                lectureTitle: "How the Brain Learns Naturally",
+                                lectureDuration: 22,
+                                isPreviewFree: true
+                            },
+                            {
+                                lectureTitle: "Cognitive Load Theory",
+                                lectureDuration: 15,
+                                isPreviewFree: true
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                courseTitle: "OpenCV Computer Vision Masterclass",
+                courseDescription: "Complete OpenCV Course for Computer Vision - Master computer vision with OpenCV, the most popular library for image processing and computer vision applications. This comprehensive course covers everything from basic image manipulation to advanced computer vision techniques.",
+                courseThumbnail: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=250&fit=crop&crop=center",
+                coursePrice: 0,
+                discount: 0,
+                isPublished: true,
+                educator: "demo-educator-1",
+                enrolledStudents: [],
+                courseContent: [
+                    {
+                        chapterTitle: "OpenCV Fundamentals",
+                        chapterContent: [
+                            {
+                                lectureTitle: "Introduction to OpenCV",
+                                lectureDuration: 15,
+                                isPreviewFree: true
+                            },
+                            {
+                                lectureTitle: "Installing and Setting Up OpenCV",
+                                lectureDuration: 12,
+                                isPreviewFree: true
+                            },
+                            {
+                                lectureTitle: "Basic Image Operations",
+                                lectureDuration: 18,
+                                isPreviewFree: true
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
                 courseTitle: "Master React JS",
                 courseDescription: "Learn React from scratch to advanced concepts with hands-on projects",
                 courseThumbnail: "https://via.placeholder.com/400x250/4ade80/ffffff?text=React+JS",

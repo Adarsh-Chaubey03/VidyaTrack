@@ -20,4 +20,7 @@ userRouter.post('/confirm-payment', protect, confirmPayment)
 // Legacy route (keeping for backward compatibility)
 userRouter.post('/purchase-course', protect, purchaseCourse)
 
+// Free course enrollment route (no authentication required)
+userRouter.post('/enroll-free-course', purchaseCourse)
+
 export default userRouter

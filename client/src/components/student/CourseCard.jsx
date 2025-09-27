@@ -23,7 +23,7 @@ function CourseCard({ course }) {
       to={`/course/${course._id}`}
       onClick={() => window.scrollTo(0, 0)}
       className="
-        w-full max-w-[300px] sm:max-w-[300px] max-w-[180px] min-w-[160px] sm:min-w-[220px] md:min-w-[320px] 
+        w-full max-w-[180px] sm:max-w-[300px] min-w-[160px] sm:min-w-[220px] md:min-w-[320px] 
         bg-transparent border border-gray-300 dark:border-gray-700 
         shadow-emerald-200 hover:shadow-emerald-400
         overflow-hidden transition-all duration-300 mx-auto group
@@ -69,6 +69,19 @@ function CourseCard({ course }) {
             })}
           </div>
           <span className="text-gray-600 dark:text-gray-400">({totalRatings})</span>
+        </div>
+
+        {/* Pricing */}
+        <div className="mt-2 sm:mt-3 flex items-center justify-between">
+          {course.isFree || course.coursePrice === 0 ? (
+            <span className="text-sm font-semibold text-green-600">FREE</span>
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500 line-through">{currency}{course.coursePrice.toFixed(2)}</span>
+              <span className="text-sm font-semibold text-emerald-600">{currency}{discountedPrice}</span>
+            </div>
+          )}
+          <span className="text-xs text-gray-500">{course.enrolledStudents?.length || 0} students</span>
         </div>
       </div>
       <div className="border-b border-gray-200 dark:border-gray-700 w-full" />

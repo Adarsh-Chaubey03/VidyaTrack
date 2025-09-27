@@ -1,8 +1,15 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Facebook, Twitter, Linkedin, Mail } from 'lucide-react';
 
 function Footer() {
+  const navigate = useNavigate();
+
+  const handleCoursesClick = () => {
+    navigate('/course-list');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <footer className="w-full bg-gradient-to-br from-emerald-50 to-emerald-100 border-t border-gray-200 pt-12 pb-4 flex flex-col items-center justify-center">
       <div className="w-full flex justify-center items-center px-1 md:px-2">
@@ -33,20 +40,20 @@ function Footer() {
             <div className="flex flex-col items-center text-center">
               <h3 className="text-lg font-bold text-emerald-600 mb-4">Explore</h3>
               <ul className="space-y-2">
-                <li><Link to="/courses" className="hover:text-emerald-600 transition">Courses</Link></li>
-                <li><Link to="/about" className="hover:text-emerald-600 transition">About Us</Link></li>
-                <li><Link to="/blog" className="hover:text-emerald-600 transition">Blog</Link></li>
-                <li><Link to="/faq" className="hover:text-emerald-600 transition">FAQs</Link></li>
+                <li><button onClick={handleCoursesClick} className="hover:text-emerald-600 transition cursor-pointer">Courses</button></li>
+                <li><button className="hover:text-emerald-600 transition cursor-pointer">About Us</button></li>
+                <li><button className="hover:text-emerald-600 transition cursor-pointer">Blog</button></li>
+                <li><button className="hover:text-emerald-600 transition cursor-pointer">FAQs</button></li>
             </ul>
           </div>
             {/* Support Section */}
             <div className="flex flex-col items-center text-center">
               <h3 className="text-lg font-bold text-emerald-600 mb-4">Support</h3>
               <ul className="space-y-2">
-                <li><Link to="/contact" className="hover:text-emerald-600 transition">Contact Us</Link></li>
-                <li><Link to="/terms" className="hover:text-emerald-600 transition">Terms of Service</Link></li>
-                <li><Link to="/privacy" className="hover:text-emerald-600 transition">Privacy Policy</Link></li>
-                <li><Link to="/feedback" className="hover:text-emerald-600 transition">Feedback</Link></li>
+                <li><Link to="/contact" className="hover:text-emerald-600 transition cursor-pointer">Contact Us</Link></li>
+                <li><button className="hover:text-emerald-600 transition cursor-pointer">Terms of Service</button></li>
+                <li><button className="hover:text-emerald-600 transition cursor-pointer">Privacy Policy</button></li>
+                <li><button className="hover:text-emerald-600 transition cursor-pointer">Feedback</button></li>
             </ul>
           </div>
             {/* Newsletter Section */}

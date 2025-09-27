@@ -74,18 +74,39 @@ export const AppContextProvider = ({ children }) => {
 
   const enrollInCourse = async (courseId) => {
     try {
-      if (!user) {
-        throw new Error('User not authenticated');
-      }
+      // Find the course to check if it's free
+      const course = allCourses.find(c => c._id === courseId);
+      const isFreeCourse = course && (course.isFree || course.coursePrice === 0);
 
-      const result = await apiService.user.purchaseCourse({ courseId });
-      
-      if (result.success) {
-        // Refresh enrolled courses
-        await fetchUserEnrollmentCourses();
-        return { success: true, message: 'Successfully enrolled in course!' };
+      if (isFreeCourse) {
+        // Use free course enrollment endpoint
+        const result = await apiService.user.enrollFreeCourse({ courseId });
+        
+        if (result.success) {
+          // For free courses, add to enrolled courses locally
+          const courseData = allCourses.find(c => c._id === courseId);
+          if (courseData) {
+            setEnrolledCourses(prev => [...prev, courseData]);
+          }
+          return { success: true, message: 'Successfully enrolled in free course!' };
+        } else {
+          return { success: false, message: result.message };
+        }
       } else {
-        return { success: false, message: result.message };
+        // For paid courses, require authentication
+        if (!user) {
+          throw new Error('User not authenticated');
+        }
+
+        const result = await apiService.user.purchaseCourse({ courseId });
+        
+        if (result.success) {
+          // Refresh enrolled courses
+          await fetchUserEnrollmentCourses();
+          return { success: true, message: 'Successfully enrolled in course!' };
+        } else {
+          return { success: false, message: result.message };
+        }
       }
     } catch (error) {
       console.error('Error enrolling in course:', error);

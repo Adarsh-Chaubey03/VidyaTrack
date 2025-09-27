@@ -1,5 +1,6 @@
 import React from 'react';
 import { Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 function MentorCard({ mentor }) {
   return (
@@ -43,9 +44,12 @@ function MentorCard({ mentor }) {
         </div>
         {/* View Profile Button */}
         <div className="flex w-full justify-center mt-3 md:mt-4">
-          <a href={mentor.profileUrl} className="w-full max-w-xs text-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 md:py-3 rounded-lg shadow transition text-sm md:text-base">
+          <Link 
+            to={`/mentor/${mentor.id}`}
+            className="w-full max-w-xs text-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 md:py-3 rounded-lg shadow transition text-sm md:text-base"
+          >
             View Profile
-          </a>
+          </Link>
         </div>
       </div>
     </div>

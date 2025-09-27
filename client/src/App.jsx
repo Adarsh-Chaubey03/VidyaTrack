@@ -21,6 +21,8 @@ import GenerateResume from './pages/student/GenerateResume';
 import GetReviewed from './pages/student/GetReviewed';
 import ExploreProfessionals from './pages/student/ExploreProfessionals';
 import PaymentSuccess from './pages/student/PaymentSuccess';
+import ContactUs from './pages/student/ContactUs';
+import MentorProfile from './pages/student/MentorProfile';
 
 const App = () => {
   const location = useLocation();
@@ -48,6 +50,8 @@ const App = () => {
         <Route path='/getreviewed/:id' element={<GetReviewed />} />
         <Route path='/getreviewed' element={<ExploreProfessionals />} />
         <Route path='/payment-success' element={<PaymentSuccess />} />
+        <Route path='/contact' element={<ContactUs />} />
+        <Route path='/mentor/:id' element={<MentorProfile />} />
 
         {/* Educator Routes with Authentication Check */}
         <Route path='/educator' element={<Educator />}>

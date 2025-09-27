@@ -50,18 +50,42 @@ function CourseDetails() {
   const isEnrolled = enrolledCourses.some(course => course._id === id);
 
   const handleEnroll = async () => {
-    if (!userId) {
-      setEnrollmentMessage('Please sign in to enroll in this course');
-      return;
-    }
-
     if (isEnrolled) {
       navigate(`/player/${id}`);
       return;
     }
 
-    // Show payment modal instead of direct enrollment
-    setShowPaymentModal(true);
+    // Check if course is free
+    if (courseData.isFree || courseData.coursePrice === 0) {
+      setEnrolling(true);
+      setEnrollmentMessage('Enrolling you in the free course...');
+      
+      try {
+        const result = await enrollInCourse(id);
+        if (result.success) {
+          setEnrollmentMessage('Successfully enrolled! Redirecting to course...');
+          setTimeout(() => {
+            navigate(`/player/${id}`);
+          }, 1500);
+        } else {
+          setEnrollmentMessage(result.message || 'Failed to enroll in course');
+        }
+      } catch (error) {
+        setEnrollmentMessage('Failed to enroll in course');
+        console.error('Enrollment error:', error);
+      } finally {
+        setEnrolling(false);
+      }
+    } else {
+      // For paid courses, require authentication
+      if (!userId) {
+        setEnrollmentMessage('Please sign in to enroll in this course');
+        return;
+      }
+      
+      // Show payment modal for paid courses
+      setShowPaymentModal(true);
+    }
   };
 
   const handleSignIn = () => {
@@ -167,9 +191,15 @@ function CourseDetails() {
           </div>
           <p className="text-sm text-gray-600">{calculateNoOfLectures(courseData)} lectures • {calculateCourseDuration(courseData)}</p>
 
-          <p className="text-sm text-gray-500 line-through">{currency}{courseData.coursePrice.toFixed(2)}</p>
-          <p className="text-sm text-emerald-600 font-semibold">{courseData.discount}% OFF</p>
-          <p className="text-xl font-semibold text-emerald-700">Price: {currency}{discountedPrice}</p>
+          {courseData.isFree || courseData.coursePrice === 0 ? (
+            <p className="text-xl font-semibold text-green-700">FREE</p>
+          ) : (
+            <>
+              <p className="text-sm text-gray-500 line-through">{currency}{courseData.coursePrice.toFixed(2)}</p>
+              <p className="text-sm text-emerald-600 font-semibold">{courseData.discount}% OFF</p>
+              <p className="text-xl font-semibold text-emerald-700">Price: {currency}{discountedPrice}</p>
+            </>
+          )}
 
           {enrollmentMessage && (
             <div className={`p-3 rounded-lg text-sm ${
@@ -181,7 +211,7 @@ function CourseDetails() {
             </div>
           )}
 
-          {!userId ? (
+          {!userId && !(courseData.isFree || courseData.coursePrice === 0) ? (
             <SignInButton mode="modal">
               <button className="w-full py-2 rounded-lg font-semibold transition bg-emerald-500 hover:bg-emerald-600 text-white">
                 Sign In to Enroll
@@ -194,10 +224,17 @@ function CourseDetails() {
               className={`w-full py-2 rounded-lg font-semibold transition ${
                 isEnrolled 
                   ? 'bg-blue-500 hover:bg-blue-600 text-white' 
-                  : 'bg-emerald-500 hover:bg-emerald-600 text-white'
+                  : (courseData.isFree || courseData.coursePrice === 0)
+                    ? 'bg-green-500 hover:bg-green-600 text-white'
+                    : 'bg-emerald-500 hover:bg-emerald-600 text-white'
               } ${enrolling ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              {isEnrolled ? 'Continue Learning' : 'Enroll Now'}
+              {isEnrolled 
+                ? 'Continue Learning' 
+                : (courseData.isFree || courseData.coursePrice === 0)
+                  ? 'Enroll for Free'
+                  : 'Enroll Now'
+              }
             </button>
           )}
         </aside>

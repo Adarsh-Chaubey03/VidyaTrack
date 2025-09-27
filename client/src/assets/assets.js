@@ -229,6 +229,261 @@ export const dummyStudentEnrolled = [
 
 export const dummyCourses = [
     {
+        "_id": "free_course_natural_learning_001",
+        "courseTitle": "Natural Learning Process",
+        "courseDescription": "<h2>Master the Art of Natural Learning</h2><p>Discover the science behind how humans naturally acquire knowledge and skills. This comprehensive course explores cognitive psychology, memory techniques, and learning strategies that align with how your brain naturally processes information.</p><p>Learn to optimize your learning potential through evidence-based methods that make studying more effective and enjoyable. Perfect for students, professionals, and lifelong learners who want to maximize their learning efficiency.</p><ul><li>Understand cognitive learning principles</li><li>Master memory enhancement techniques</li><li>Develop personalized learning strategies</li><li>Apply natural learning methods to any subject</li></ul>",
+        "coursePrice": 0,
+        "isPublished": true,
+        "discount": 0,
+        "courseContent": [
+            {
+                "chapterId": "chapter1",
+                "chapterOrder": 1,
+                "chapterTitle": "Understanding Natural Learning",
+                "chapterContent": [
+                    {
+                        "lectureId": "lecture1",
+                        "lectureTitle": "Introduction to Natural Learning",
+                        "lectureDuration": 18,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 1
+                    },
+                    {
+                        "lectureId": "lecture2",
+                        "lectureTitle": "How the Brain Learns Naturally",
+                        "lectureDuration": 22,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 2
+                    },
+                    {
+                        "lectureId": "lecture3",
+                        "lectureTitle": "Cognitive Load Theory",
+                        "lectureDuration": 15,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 3
+                    }
+                ]
+            },
+            {
+                "chapterId": "chapter2",
+                "chapterOrder": 2,
+                "chapterTitle": "Memory and Retention Techniques",
+                "chapterContent": [
+                    {
+                        "lectureId": "lecture4",
+                        "lectureTitle": "Spaced Repetition System",
+                        "lectureDuration": 20,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 1
+                    },
+                    {
+                        "lectureId": "lecture5",
+                        "lectureTitle": "Visual Memory Techniques",
+                        "lectureDuration": 16,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 2
+                    },
+                    {
+                        "lectureId": "lecture6",
+                        "lectureTitle": "Active Recall Methods",
+                        "lectureDuration": 19,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 3
+                    }
+                ]
+            },
+            {
+                "chapterId": "chapter3",
+                "chapterOrder": 3,
+                "chapterTitle": "Practical Learning Applications",
+                "chapterContent": [
+                    {
+                        "lectureId": "lecture7",
+                        "lectureTitle": "Learning Languages Naturally",
+                        "lectureDuration": 25,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 1
+                    },
+                    {
+                        "lectureId": "lecture8",
+                        "lectureTitle": "Skill Acquisition Strategies",
+                        "lectureDuration": 21,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 2
+                    },
+                    {
+                        "lectureId": "lecture9",
+                        "lectureTitle": "Creating Your Learning Plan",
+                        "lectureDuration": 17,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 3
+                    }
+                ]
+            }
+        ],
+        "educator": "675ac1512100b91a6d9b8b24",
+        "enrolledStudents": [],
+        "courseRatings": [],
+        "createdAt": "2024-12-17T08:16:53.622Z",
+        "updatedAt": "2025-01-02T04:47:44.701Z",
+        "__v": 0,
+        "courseThumbnail": "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=250&fit=crop&crop=center",
+        "progress": { "completedLectures": 0, "totalLectures": 9 },
+        "isFree": true
+    },
+    {
+        "_id": "free_course_opencv_002",
+        "courseTitle": "OpenCV Computer Vision Masterclass",
+        "courseDescription": "<h2>Complete OpenCV Course for Computer Vision</h2><p>Master computer vision with OpenCV, the most popular library for image processing and computer vision applications. This comprehensive course covers everything from basic image manipulation to advanced computer vision techniques.</p><p>Perfect for developers, data scientists, and anyone interested in computer vision. Learn to build real-world applications including face detection, object tracking, and image recognition systems.</p><ul><li>Master OpenCV fundamentals</li><li>Build face detection systems</li><li>Implement object tracking</li><li>Create image processing pipelines</li><li>Develop computer vision applications</li></ul>",
+        "coursePrice": 0,
+        "isPublished": true,
+        "discount": 0,
+        "courseContent": [
+            {
+                "chapterId": "chapter1",
+                "chapterOrder": 1,
+                "chapterTitle": "OpenCV Fundamentals",
+                "chapterContent": [
+                    {
+                        "lectureId": "lecture1",
+                        "lectureTitle": "Introduction to OpenCV",
+                        "lectureDuration": 15,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 1
+                    },
+                    {
+                        "lectureId": "lecture2",
+                        "lectureTitle": "Installing and Setting Up OpenCV",
+                        "lectureDuration": 12,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 2
+                    },
+                    {
+                        "lectureId": "lecture3",
+                        "lectureTitle": "Basic Image Operations",
+                        "lectureDuration": 18,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 3
+                    }
+                ]
+            },
+            {
+                "chapterId": "chapter2",
+                "chapterOrder": 2,
+                "chapterTitle": "Image Processing Techniques",
+                "chapterContent": [
+                    {
+                        "lectureId": "lecture4",
+                        "lectureTitle": "Color Spaces and Conversions",
+                        "lectureDuration": 20,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 1
+                    },
+                    {
+                        "lectureId": "lecture5",
+                        "lectureTitle": "Image Filtering and Smoothing",
+                        "lectureDuration": 16,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 2
+                    },
+                    {
+                        "lectureId": "lecture6",
+                        "lectureTitle": "Edge Detection and Gradients",
+                        "lectureDuration": 22,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 3
+                    }
+                ]
+            },
+            {
+                "chapterId": "chapter3",
+                "chapterOrder": 3,
+                "chapterTitle": "Feature Detection and Matching",
+                "chapterContent": [
+                    {
+                        "lectureId": "lecture7",
+                        "lectureTitle": "Corner Detection",
+                        "lectureDuration": 19,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 1
+                    },
+                    {
+                        "lectureId": "lecture8",
+                        "lectureTitle": "SIFT and SURF Features",
+                        "lectureDuration": 25,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 2
+                    },
+                    {
+                        "lectureId": "lecture9",
+                        "lectureTitle": "Feature Matching Techniques",
+                        "lectureDuration": 21,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 3
+                    }
+                ]
+            },
+            {
+                "chapterId": "chapter4",
+                "chapterOrder": 4,
+                "chapterTitle": "Face Detection and Recognition",
+                "chapterContent": [
+                    {
+                        "lectureId": "lecture10",
+                        "lectureTitle": "Haar Cascade Classifiers",
+                        "lectureDuration": 17,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 1
+                    },
+                    {
+                        "lectureId": "lecture11",
+                        "lectureTitle": "Face Detection Implementation",
+                        "lectureDuration": 23,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 2
+                    },
+                    {
+                        "lectureId": "lecture12",
+                        "lectureTitle": "Building a Face Recognition System",
+                        "lectureDuration": 28,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 3
+                    }
+                ]
+            }
+        ],
+        "educator": "675ac1512100b91a6d9b8b24",
+        "enrolledStudents": [],
+        "courseRatings": [],
+        "createdAt": "2024-12-17T08:16:53.622Z",
+        "updatedAt": "2025-01-02T04:47:44.701Z",
+        "__v": 0,
+        "courseThumbnail": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=250&fit=crop&crop=center",
+        "progress": { "completedLectures": 0, "totalLectures": 12 },
+        "isFree": true
+    },
+    {
         "_id": "605c72efb3f1c2b1f8e4e1a1",
         "courseTitle": "Introduction to JavaScript",
         "courseDescription": "<h2>Learn the Basics of JavaScript</h2><p>JavaScript is a versatile programming language that powers the web. In this course, you will learn the fundamentals of JavaScript, including syntax, data types, and control structures.</p><p>This course is perfect for beginners who want to start their journey in web development. By the end of this course, you will be able to create interactive web pages and understand the core concepts of JavaScript.</p><ul><li>Understand the basics of programming</li><li>Learn how to manipulate the DOM</li><li>Create dynamic web applications</li></ul>",
