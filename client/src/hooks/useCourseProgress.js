@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '@clerk/clerk-react';
+import { useAuth } from '../context/AuthContext.jsx';
 import { apiService } from '../services/api.js';
 
 export const useCourseProgress = (courseId) => {

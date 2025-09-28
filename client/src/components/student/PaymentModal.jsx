@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { apiService } from '../../services/api.js';
-import { useAuth } from '@clerk/clerk-react';
+import { useAuth } from '../../context/AuthContext.jsx';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 

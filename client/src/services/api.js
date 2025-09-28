@@ -12,18 +12,16 @@ const api = axios.create({
 
 // Request interceptor to add auth token
 api.interceptors.request.use(
-  async (config) => {
-    // For Clerk, we need to ensure the session cookie is included
-    config.withCredentials = true;
-    
+  (config) => {
     // Add Authorization header with Bearer token if available
-    try {
-      const token = await window.Clerk?.session?.getToken();
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    } catch (error) {
-      console.log('No Clerk token available');
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    
+    // For FormData, let the browser set the Content-Type automatically
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
     }
     
     return config;
@@ -40,10 +38,9 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized access - don't redirect automatically
-      console.warn('Unauthorized access detected, but not redirecting');
-      // Only redirect if explicitly needed
-      // window.location.href = '/';
+      // Handle unauthorized access - clear token and redirect to login
+      localStorage.removeItem('token');
+      window.location.href = '/login';
     }
     return Promise.reject(error);
   }
@@ -53,6 +50,14 @@ api.interceptors.response.use(
 
 // API endpoints
 export const API_ENDPOINTS = {
+  // Auth endpoints
+  AUTH: {
+    LOGIN: '/auth/login',
+    REGISTER: '/auth/register',
+    EDUCATOR_LOGIN: '/auth/educator-login',
+    ME: '/auth/me',
+  },
+  
   // Course endpoints
   COURSES: {
     ALL: '/course/all',
@@ -92,6 +97,29 @@ export const API_ENDPOINTS = {
 
 // API service functions
 export const apiService = {
+  // Auth services
+  auth: {
+    login: async (data) => {
+      const response = await api.post(API_ENDPOINTS.AUTH.LOGIN, data);
+      return response.data;
+    },
+    
+    register: async (data) => {
+      const response = await api.post(API_ENDPOINTS.AUTH.REGISTER, data);
+      return response.data;
+    },
+    
+    educatorLogin: async (data) => {
+      const response = await api.post(API_ENDPOINTS.AUTH.EDUCATOR_LOGIN, data);
+      return response.data;
+    },
+    
+    getMe: async () => {
+      const response = await api.get(API_ENDPOINTS.AUTH.ME);
+      return response.data;
+    },
+  },
+  
   // Course services
   courses: {
     getAll: async () => {

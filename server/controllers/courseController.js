@@ -1,21 +1,26 @@
 import Course from "../models/Course.js";
-
 // get all courses 
 
 export const getAllCourses = async (req,res)=>{
     try {
-        let courses = await Course.find({
-            isPublished:true
-        }).select(['-courseContent','-enrolledStudents']).populate({path:'educator'})
+        // let courses = await Course.find({
+        //     isPublished:true
+        // }).select(['-courseContent','-enrolledStudents']).populate({path:'educator'})
 
-        // If no courses exist, create some demo courses
-        if (courses.length === 0) {
-            console.log('No courses found, creating demo courses...');
-            await createDemoCourses();
-            courses = await Course.find({
-                isPublished:true
-            }).select(['-courseContent','-enrolledStudents']).populate({path:'educator'})
-        }
+        // // If no courses exist, create some demo courses
+        // if (courses.length === 0) {
+        //     console.log('No courses found, creating demo courses...');
+        //     await createDemoCourses();
+        //     courses = await Course.find({
+        //         isPublished:true
+        //     }).select(['-courseContent','-enrolledStudents']).populate({path:'educator'})
+        // }
+
+        const courses = await Course.find({})
+        console.log(courses)
+
+
+
 
         res.json({success: true, courses})
     } catch (error) {

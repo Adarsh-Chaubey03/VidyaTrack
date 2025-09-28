@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { useClerk, UserButton, useUser } from '@clerk/clerk-react';
-import { Menu, Bell, X, Home } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext.jsx';
+import { Menu, Bell, X, Home, User, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { assets } from '../../assets/assets';
 import MyEnrollment from '../../pages/student/MyEnrollment';  
@@ -12,8 +12,7 @@ function Navbar() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const isCourseListPage = pathname.includes('/course-list');
-  const { openSignIn, openSignUp } = useClerk();
-  const { user } = useUser();
+  const { user, logout, isAuthenticated } = useAuth();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
@@ -77,11 +76,21 @@ function Navbar() {
           </div>
         </div>
         <div className="flex items-center gap-2 sm:gap-4">
-          {!user && (
+          {!isAuthenticated() ? (
             <>
-              <button onClick={() => openSignIn()} className="border border-white text-white font-bold text-sm sm:text-base rounded-full px-3 py-1 sm:px-6 sm:py-1 cursor-pointer bg-transparent hover:bg-white hover:text-emerald-600 transition">Login</button>
-              <button onClick={() => openSignUp()} className="border border-white text-white font-bold text-sm sm:text-base rounded-full px-3 py-1 sm:px-6 sm:py-1 cursor-pointer bg-transparent hover:bg-white hover:text-emerald-600 transition">Signup</button>
+              <button onClick={() => navigate('/login')} className="border border-white text-white font-bold text-sm sm:text-base rounded-full px-3 py-1 sm:px-6 sm:py-1 cursor-pointer bg-transparent hover:bg-white hover:text-emerald-600 transition">Login</button>
+              <button onClick={() => navigate('/signup')} className="border border-white text-white font-bold text-sm sm:text-base rounded-full px-3 py-1 sm:px-6 sm:py-1 cursor-pointer bg-transparent hover:bg-white hover:text-emerald-600 transition">Signup</button>
             </>
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="text-white text-sm">Welcome, {user?.name}</span>
+              <button 
+                onClick={logout}
+                className="border border-white text-white font-bold text-sm sm:text-base rounded-full px-3 py-1 sm:px-6 sm:py-1 cursor-pointer bg-transparent hover:bg-white hover:text-emerald-600 transition"
+              >
+                Logout
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -95,7 +104,7 @@ function Navbar() {
           </Link>
         </div>
         <div className='hidden md:flex flex-1 justify-center items-center gap-6 text-gray-700'>
-          {user && <NavLink to="/my-enrollment" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>My Enrollment</NavLink>}
+          {isAuthenticated() && <NavLink to="/my-enrollment" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>My Enrollment</NavLink>}
           <NavLink to="/course-list" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Courses</NavLink>
           <NavLink to="/mentor" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Mentor</NavLink>
           <NavLink to="/resumereview" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Resume</NavLink>
@@ -106,7 +115,16 @@ function Navbar() {
             <Bell />
             <span className='absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full'></span>
           </button>
-          {user && <UserButton />}
+          {isAuthenticated() && (
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-sm">
+                {user?.name?.charAt(0)?.toUpperCase()}
+              </div>
+              <button onClick={logout} className="text-gray-700 hover:text-emerald-600">
+                <LogOut size={20} />
+              </button>
+            </div>
+          )}
         </div>
         <div className='hidden md:flex items-center gap-4'>
           {/* No Login/Signup on white bar when not logged in */}
@@ -131,9 +149,21 @@ function Navbar() {
             <button onClick={toggleMobileMenu} className='self-end'><X /></button>
             {/* Centered profile icon on mobile */}
             <div className='flex justify-center mb-4'>
-              {user ? <UserButton afterSignOutUrl='/' /> : <div className='w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-lg'>I</div>}
+              {isAuthenticated() ? (
+                <div className="flex flex-col items-center gap-2">
+                  <div className='w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-lg'>
+                    {user?.name?.charAt(0)?.toUpperCase()}
+                  </div>
+                  <span className="text-sm text-gray-600">{user?.name}</span>
+                  <button onClick={() => { logout(); toggleMobileMenu(); }} className="text-red-600 text-sm">
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <div className='w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-lg'>I</div>
+              )}
             </div>
-            {user && <Link to="/my-enrollment" onClick={toggleMobileMenu}>My Enrollment</Link>}
+            {isAuthenticated() && <Link to="/my-enrollment" onClick={toggleMobileMenu}>My Enrollment</Link>}
             <Link to="/course-list" onClick={toggleMobileMenu}>Courses</Link>
             <Link to="/mentor" onClick={toggleMobileMenu}>Mentor</Link>
             <Link to="/resumereview" onClick={toggleMobileMenu}>Resume</Link>

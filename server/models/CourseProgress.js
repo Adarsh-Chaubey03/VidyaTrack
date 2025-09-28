@@ -16,7 +16,7 @@ const chapterProgressSchema = new mongoose.Schema({
 }, { _id: false });
 
 const courseProgressSchema = new mongoose.Schema({
-    userId: { type: String, ref: 'User', required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
     progressPercentage: { type: Number, default: 0, min: 0, max: 100 },
     totalLectures: { type: Number, default: 0 },

@@ -23,6 +23,10 @@ import ExploreProfessionals from './pages/student/ExploreProfessionals';
 import PaymentSuccess from './pages/student/PaymentSuccess';
 import ContactUs from './pages/student/ContactUs';
 import MentorProfile from './pages/student/MentorProfile';
+import Login from './components/auth/Login';
+import Signup from './components/auth/Signup';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import TestAuth from './pages/TestAuth';
 
 const App = () => {
   const location = useLocation();
@@ -39,8 +43,16 @@ const App = () => {
         <Route path='/course-list' element={<CourseList />} />
         <Route path='/course-list/:input' element={<CourseList />} />
         <Route path='/course/:id' element={<CourseDetails />} />
-        <Route path='/my-enrollment' element={<MyEnrollment/>}/>
-        <Route path='/player/:courseId' element={<Player />} />
+        <Route path='/my-enrollment' element={
+          <ProtectedRoute>
+            <MyEnrollment />
+          </ProtectedRoute>
+        } />
+        <Route path='/player/:courseId' element={
+          <ProtectedRoute>
+            <Player />
+          </ProtectedRoute>
+        } />
         <Route path='/loading/:path' element={<Loading />} />
         <Route path='/mentor' element={<Mentor />} />
         <Route path='/resumereview' element={<ResumeReview />} />
@@ -53,8 +65,17 @@ const App = () => {
         <Route path='/contact' element={<ContactUs />} />
         <Route path='/mentor/:id' element={<MentorProfile />} />
 
+        {/* Auth Routes */}
+        <Route path='/login' element={<Login />} />
+        <Route path='/signup' element={<Signup />} />
+        <Route path='/test-auth' element={<TestAuth />} />
+
         {/* Educator Routes with Authentication Check */}
-        <Route path='/educator' element={<Educator />}>
+        <Route path='/educator' element={
+          <ProtectedRoute requireEducator={true}>
+            <Educator />
+          </ProtectedRoute>
+        }>
           <Route element={<EducatorLayout />}>
             <Route index element={<Dashboard />} />
             <Route path='my-courses' element={<MyCourses />} />

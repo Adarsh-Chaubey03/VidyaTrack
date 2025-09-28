@@ -1,11 +1,12 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { assets, dummyEducatorData } from '../../assets/assets'
-import { UserButton, useUser } from '@clerk/clerk-react'
+import { useAuth } from '../../context/AuthContext.jsx'
+import { LogOut } from 'lucide-react'
 
 function Navbar({ afterSignOutUrl }) {
     const educatorData = dummyEducatorData
-    const { user } = useUser()
+    const { user, logout, isAuthenticated } = useAuth()
     const location = useLocation();
     const isEducator = location.pathname.startsWith('/educator');
     
@@ -31,8 +32,19 @@ function Navbar({ afterSignOutUrl }) {
           </div>
         </div>
         <div className='flex items-center gap-5 text-gray-500'>
-            <p>Hi! {user ? user.fullName : 'Educator'}</p>
-            {user ? <UserButton afterSignOutUrl="/educator" /> : <img src={assets.profile_img} className='w-10 h-10 rounded-full' alt="Profile" />}
+            <p>Hi! {isAuthenticated() ? user?.name : 'Educator'}</p>
+            {isAuthenticated() ? (
+                <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-sm">
+                        {user?.name?.charAt(0)?.toUpperCase()}
+                    </div>
+                    <button onClick={logout} className="text-gray-700 hover:text-emerald-600">
+                        <LogOut size={20} />
+                    </button>
+                </div>
+            ) : (
+                <img src={assets.profile_img} className='w-10 h-10 rounded-full' alt="Profile" />
+            )}
         </div>
        </div> 
     )

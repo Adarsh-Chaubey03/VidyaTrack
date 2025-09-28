@@ -1,48 +1,51 @@
-import { clerkClient } from '@clerk/express'
-import Course from '../models/Course.js'
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 
 // General authentication middleware
 export const protect = async (req, res, next) => {
     try {
-        console.log('🔍 Auth middleware - Headers:', {
-            authorization: req.headers.authorization,
-            cookie: req.headers.cookie ? 'Present' : 'Not present'
-        });
+        let token;
         
-        const userId = req.auth?.userId || req.auth?.()?.userId
-        console.log('🔍 Auth middleware - User ID:', userId);
+        // Check for token in Authorization header
+        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+            token = req.headers.authorization.split(' ')[1];
+        }
         
-        if (!userId) {
-            console.log('❌ Auth middleware - No user ID found');
-            return res.status(401).json({ success: false, message: 'Not authorized, no token' })
+        if (!token) {
+            return res.status(401).json({ success: false, message: 'Not authorized, no token' });
         }
 
-        const response = await clerkClient.users.getUser(userId)
-        req.user = response
-        console.log('✅ Auth middleware - User authenticated:', userId);
-        next()
+        // Verify token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret_key');
+        
+        // Get user from database
+        const user = await User.findById(decoded.id).select('-password');
+        if (!user) {
+            return res.status(401).json({ success: false, message: 'User not found' });
+        }
+
+        req.user = user;
+        next();
     } catch (error) {
         console.log('❌ Auth middleware - Error:', error.message);
-        res.status(401).json({ success: false, message: 'Not authorized, token failed' })
+        res.status(401).json({ success: false, message: 'Not authorized, token failed' });
     }
 }
 
-// Middleware (Protect Educator Routes)
-export const protectEducator = async (req,res,next)=>{
-    try{
-        const userId = req.auth?.userId || req.auth?.()?.userId
-        const response = await clerkClient.users.getUser(userId)
+// Middleware to protect educator routes
+export const protectEducator = async (req, res, next) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ success: false, message: 'Authentication required' });
+        }
 
-         if(response.publicMetadata.role !== 'educator'){
-            return res.json({success: false, message: 'Unauthorized Access'})
-         }
+        if (req.user.role !== 'educator') {
+            return res.status(403).json({ success: false, message: 'Unauthorized Access - Educator role required' });
+        }
 
-         next()
-
-    } catch(error){
-
-        res.json({succes:false , message: error.message})  
-
+        next();
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
     }
 }
 

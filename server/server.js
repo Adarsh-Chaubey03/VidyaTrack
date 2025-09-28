@@ -2,13 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import 'dotenv/config'
 import connectDB from './configs/mongodb.js';
-import { clerkWebhooks } from './controllers/webhook.js';
 import educatorRouter from './routes/educatorRoutes.js';
-import { clerkMiddleware } from '@clerk/express';
 import connectCloudinary from './configs/cloudinary.js';
 import courseRouter from './routes/courseRoutes.js';
 import courseProgressRouter from './routes/courseProgressRoutes.js';
 import userRouter from './routes/userRoutes.js';
+import authRouter from './routes/authRoutes.js';
 import { stripeWebhook } from './controllers/userController.js';
 
 //initialize express app
@@ -43,16 +42,8 @@ app.use(cors({
   credentials: true
 }))
 
-// Clerk middleware (only if CLERK_SECRET_KEY is available)
-if (process.env.CLERK_SECRET_KEY) {
-    app.use(clerkMiddleware({
-        secretKey: process.env.CLERK_SECRET_KEY,
-        publishableKey: process.env.CLERK_PUBLISHABLE_KEY
-    }))
-    console.log('✅ Clerk authentication configured');
-} else {
-    console.warn('⚠️  CLERK_SECRET_KEY not found. Authentication will be disabled.');
-}
+// Authentication middleware will be applied per route as needed
+console.log('✅ Custom authentication system configured');
 
 // Stripe webhook route (needs raw body)
 app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), stripeWebhook)
@@ -74,8 +65,6 @@ app.get('/api/test', (req, res) => {
     res.json({
         message: "API is working",
         timestamp: new Date().toISOString(),
-        auth: req.auth ? "Auth available" : "No auth",
-        authUserId: req.auth?.userId || req.auth?.()?.userId || "No user ID",
         headers: req.headers,
         url: req.url
     })
@@ -108,17 +97,16 @@ app.get('/api/auth-test', (req, res) => {
     res.json({
         message: "Auth test endpoint",
         timestamp: new Date().toISOString(),
-        auth: req.auth ? "Auth available" : "No auth",
-        authUserId: req.auth?.userId || req.auth?.()?.userId || "No user ID",
         cookies: req.headers.cookie ? "Cookies present" : "No cookies",
         authorization: req.headers.authorization ? "Authorization header present" : "No authorization header",
         userAgent: req.headers['user-agent']
     })
 })
 
-app.post('/clerk', express.json(), clerkWebhooks)
+// Auth routes
+app.use('/api/auth', authRouter)
 
-// Test endpoint to manually verify Clerk token
+// Test endpoint to manually verify JWT token
 app.get('/api/test-token', async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
