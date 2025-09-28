@@ -1,17 +1,17 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Preview from './Preview'
-import { useUser } from '@clerk/clerk-react'
+import { useAuth } from '../../context/AuthContext.jsx'
 
 function Educator() {
-    const { user } = useUser();
+    const { user, isAuthenticated, isEducator } = useAuth();
 
-    if (!user) {
-        // Not logged in: show only the Preview page
+    if (!isAuthenticated() || !isEducator()) {
+        // Not logged in or not an educator: show only the Preview page
         return <Preview />;
     }
 
-    // Logged in: show nested educator routes (layout handled by EducatorLayout)
+    // Logged in as educator: show nested educator routes (layout handled by EducatorLayout)
     return <Outlet />;
 }
 

@@ -4,8 +4,7 @@ import { AppContext } from '../../context/AppContext';
 import CourseCard from './CourseCard';
 
 const CourseSection = () => {
-  const { educatorCourses } = useContext(AppContext);
-  const allCourses = educatorCourses;
+  const { allCourses } = useContext(AppContext);
 
   return (
     <div className="py-16 px-0 md:px-0 lg:px-0 text-center bg-gray-50 overflow-x-hidden">

@@ -2,24 +2,28 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.jsx';
 import { AppContextProvider } from './context/AppContext.jsx';
+import { AuthProvider } from './context/AuthContext.jsx';
 import { BrowserRouter } from 'react-router-dom';
-import { ClerkProvider } from '@clerk/clerk-react';
-
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-
-if (!PUBLISHABLE_KEY) {
-  throw new Error('Missing Publishable Key');
-}
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 createRoot(document.getElementById('root')).render(
-  <ClerkProvider 
-    publishableKey={PUBLISHABLE_KEY}
-    navigate={(to) => window.location.href = to}
-  >
-    <BrowserRouter>
+  <BrowserRouter>
+    <AuthProvider>
       <AppContextProvider>
         <App />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </AppContextProvider>
-    </BrowserRouter>
-  </ClerkProvider>
+    </AuthProvider>
+  </BrowserRouter>
 );

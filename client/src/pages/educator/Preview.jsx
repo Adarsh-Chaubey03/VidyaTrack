@@ -1,18 +1,17 @@
 import React from 'react'
-import { useUser, useClerk } from '@clerk/clerk-react';
+import { useAuth } from '../../context/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
 import { assets } from '../../assets/assets';
 
 function Preview() {
-    const { user } = useUser();
-    const { openSignIn } = useClerk();
+    const { user, isAuthenticated, isEducator } = useAuth();
     const navigate = useNavigate();
 
     const handleGetStarted = () => {
-        if (user) {
+        if (isAuthenticated() && isEducator()) {
             navigate('/educator');
         } else {
-            openSignIn();
+            navigate('/login');
         }
     };
 

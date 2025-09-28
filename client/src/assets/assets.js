@@ -142,8 +142,16 @@ export const dummyTestimonial = [
 ];
 
 export const dummyDashboardData = {
-    "totalEarnings": 707.38,
+    "totalEarnings": 1157.38,
     "enrolledStudentsData": [
+        {
+            "courseTitle": "Learning Path",
+            "student": {
+                "_id": "user_2qQlvXyr02B4Bq6hT0Gvaa5fT9V",
+                "name": "Great Stack",
+                "imageUrl": "https://img.clerk.com/eyJ0eXBlIjoicHJveHkiLCJzcmMiOiJodHRwczovL2ltYWdlcy5jbGVyay5kZXYvb2F1dGhfZ29vZ2xlL2ltZ18ycVFsdmFMSkw3ckIxNHZMU2o4ZURWNEtmR2IifQ"
+            }
+        },
         {
             "courseTitle": "Introduction to JavaScript",
             "student": {
@@ -185,7 +193,7 @@ export const dummyDashboardData = {
             }
         }
     ],
-    "totalCourses": 8
+    "totalCourses": 9
 }
 
 export const dummyStudentEnrolled = [
@@ -224,6 +232,15 @@ export const dummyStudentEnrolled = [
         },
         "courseTitle": "Web Development Bootcamp",
         "purchaseDate": "2024-12-20T11:04:48.798Z"
+    },
+    {
+        "student": {
+            "_id": "user_2qQlvXyr02B4Bq6hT0Gvaa5fT9V",
+            "name": "GreatStack",
+            "imageUrl": "https://img.clerk.com/eyJ0eXBlIjoicHJveHkiLCJzcmMiOiJodHRwczovL2ltYWdlcy5jbGVyay5kZXYvb2F1dGhfZ29vZ2xlL2ltZ18ycVFsdmFMSkw3ckIxNHZMU2o4ZURWNEtmR2IifQ"
+        },
+        "courseTitle": "Learning Path",
+        "purchaseDate": "2025-01-27T16:30:00.000Z"
     }
 ]
 
@@ -1035,6 +1052,71 @@ export const dummyCourses = [
         "__v": 1,
         "courseThumbnail": "https://img.youtube.com/vi/WbV3zRgpw_E/maxresdefault.jpg",
         "progress": { "completedLectures": 0, "totalLectures": 10 }
+    },
+    {
+        "_id": "course_learning_path_001",
+        "courseTitle": "Learning Path",
+        "courseDescription": "<h2>Master Your Learning Journey</h2><p>Discover the most effective learning strategies and techniques to accelerate your personal and professional growth. This comprehensive course covers everything from setting learning goals to implementing advanced study methods.</p><p>Perfect for students, professionals, and lifelong learners who want to optimize their learning process and achieve better results in less time.</p><ul><li>Develop effective learning strategies</li><li>Master time management for learning</li><li>Build sustainable learning habits</li><li>Apply advanced study techniques</li></ul>",
+        "coursePrice": 450,
+        "isPublished": true,
+        "discount": 0,
+        "courseContent": [
+            {
+                "chapterId": "chapter1",
+                "chapterOrder": 1,
+                "chapterTitle": "Learning Fundamentals",
+                "chapterContent": [
+                    {
+                        "lectureId": "lecture1",
+                        "lectureTitle": "Introduction to Effective Learning",
+                        "lectureDuration": 20,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": true,
+                        "lectureOrder": 1
+                    },
+                    {
+                        "lectureId": "lecture2",
+                        "lectureTitle": "Setting Learning Goals",
+                        "lectureDuration": 18,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": false,
+                        "lectureOrder": 2
+                    }
+                ]
+            },
+            {
+                "chapterId": "chapter2",
+                "chapterOrder": 2,
+                "chapterTitle": "Advanced Study Techniques",
+                "chapterContent": [
+                    {
+                        "lectureId": "lecture3",
+                        "lectureTitle": "Active Learning Methods",
+                        "lectureDuration": 25,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": false,
+                        "lectureOrder": 1
+                    },
+                    {
+                        "lectureId": "lecture4",
+                        "lectureTitle": "Memory Enhancement Techniques",
+                        "lectureDuration": 22,
+                        "lectureUrl": "https://youtu.be/dQw4w9WgXcQ",
+                        "isPreviewFree": false,
+                        "lectureOrder": 2
+                    }
+                ]
+            }
+        ],
+        "educator": "68d809a53de9fea98afb8a08",
+        "enrolledStudents": [],
+        "courseRatings": [],
+        "createdAt": "2025-01-27T16:30:00.000Z",
+        "updatedAt": "2025-01-27T16:30:00.000Z",
+        "__v": 0,
+        "courseThumbnail": "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=250&fit=crop&crop=center",
+        "progress": { "completedLectures": 0, "totalLectures": 4 },
+        "isFree": false
     }
 ]
 

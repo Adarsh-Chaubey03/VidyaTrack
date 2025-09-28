@@ -1,6 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
+import { apiService } from '../../services/api.js'
+import DebugAuth from '../../components/DebugAuth.jsx'
+import { AppContext } from '../../context/AppContext.jsx'
 
 function AddCourse() {
+    const { refreshCourses, refreshEducatorCourses } = useContext(AppContext);
     const [form, setForm] = useState({
         title: '',
         description: '',
@@ -20,6 +24,11 @@ function AddCourse() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Debug: Check authentication status
+        console.log('Token in localStorage:', localStorage.getItem('token'));
+        console.log('User in localStorage:', localStorage.getItem('user'));
+        
         const formData = new FormData();
         const courseData = {
             courseTitle: form.title,
@@ -30,27 +39,36 @@ function AddCourse() {
         };
         formData.append('courseData', JSON.stringify(courseData));
         formData.append('thumbnail', form.thumbnail);
+        
+        console.log('Sending course data:', courseData);
+        console.log('Thumbnail file:', form.thumbnail);
+        console.log('FormData entries:');
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
+        
         try {
-            const res = await fetch('http://localhost:5000/api/educator/add-course', {
-                method: 'POST',
-                body: formData,
-                credentials: 'include',
-            });
-            const data = await res.json();
+            const data = await apiService.educator.addCourse(formData);
+            console.log('Response from server:', data);
             if (data.success) {
                 setSuccess(true);
                 setForm({ title: '', description: '', price: '', thumbnail: null });
+                // Refresh courses to show the new course
+                refreshCourses();
+                refreshEducatorCourses();
                 setTimeout(() => setSuccess(false), 3000);
             } else {
                 alert(data.message || 'Failed to add course');
             }
         } catch (err) {
+            console.error('Error details:', err);
             alert('Error adding course: ' + err.message);
         }
     };
 
     return (
         <div className="w-full max-w-2xl mx-auto p-4">
+            <DebugAuth />
             <h1 className="text-2xl font-bold mb-6">Add New Course</h1>
             <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-6 flex flex-col gap-5">
                 <div>
