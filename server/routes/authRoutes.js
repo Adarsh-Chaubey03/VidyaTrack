@@ -137,14 +137,14 @@ export const educatorLogin = async (req, res) => {
         const { email, password } = req.body;
 
         // Check for specific educator credentials
-        if (email === 'aditya@gmail.com' && password === '12345678') {
+        if (email === 'teacher@gmail.com' && password === '12345678') {
             // Check if educator user exists, if not create one
             let educator = await User.findOne({ email });
             
             if (!educator) {
                 educator = await User.create({
-                    name: 'Aditya Educator',
-                    email: 'aditya@gmail.com',
+                    name: 'The Educator',
+                    email: 'teacher@gmail.com',
                     password: '12345678',
                     role: 'educator',
                     imageUrl: 'https://via.placeholder.com/150'
