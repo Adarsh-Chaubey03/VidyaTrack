@@ -1,20 +1,17 @@
-  {
+{
     "version": 2,
     "builds": [
-        {
-            "src": "server.js",
-            "use": "@vercel/node",
-            "config": {
-                "includeFiles": [
-                    "dist/**"
-                ]
-            }
-        } 
+        { "src": "server.js", "use": "@vercel/node" }
     ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "server.js"
+    "functions": {
+        "server.js": {
+            "memory": 1024,
+            "maxDuration": 15
         }
+    },
+    "routes": [
+        { "src": "/api/stripe/webhook", "dest": "server.js" },
+        { "src": "/api/(.*)", "dest": "server.js" },
+        { "src": "/(.*)", "dest": "server.js" }
     ]
 }
