@@ -34,6 +34,7 @@ function Player() {
   const [expandedChapter, setExpandedChapter] = useState(null); // null or index
   const [courseRating, setCourseRating] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [progressMap, setProgressMap] = useState({}); // keys: `${chapterId}_${lectureId}` => true
 
   useEffect(() => {
     getCourseData();
@@ -50,6 +51,100 @@ function Player() {
       }
     }
   }, [courseData]);
+
+  // Load progress for this course (backend if available, fallback to localStorage)
+  useEffect(() => {
+    let mounted = true
+    const loadProgress = async () => {
+      if (!courseId || !userId) return
+      // local key
+      const localKey = `vt_progress_${userId}_${courseId}`
+      // start with local copy
+      let local = {}
+      try { local = JSON.parse(localStorage.getItem(localKey) || '{}') || {} } catch(e) { local = {} }
+
+      // try backend
+      try {
+        const res = await apiService.progress.get(userId, courseId)
+        if (res?.success && res.progress) {
+          // backend may include a list of completed lecture ids
+          const p = res.progress
+          // support multiple shapes
+          let ids = []
+          if (Array.isArray(p.completedLectureIds)) {
+            ids = p.completedLectureIds
+          } else if (Array.isArray(p.completedLecturesList)) {
+            ids = p.completedLecturesList
+          } else if (p.completedByChapter) {
+            // object shape { chapterId: [lectureId,...] }
+            ids = Object.entries(p.completedByChapter).flatMap(([ch, arr]) => arr.map(l => `${ch}_${l}`))
+          }
+          const map = { ...(local.completed || {}) }
+          ids.forEach(id => {
+            // if id already encoded as chapter_lecture keep, otherwise assume it's an object-like string
+            if (typeof id === 'string' && id.includes('_')) map[id] = true
+            else if (id && typeof id === 'object' && id.chapterId !== undefined && id.lectureId !== undefined) map[`${id.chapterId}_${id.lectureId}`] = true
+          })
+          if (mounted) setProgressMap(map)
+          // merge back to local storage for offline fallback
+          try { localStorage.setItem(localKey, JSON.stringify({ completed: map })) } catch (e) {}
+          return
+        }
+      } catch (e) {
+        // ignore backend errors and keep local
+      }
+
+      // fallback: use local stored completed map
+      if (local && local.completed) {
+        if (mounted) setProgressMap(local.completed)
+      }
+    }
+    loadProgress()
+    return () => { mounted = false }
+  }, [userId, courseId])
+
+  // Try to sync any pending local progress entries for this course to the backend when possible
+  useEffect(() => {
+    let mounted = true
+    const trySyncPending = async () => {
+      if (!userId || !courseId) return
+      const localKey = `vt_progress_${userId}_${courseId}`
+      let store = {}
+      try { store = JSON.parse(localStorage.getItem(localKey) || '{}') || {} } catch (e) { store = {} }
+      const pending = store.pending || {}
+      const keys = Object.keys(pending)
+      if (!keys.length) return
+      for (const k of keys) {
+        const [chId, lecId] = k.split('_')
+        try {
+          await apiService.progress.updateLecture(userId, courseId, chId, lecId, { isCompleted: !!store.completed?.[k] })
+          // clear pending for this key
+          try {
+            const s2 = JSON.parse(localStorage.getItem(localKey) || '{}') || { completed: {}, pending: {} }
+            if (s2.pending) delete s2.pending[k]
+            localStorage.setItem(localKey, JSON.stringify(s2))
+            // notify dashboard to refresh
+            try { window.dispatchEvent(new CustomEvent('vt_progressUpdated', { detail: { courseId } })) } catch(e) {}
+          } catch (e) {}
+        } catch (err) {
+          // leave pending for later retry
+          console.error('Pending sync failed for', k, err)
+        }
+      }
+    }
+    trySyncPending()
+    return () => { mounted = false }
+  }, [userId, courseId])
+
+  // keep isCompleted in sync with current lecture
+  useEffect(() => {
+    if (!currentLecture) return
+    const chapter = courseData?.courseContent?.[currentChapter]
+    const chapterId = chapter?._id ?? currentChapter
+    const lectureId = currentLecture?._id ?? currentLectureIndex
+    const key = `${chapterId}_${lectureId}`
+    setIsCompleted(!!progressMap[key])
+  }, [currentLecture, currentChapter, currentLectureIndex, progressMap, courseData])
 
   const getCourseData = () => {
     setLoading(true);
@@ -236,32 +331,60 @@ function Player() {
               <div className="mt-4">
                 <button
                   onClick={async () => {
-                    const next = !isCompleted;
+                    const chapter = courseData?.courseContent?.[currentChapter];
+                    const chapterId = chapter?._id ?? currentChapter;
+                    const lectureId = currentLecture?._id ?? currentLectureIndex;
+                    if (chapterId === undefined || lectureId === undefined) return;
+
+                    const key = `${chapterId}_${lectureId}`;
+                    const next = !Boolean(progressMap[key]);
+
+                    // optimistic update
+                    const newMap = { ...progressMap, ...(next ? { [key]: true } : {}) };
+                    if (!next) delete newMap[key];
+                    setProgressMap(newMap);
                     setIsCompleted(next);
+
+                    const localKey = `vt_progress_${userId}_${courseId}`;
+                    // write optimistic state to localStorage immediately and mark as pending sync
                     try {
-                      const chapter = courseData?.courseContent?.[currentChapter];
-                      const chapterId = chapter?._id ?? currentChapter;
-                      const lectureId = currentLecture?._id ?? currentLectureIndex;
-                      if (userId && chapterId !== undefined && lectureId !== undefined) {
-                        await apiService.progress.updateLecture(
-                          userId,
-                          courseId,
-                          chapterId,
-                          lectureId,
-                          { isCompleted: next }
-                        );
-                      }
+                      const s = JSON.parse(localStorage.getItem(localKey) || '{}') || { completed: {}, pending: {} };
+                      s.completed = { ...(s.completed || {}), ...newMap };
+                      s.pending = { ...(s.pending || {}) };
+                      s.pending[key] = true;
+                      localStorage.setItem(localKey, JSON.stringify(s));
                     } catch (e) {
-                      // revert on error
-                      setIsCompleted(!next);
-                      console.error('Failed to update completion status', e);
+                      // ignore storage errors
                     }
+
+                    // attempt backend sync; do not remove local completed on error so refresh preserves user's action
+                    (async () => {
+                      try {
+                        if (userId) {
+                          await apiService.progress.updateLecture(userId, courseId, chapterId, lectureId, { isCompleted: next });
+                        }
+                        // on success, clear pending flag for this key
+                        try {
+                          const s2 = JSON.parse(localStorage.getItem(localKey) || '{}') || { completed: {}, pending: {} };
+                          if (s2.pending) delete s2.pending[key];
+                          s2.completed = { ...(s2.completed || {}), ...newMap };
+                          localStorage.setItem(localKey, JSON.stringify(s2));
+                        } catch (e) {}
+                        try { window.dispatchEvent(new CustomEvent('vt_progressUpdated', { detail: { courseId } })); } catch (e) {}
+                      } catch (err) {
+                        // keep pending flag so sync can be retried later
+                        try {
+                          const s3 = JSON.parse(localStorage.getItem(localKey) || '{}') || { completed: {}, pending: {} };
+                          s3.completed = { ...(s3.completed || {}), ...newMap };
+                          s3.pending = { ...(s3.pending || {}) };
+                          s3.pending[key] = true;
+                          localStorage.setItem(localKey, JSON.stringify(s3));
+                        } catch (e) {}
+                        console.error('Failed to sync progress to server', err);
+                      }
+                    })();
                   }}
-                  className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
-                    isCompleted 
-                      ? 'bg-green-500 text-white hover:bg-green-600' 
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
+                  className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${isCompleted ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
                 >
                   {isCompleted ? '✓ Completed' : 'Mark as Completed'}
                 </button>

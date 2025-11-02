@@ -23,15 +23,45 @@ const MyDashboard = () => {
             try {
                 const entries = await Promise.all(
                     enrolledCourses.map(async (c) => {
+                        const localKey = `vt_progress_${userId}_${c._id}`
+                        let local = {}
+                        try { local = JSON.parse(localStorage.getItem(localKey) || '{}') || {} } catch(e) { local = {} }
+                        const localCompleted = local.completed || {}
+                        const localPending = local.pending || {}
+
                         try {
                             const res = await apiService.progress.get(userId, c._id)
                             if (res?.success && res.progress) {
-                                return [c._id, res.progress]
+                                const p = res.progress
+                                // normalize backend progress to an array of keys like 'chapterId_lectureId' when possible
+                                let ids = []
+                                if (Array.isArray(p.completedLectureIds)) ids = p.completedLectureIds
+                                else if (p.completedByChapter) ids = Object.entries(p.completedByChapter).flatMap(([ch, arr]) => (Array.isArray(arr) ? arr.map(l => `${ch}_${l}`) : []))
+                                // merge local completed/pending keys so UI reflects user's local actions
+                                const merged = Array.from(new Set([...(ids || []), ...Object.keys(localCompleted || {}), ...Object.keys(localPending || {})]))
+                                const total = c.courseContent?.reduce((sum, ch) => sum + (ch.chapterContent?.length || 0), 0) || 0
+                                const progressObj = {
+                                    completedLectureIds: merged,
+                                    completedLectures: merged.length,
+                                    totalLectures: total,
+                                    progressPercentage: total > 0 ? (merged.length / total) * 100 : 0,
+                                }
+                                return [c._id, progressObj]
                             }
                         } catch (e) {
                             // ignore per-course errors
                         }
-                        return [c._id, null]
+
+                        // fallback: use local storage if backend not available
+                        const mergedLocal = Array.from(new Set([...(Object.keys(local.completed || {})), ...(Object.keys(local.pending || {}))]))
+                        const totalLocal = c.courseContent?.reduce((sum, ch) => sum + (ch.chapterContent?.length || 0), 0) || 0
+                        const fallbackProgress = {
+                            completedLectureIds: mergedLocal,
+                            completedLectures: mergedLocal.length,
+                            totalLectures: totalLocal,
+                            progressPercentage: totalLocal > 0 ? (mergedLocal.length / totalLocal) * 100 : 0,
+                        }
+                        return [c._id, fallbackProgress]
                     })
                 )
                 const map = Object.fromEntries(entries)
@@ -42,6 +72,24 @@ const MyDashboard = () => {
         }
         fetchProgress()
     }, [userId, Array.isArray(enrolledCourses) ? enrolledCourses.map(c => c._id).join(',') : ''])
+
+    // Listen for progress updates from Player (optimistic updates) and refresh that course's progress
+    useEffect(() => {
+        const handler = async (e) => {
+            const updatedCourseId = e?.detail?.courseId
+            if (!updatedCourseId || !userId) return
+            try {
+                const res = await apiService.progress.get(userId, updatedCourseId)
+                if (res?.success) {
+                    setProgressByCourse(prev => ({ ...prev, [updatedCourseId]: res.progress }))
+                }
+            } catch (err) {
+                // ignore
+            }
+        }
+        window.addEventListener('vt_progressUpdated', handler)
+        return () => window.removeEventListener('vt_progressUpdated', handler)
+    }, [userId])
 
 return (
     <div className='bg-gradient-to-br from-slate-50 via-white to-slate-100 min-h-screen flex flex-col'>
@@ -135,9 +183,15 @@ return (
                                         ) : (
                                             enrolledCourses.map((course, index) => {
                                             const p = progressByCourse[course._id]
-                                            const completed = p?.completedLectures ?? 0
-                                            const total = p?.totalLectures ?? 0
-                                            const percent = p?.progressPercentage ?? (total > 0 ? (completed / total) * 100 : 0)
+                                            // compute total from course content reliably
+                                            const total = course.courseContent?.reduce((sum, ch) => sum + (ch.chapterContent?.length || 0), 0) || 0
+                                            let completed = 0
+                                            if (p) {
+                                                if (Array.isArray(p.completedLectureIds)) completed = p.completedLectureIds.length
+                                                else if (typeof p.completedLectures === 'number') completed = p.completedLectures
+                                                else if (p.completedByChapter) completed = Object.values(p.completedByChapter).reduce((a, b) => a + (Array.isArray(b) ? b.length : 0), 0)
+                                            }
+                                            const percent = total > 0 ? (completed / total) * 100 : 0
                                             const status = Math.round(percent) === 100 ? 'Completed' : 'On Going'
                                             return (
                                                 <tr key={index} className='hover:bg-gray-50 transition-colors'>
