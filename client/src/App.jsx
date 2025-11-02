@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import Home from './pages/student/Home';
 import CourseList from './pages/student/CourseList';
-import MyEnrollment from './pages/student/MyEnrollment';
+import MyDashboard from './pages/student/MyDashboard';
 import CourseDetails from './pages/student/CourseDetails';
 import Player from './pages/student/Player';
 import Loading from './components/student/Loading';
@@ -21,6 +21,7 @@ import GenerateResume from './pages/student/GenerateResume';
 import GetReviewed from './pages/student/GetReviewed';
 import ExploreProfessionals from './pages/student/ExploreProfessionals';
 import PaymentSuccess from './pages/student/PaymentSuccess';
+import { Navigate } from 'react-router-dom';
 import ContactUs from './pages/student/ContactUs';
 import MentorProfile from './pages/student/MentorProfile';
 import Login from './components/auth/Login';
@@ -43,9 +44,10 @@ const App = () => {
         <Route path='/course-list' element={<CourseList />} />
         <Route path='/course-list/:input' element={<CourseList />} />
         <Route path='/course/:id' element={<CourseDetails />} />
-        <Route path='/my-enrollment' element={
+        <Route path='/my-enrollment' element={<Navigate to="/my-dashboard" replace />} />
+        <Route path='/my-dashboard' element={
           <ProtectedRoute>
-            <MyEnrollment />
+            <MyDashboard />
           </ProtectedRoute>
         } />
         <Route path='/player/:courseId' element={

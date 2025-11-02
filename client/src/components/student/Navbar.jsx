@@ -4,7 +4,6 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import { Menu, Bell, X, Home, User, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { assets } from '../../assets/assets';
-import MyEnrollment from '../../pages/student/MyEnrollment';  
 import { AppContext } from '../../context/AppContext';
 // import EducatorNavbar from '../educator/Navbar';
 
@@ -104,7 +103,7 @@ function Navbar() {
           </Link>
         </div>
         <div className='hidden md:flex flex-1 justify-center items-center gap-6 text-gray-700'>
-          {isAuthenticated() && <NavLink to="/my-enrollment" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>My Enrollment</NavLink>}
+          {isAuthenticated() && <NavLink to="/my-dashboard" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>My Dashboard</NavLink>}
           <NavLink to="/course-list" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Courses</NavLink>
           <NavLink to="/mentor" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Mentor</NavLink>
           <NavLink to="/resumereview" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Resume</NavLink>
@@ -163,7 +162,7 @@ function Navbar() {
                 <div className='w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-lg'>I</div>
               )}
             </div>
-            {isAuthenticated() && <Link to="/my-enrollment" onClick={toggleMobileMenu}>My Enrollment</Link>}
+            {isAuthenticated() && <Link to="/my-dashboard" onClick={toggleMobileMenu}>My Dashboard</Link>}
             <Link to="/course-list" onClick={toggleMobileMenu}>Courses</Link>
             <Link to="/mentor" onClick={toggleMobileMenu}>Mentor</Link>
             <Link to="/resumereview" onClick={toggleMobileMenu}>Resume</Link>

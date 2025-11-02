@@ -93,10 +93,10 @@ const PaymentSuccess = () => {
 
           <div className="space-y-3">
             <button
-              onClick={() => navigate('/my-enrollment')}
+              onClick={() => navigate('/my-dashboard')}
               className="w-full bg-emerald-500 text-white py-3 rounded-lg font-semibold hover:bg-emerald-600"
             >
-              View My Enrollments
+              View My Dashboard
             </button>
             
             <button

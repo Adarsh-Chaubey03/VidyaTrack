@@ -6,7 +6,6 @@ import humanizeDuration from 'humanize-duration';
 import ReactPlayer from 'react-player';
 import Footer from '../../components/student/Footer';
 import Rating from '../../components/student/Rating';
-import CourseProgress from '../../components/student/CourseProgress';
 
 // Mock data for similar courses
 const similarCourses = [
@@ -255,12 +254,7 @@ function Player() {
             </div>
           </div>
 
-          {/* Course Progress Component */}
-          <div className="bg-white rounded-2xl shadow-md p-4">
-            <CourseProgress courseId={courseId} />
-          </div>
-
-          {/* Feedback Form */}
+          {/* Feedback Form (Course progress section removed per request) */}
           <FeedbackForm />
         </div>
       </div>

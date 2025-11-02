@@ -73,12 +73,10 @@ const CourseProgress = ({ courseId, onProgressUpdate }) => {
         }
     }, [userId, courseId]);
 
+    // While progress is being fetched we intentionally render nothing
+    // to avoid showing a distracting spinner between the player and feedback section.
     if (loading) {
-        return (
-            <div className="flex items-center justify-center p-4">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            </div>
-        );
+        return null;
     }
 
     if (error) {
