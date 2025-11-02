@@ -6,6 +6,8 @@ import humanizeDuration from 'humanize-duration';
 import ReactPlayer from 'react-player';
 import Footer from '../../components/student/Footer';
 import Rating from '../../components/student/Rating';
+import { useAuth } from '../../context/AuthContext.jsx';
+import { apiService } from '../../services/api.js';
 
 // Mock data for similar courses
 const similarCourses = [
@@ -20,6 +22,7 @@ const similarCourses = [
 function Player() {
   const { courseId } = useParams();
   const { enrolledCourses, calculateChapterTime } = useContext(AppContext);
+  const { userId } = useAuth();
   const [courseData, setCourseData] = useState(null);
   const [openChapters, setOpenChapters] = useState({});
   const [currentLecture, setCurrentLecture] = useState(null);
@@ -232,10 +235,27 @@ function Player() {
               {/* Mark as Completed Button */}
               <div className="mt-4">
                 <button
-                  onClick={() => {
-                    setIsCompleted(!isCompleted);
-                    // Here you can add API call to mark lecture as completed
-                    console.log(`Lecture ${currentLecture?.lectureTitle} marked as ${!isCompleted ? 'completed' : 'incomplete'}`);
+                  onClick={async () => {
+                    const next = !isCompleted;
+                    setIsCompleted(next);
+                    try {
+                      const chapter = courseData?.courseContent?.[currentChapter];
+                      const chapterId = chapter?._id ?? currentChapter;
+                      const lectureId = currentLecture?._id ?? currentLectureIndex;
+                      if (userId && chapterId !== undefined && lectureId !== undefined) {
+                        await apiService.progress.updateLecture(
+                          userId,
+                          courseId,
+                          chapterId,
+                          lectureId,
+                          { isCompleted: next }
+                        );
+                      }
+                    } catch (e) {
+                      // revert on error
+                      setIsCompleted(!next);
+                      console.error('Failed to update completion status', e);
+                    }
                   }}
                   className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
                     isCompleted 

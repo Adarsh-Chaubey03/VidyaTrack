@@ -1,17 +1,51 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../context/AppContext'
 import { assets } from '../../assets/assets'
 import { Link } from 'react-router-dom'
 import Footer from '../../components/student/Footer'
 import DashboardCard from '../../components/student/DashboardCard'
+import { useAuth } from '../../context/AuthContext.jsx'
+import { apiService } from '../../services/api.js'
 
 const MyDashboard = () => {
-  const { enrolledCourses, calculateCourseDuration } = useContext(AppContext)
+    const { enrolledCourses, calculateCourseDuration } = useContext(AppContext)
   const [active, setActive] = useState('courses')
+    const { userId } = useAuth()
+    const [progressByCourse, setProgressByCourse] = useState({})
+
+    // Fetch per-course progress so status/percent reflect backend updates
+    useEffect(() => {
+        const fetchProgress = async () => {
+            if (!userId || !enrolledCourses?.length) {
+                setProgressByCourse({})
+                return
+            }
+            try {
+                const entries = await Promise.all(
+                    enrolledCourses.map(async (c) => {
+                        try {
+                            const res = await apiService.progress.get(userId, c._id)
+                            if (res?.success && res.progress) {
+                                return [c._id, res.progress]
+                            }
+                        } catch (e) {
+                            // ignore per-course errors
+                        }
+                        return [c._id, null]
+                    })
+                )
+                const map = Object.fromEntries(entries)
+                setProgressByCourse(map)
+            } catch (e) {
+                setProgressByCourse({})
+            }
+        }
+        fetchProgress()
+    }, [userId, Array.isArray(enrolledCourses) ? enrolledCourses.map(c => c._id).join(',') : ''])
 
 return (
     <div className='bg-gradient-to-br from-slate-50 via-white to-slate-100 min-h-screen flex flex-col'>
-        <div className='container mx-auto px-4 sm:px-6 lg:px-8 xl:px-24 py-8 flex-1'>
+    <div className='container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-8 flex-1'>
             {/* Header */}
             <div className='mb-8'>
                 <h1 className='text-3xl md:text-4xl font-bold text-gray-900 mb-2'>My Dashboard</h1>
@@ -83,29 +117,31 @@ return (
                                 <table className='min-w-full table-auto'>
                                     <thead className='bg-gray-50 border-b border-gray-200'>
                                         <tr>
-                                            <th className='px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>Course</th>
-                                            <th className='px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>Duration</th>
-                                            <th className='px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>Chapters</th>
-                                            <th className='px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>Progress</th>
-                                            <th className='px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>Status</th>
-                                            <th className='px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider'>Action</th>
+                                            <th className='px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>Course</th>
+                                            <th className='px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>Duration</th>
+                                            <th className='px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>Chapters</th>
+                                            <th className='px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>Progress</th>
+                                            <th className='px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>Status</th>
+                                            <th className='px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider'>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody className='divide-y divide-gray-200'>
                                         {(!enrolledCourses || enrolledCourses.length === 0) ? (
                                             <tr>
-                                                <td className='px-6 py-8 text-center text-gray-500' colSpan={6}>
+                                                <td className='px-4 py-8 text-center text-gray-500' colSpan={6}>
                                                         No courses added
                                                 </td>
                                             </tr>
                                         ) : (
                                             enrolledCourses.map((course, index) => {
-                                            const progress = course.progress || { completedLectures: 0, totalLectures: 0 };
-                                            const percent = progress.totalLectures > 0 ? (progress.completedLectures / progress.totalLectures) * 100 : 0;
-                                            const status = percent === 100 ? 'Completed' : 'On Going';
+                                            const p = progressByCourse[course._id]
+                                            const completed = p?.completedLectures ?? 0
+                                            const total = p?.totalLectures ?? 0
+                                            const percent = p?.progressPercentage ?? (total > 0 ? (completed / total) * 100 : 0)
+                                            const status = Math.round(percent) === 100 ? 'Completed' : 'On Going'
                                             return (
                                                 <tr key={index} className='hover:bg-gray-50 transition-colors'>
-                                                    <td className='px-6 py-4'>
+                                                    <td className='px-4 py-4'>
                                                         <div className='flex items-center gap-4'>
                                                             <img 
                                                                 src={course.courseThumbnail || assets.course_1} 
@@ -117,9 +153,9 @@ return (
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className='px-6 py-4 text-sm text-gray-700 whitespace-nowrap'>{calculateCourseDuration(course)}</td>
-                                                    <td className='px-6 py-4 text-sm text-gray-700 whitespace-nowrap'>{course.courseContent?.length || 0}</td>
-                                                    <td className='px-6 py-4 min-w-[180px]'>
+                                                    <td className='px-4 py-4 text-sm text-gray-700 whitespace-nowrap'>{calculateCourseDuration(course)}</td>
+                                                    <td className='px-4 py-4 text-sm text-gray-700 whitespace-nowrap'>{course.courseContent?.length || 0}</td>
+                                                    <td className='px-4 py-4 min-w-[180px]'>
                                                         <div className="w-full bg-gray-200 rounded-full h-2.5 mb-1">
                                                             <div
                                                                 className="bg-gradient-to-r from-emerald-500 to-emerald-600 h-2.5 rounded-full transition-all duration-300"
@@ -127,11 +163,11 @@ return (
                                                             ></div>
                                                         </div>
                                                         <div className='flex items-center justify-between'>
-                                                            <span className="text-xs text-gray-600 font-medium">{progress.completedLectures}/{progress.totalLectures} Lectures</span>
+                                                            <span className="text-xs text-gray-600 font-medium">{completed}/{total} Lectures</span>
                                                             <span className="text-xs text-emerald-600 font-semibold">{Math.round(percent)}%</span>
                                                         </div>
                                                     </td>
-                                                    <td className='px-6 py-4 whitespace-nowrap'>
+                                                    <td className='px-2 py-4 whitespace-nowrap'>
                                                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
                                                             status === 'Completed' 
                                                                 ? 'bg-green-100 text-green-700 border border-green-200' 
@@ -140,7 +176,7 @@ return (
                                                             {status === 'Completed' ? '✓' : '⏳'} {status}
                                                         </span>
                                                     </td>
-                                                    <td className='px-6 py-4 text-center whitespace-nowrap'>
+                                                    <td className='px-2 py-4 text-center whitespace-nowrap'>
                                                         <Link
                                                             to={`/player/${course._id}`}
                                                             className='inline-flex items-center gap-2 bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm hover:bg-emerald-600 hover:shadow-md transition-all duration-200'
@@ -150,8 +186,9 @@ return (
                                                     </td>
                                                 </tr>
                                             )
-                                        })}
+                                        })
                                         )}
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -203,8 +240,9 @@ return (
                     )}
                 </section>
             </div>
-        </div>
-        <Footer />
+    </div>
+    <div className="h-12" />
+    <Footer />
     </div>
 )
 }
