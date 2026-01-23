@@ -107,7 +107,6 @@ function Navbar() {
           <NavLink to="/course-list" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Courses</NavLink>
           <NavLink to="/mentor" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Mentor</NavLink>
           <NavLink to="/resumereview" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Resume</NavLink>
-          <NavLink to="/interview" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Interview</NavLink>
         </div>
         <div className='hidden md:flex items-center gap-4'>
           <button ref={bellRef} onClick={toggleNotif} className='relative hover:text-blue-600'>
@@ -166,7 +165,6 @@ function Navbar() {
             <Link to="/course-list" onClick={toggleMobileMenu}>Courses</Link>
             <Link to="/mentor" onClick={toggleMobileMenu}>Mentor</Link>
             <Link to="/resumereview" onClick={toggleMobileMenu}>Resume</Link>
-            <Link to="/interview" onClick={toggleMobileMenu}>Interview</Link>
           </motion.div>
         )}
       </AnimatePresence>

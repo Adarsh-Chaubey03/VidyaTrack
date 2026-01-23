@@ -15,7 +15,6 @@ import Navbar from './components/student/Navbar';
 import EducatorLayout from './layouts/EducatorLayout';
 import Mentor from './pages/student/Mentor';
 import ResumeReview from './pages/student/ResumeReview';
-import Interview from './pages/student/Interview';
 import TestSeries from './pages/student/TestSeries';
 import GenerateResume from './pages/student/GenerateResume';
 import GetReviewed from './pages/student/GetReviewed';
@@ -59,7 +58,6 @@ const App = () => {
         <Route path='/mentor' element={<Mentor />} />
         <Route path='/resumereview' element={<ResumeReview />} />
         <Route path='/generateresume' element={<GenerateResume />} />
-        <Route path='/interview' element={<Interview />} />
         <Route path='/testseries' element={<TestSeries />} />
         <Route path='/getreviewed/:id' element={<GetReviewed />} />
         <Route path='/getreviewed' element={<ExploreProfessionals />} />

@@ -6,7 +6,6 @@ VidyaTrack is a full-stack educational platform designed to centralize learning 
 
 - **Curated Course Library**: A collection of structured, high-quality courses tailored to student needs.
 - **Expert Mentorship Program**: One-on-one guidance from industry professionals.
-- **Interview Preparation Tools**: Resources and mock interviews to boost career readiness.
 - **Resume Review Service**: Expert feedback and optimization for resumes.
 - **Educational Blog Hub**: Insightful articles and updates on learning trends.
 - **Resume Template Gallery**: Professionally designed templates for job applications.

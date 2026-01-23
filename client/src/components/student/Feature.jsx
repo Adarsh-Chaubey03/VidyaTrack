@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 // Placeholder icons, replace with your assets later
-import { BookOpen, User, FileText, Edit, GraduationCap, ClipboardList } from 'lucide-react';
+import { BookOpen, User, FileText, Edit, ClipboardList } from 'lucide-react';
 
 const features = [
   {
@@ -33,13 +33,6 @@ const features = [
     bg: 'bg-pink-50',
   },
   {
-    key: 'interview',
-    title: 'Interview Prep',
-    desc: 'Practice with curated questions.\nGet advice and boost confidence.',
-    icon: <GraduationCap size={32} className="text-purple-500" />, // Replace with your icon
-    bg: 'bg-purple-50',
-  },
-  {
     key: 'testseries',
     title: 'Test Series',
     desc: 'Practice with real exam-like test series to assess and improve your preparation.',
@@ -65,8 +58,6 @@ function Feature() {
               <Link to="/testseries" onClick={() => window.scrollTo(0,0)} className="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded w-fit text-white">Know More</Link>
             ) : feature.key === 'resume' ? (
               <Link to="/resumereview" onClick={() => window.scrollTo(0,0)} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded w-fit text-white">Know More</Link>
-            ) : feature.key === 'interview' ? (
-              <Link to="/interview" onClick={() => window.scrollTo(0,0)} className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-fit text-white">Know More</Link>
             ) : feature.key === 'blog' ? (
               <button className="bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded w-fit text-white">Know More</button>
             ) : (

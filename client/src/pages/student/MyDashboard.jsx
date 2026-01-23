@@ -128,17 +128,6 @@ return (
                                 <span>My Mentors</span>
                             </button>
                             <button
-                                onClick={() => setActive('interview')}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                                    active === 'interview' 
-                                        ? 'bg-emerald-500 text-white shadow-md' 
-                                        : 'text-gray-700 hover:bg-gray-50'
-                                }`}
-                            >
-                                <span className='text-lg'>💼</span>
-                                <span>Interview</span>
-                            </button>
-                            <button
                                 onClick={() => setActive('others')}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                                     active === 'others' 
@@ -256,21 +245,7 @@ return (
                             </div>
                             <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6'>
                                 <DashboardCard title="No Mentor Yet" subtitle="Find mentors who match your goals" actionLabel="Explore Mentors" to="/mentor">
-                                    Connect with experienced industry mentors for guidance and mock interviews.
-                                </DashboardCard>
-                            </div>
-                        </div>
-                    )}
-
-                    {active === 'interview' && (
-                        <div>
-                            <div className='mb-6'>
-                                <h2 className='text-2xl font-bold text-gray-900'>Interview Preparation</h2>
-                                <p className='text-sm text-gray-600 mt-1'>Practice and ace your interviews</p>
-                            </div>
-                            <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6'>
-                                <DashboardCard title="Mock Interviews" subtitle="Practice with professionals" actionLabel="Get Started" to="/interview">
-                                    Prepare for interviews with tailored practice sessions and feedback.
+                                    Connect with experienced industry mentors for guidance.
                                 </DashboardCard>
                             </div>
                         </div>

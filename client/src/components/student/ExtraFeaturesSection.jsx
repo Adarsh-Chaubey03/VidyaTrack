@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Mentor from './Mentor';
 import ResumeReview from './ResumeReview';
-import InterviewPrep from './InterviewPrep';
 import TestSeries from './TestSeries';
 
 const ExtraFeaturesSection = () => {
@@ -47,9 +46,6 @@ const ExtraFeaturesSection = () => {
           </Link>
           <Link to="/resumereview" className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-blue-200 border border-blue-200 bg-white/60 backdrop-blur-md">
             <ResumeReview />
-          </Link>
-          <Link to="/interview" className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-purple-200 border border-purple-200 bg-white/60 backdrop-blur-md">
-            <InterviewPrep />
           </Link>
           <Link to="/testseries" className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-yellow-200 border border-yellow-200 bg-white/60 backdrop-blur-md">
             <TestSeries />

@@ -9,7 +9,6 @@ import Footer from '../../components/student/Footer'
 import Mentor from '../../components/student/Mentor'
 import { Link } from 'react-router-dom';
 import ResumeReview from '../../components/student/ResumeReview'
-import InterviewPrep from '../../components/student/InterviewPrep'
 import TestSeries from '../../components/student/TestSeries'
 import arrowIcon from '../../assets/arrow_icon.svg';
 import StatsSection from '../../components/student/StatsSection';
