@@ -48,17 +48,38 @@ function CallToAction() {
             </div>
             {/* RIGHT - CARDS */}
             <div className="w-full md:w-[400px] flex flex-col items-center gap-6">
-                {featureCards.map((card, idx) => (
-                  <div key={idx} className="w-full bg-white rounded-2xl shadow-md flex items-center gap-4 p-4 hover:shadow-lg transition-all">
-                    <div className="flex-shrink-0 bg-emerald-100 rounded-xl p-2 flex items-center justify-center">
-                      {card.icon}
+                {featureCards.map((card, idx) => {
+                  const isCareer = card.title === 'Career Growth';
+                  const handleClick = () => {
+                    if (isCareer) {
+                      const el = document.getElementById('our-services');
+                      el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  };
+                  const handleKeyDown = (e) => {
+                    if (!isCareer) return;
+                    if (e.key === 'Enter' || e.key === ' ') handleClick();
+                  };
+
+                  return (
+                    <div
+                      key={idx}
+                      onClick={handleClick}
+                      onKeyDown={handleKeyDown}
+                      role={isCareer ? 'button' : undefined}
+                      tabIndex={isCareer ? 0 : undefined}
+                      className={`w-full bg-white rounded-2xl shadow-md flex items-center gap-4 p-4 hover:shadow-lg transition-all ${isCareer ? 'cursor-pointer' : ''}`}
+                    >
+                      <div className="flex-shrink-0 bg-emerald-100 rounded-xl p-2 flex items-center justify-center">
+                        {card.icon}
+                      </div>
+                      <div className="text-left">
+                        <div className="font-semibold text-lg text-emerald-700">{card.title}</div>
+                        <div className="text-gray-500 text-sm mt-1">{card.desc}</div>
+                      </div>
                     </div>
-                    <div className="text-left">
-                      <div className="font-semibold text-lg text-emerald-700">{card.title}</div>
-                      <div className="text-gray-500 text-sm mt-1">{card.desc}</div>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
             </div>
         </section>
     );

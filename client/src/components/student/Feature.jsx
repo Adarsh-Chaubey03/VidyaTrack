@@ -50,7 +50,7 @@ const features = [
 
 function Feature() {
   return (
-    <div className="w-full bg-gradient-to-b from-white to-rose-50 flex flex-col items-center mt-10 pb-10">
+    <div id="our-services" className="w-full bg-gradient-to-b from-white to-rose-50 flex flex-col items-center mt-10 pb-10 scroll-mt-28 md:scroll-mt-32">
       <h2 className="text-3xl md:text-4xl font-bold mb-8 mt-4 text-center">Our Top Services</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl">
         {features.map((feature, idx) => (
