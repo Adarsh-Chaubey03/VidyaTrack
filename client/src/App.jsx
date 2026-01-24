@@ -23,6 +23,7 @@ import PaymentSuccess from './pages/student/PaymentSuccess';
 import { Navigate } from 'react-router-dom';
 import ContactUs from './pages/student/ContactUs';
 import MentorProfile from './pages/student/MentorProfile';
+import RequestFeature from './pages/student/RequestFeature';
 import Login from './components/auth/Login';
 import Signup from './components/auth/Signup';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -63,6 +64,7 @@ const App = () => {
         <Route path='/getreviewed' element={<ExploreProfessionals />} />
         <Route path='/payment-success' element={<PaymentSuccess />} />
         <Route path='/contact' element={<ContactUs />} />
+        <Route path='/request-feature' element={<RequestFeature />} />
         <Route path='/mentor/:id' element={<MentorProfile />} />
 
         {/* Auth Routes */}

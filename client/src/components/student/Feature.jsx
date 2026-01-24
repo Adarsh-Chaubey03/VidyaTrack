@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 // Placeholder icons, replace with your assets later
-import { BookOpen, User, FileText, Edit, ClipboardList } from 'lucide-react';
+import { BookOpen, User, FileText, Edit, ClipboardList, Lightbulb } from 'lucide-react';
 
 const features = [
   {
@@ -39,6 +39,13 @@ const features = [
     icon: <ClipboardList size={32} className="text-yellow-500" />, // Replace with your icon
     bg: 'bg-yellow-50',
   },
+  {
+    key: 'request-feature',
+    title: 'Request a Feature',
+    desc: 'Tell us what service or feature you want next. We review every request.',
+    icon: <Lightbulb size={32} className="text-purple-600" />,
+    bg: 'bg-purple-50',
+  },
 ];
 
 function Feature() {
@@ -58,6 +65,8 @@ function Feature() {
               <Link to="/testseries" onClick={() => window.scrollTo(0,0)} className="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded w-fit text-white">Know More</Link>
             ) : feature.key === 'resume' ? (
               <Link to="/resumereview" onClick={() => window.scrollTo(0,0)} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded w-fit text-white">Know More</Link>
+            ) : feature.key === 'request-feature' ? (
+              <Link to="/request-feature" onClick={() => window.scrollTo(0,0)} className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded w-fit text-white">Request</Link>
             ) : feature.key === 'blog' ? (
               <button className="bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded w-fit text-white">Know More</button>
             ) : (
