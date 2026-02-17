@@ -82,7 +82,6 @@ export const API_ENDPOINTS = {
     UPDATE: '/user/update',
     PURCHASE_COURSE: '/user/purchase-course',
     ENROLL_FREE_COURSE: '/user/enroll-free-course',
-    CREATE_PAYMENT_INTENT: '/user/create-payment-intent',
   },
   
   // Educator endpoints
@@ -199,11 +198,6 @@ export const apiService = {
 
     enrollFreeCourse: async (data) => {
       const response = await api.post(API_ENDPOINTS.USER.ENROLL_FREE_COURSE, data);
-      return response.data;
-    },
-
-    createPaymentIntent: async (data) => {
-      const response = await api.post(API_ENDPOINTS.USER.CREATE_PAYMENT_INTENT, data);
       return response.data;
     },
   },

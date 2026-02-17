@@ -9,7 +9,6 @@ import courseProgressRouter from './routes/courseProgressRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import authRouter from './routes/authRoutes.js';
 import paymentRouter from './routes/paymentRoutes.js';
-import { stripeWebhook } from './controllers/userController.js';
 import { razorpayWebhook } from './controllers/paymentController.js';
 
 //initialize express app
@@ -46,9 +45,6 @@ app.use(cors({
 
 // Authentication middleware will be applied per route as needed
 console.log('✅ Custom authentication system configured');
-
-// Stripe webhook route (needs raw body)
-app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), stripeWebhook)
 
 // Razorpay webhook route (needs raw body for signature verification)
 app.post('/api/payments/webhook/razorpay', express.raw({ type: 'application/json' }), (req, res, next) => {

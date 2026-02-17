@@ -19,7 +19,6 @@ import TestSeries from './pages/student/TestSeries';
 import GenerateResume from './pages/student/GenerateResume';
 import GetReviewed from './pages/student/GetReviewed';
 import ExploreProfessionals from './pages/student/ExploreProfessionals';
-import PaymentSuccess from './pages/student/PaymentSuccess';
 import { Navigate } from 'react-router-dom';
 import ContactUs from './pages/student/ContactUs';
 import MentorProfile from './pages/student/MentorProfile';
@@ -62,7 +61,6 @@ const App = () => {
         <Route path='/testseries' element={<TestSeries />} />
         <Route path='/getreviewed/:id' element={<GetReviewed />} />
         <Route path='/getreviewed' element={<ExploreProfessionals />} />
-        <Route path='/payment-success' element={<PaymentSuccess />} />
         <Route path='/contact' element={<ContactUs />} />
         <Route path='/request-feature' element={<RequestFeature />} />
         <Route path='/mentor/:id' element={<MentorProfile />} />

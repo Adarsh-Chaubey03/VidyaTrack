@@ -2,8 +2,6 @@ import express from 'express'
 import { 
     getUserData, 
     userEnrolledCourses, 
-    createPaymentIntent, 
-    confirmPayment,
     purchaseCourse 
 } from '../controllers/userController.js'
 import { protect } from '../middlewares/authMiddleware.js'
@@ -12,10 +10,6 @@ const userRouter = express.Router()
 
 userRouter.get('/data', protect, getUserData)
 userRouter.get('/enrolled-courses', protect, userEnrolledCourses)
-
-// Stripe payment routes
-userRouter.post('/create-payment-intent', protect, createPaymentIntent)
-userRouter.post('/confirm-payment', protect, confirmPayment)
 
 // Legacy route (keeping for backward compatibility)
 userRouter.post('/purchase-course', protect, purchaseCourse)

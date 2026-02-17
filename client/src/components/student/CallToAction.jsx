@@ -27,13 +27,13 @@ const featureCards = [
 
 function CallToAction() {
     return (
-        <section className="mb-10 w-full min-h-[60vh] bg-gradient-to-b from-rose-100 via-emerald-50 to-white dark:from-gray-900 dark:to-gray-800 px-6 md:px-32 py-20 flex flex-col-reverse md:flex-row items-center justify-between gap-12">
+        <section className="mb-10 w-full min-h-[60vh] bg-emerald-100 dark:bg-emerald-800 px-6 md:px-32 py-20 flex flex-col-reverse md:flex-row items-center justify-between gap-12">
 
             {/* LEFT - TEXT */}
             <div className="max-w-xl text-center md:text-left flex flex-col justify-center">
                 <h1 className="text-4xl md:text-5xl font-extrabold leading-tight text-gray-900 dark:text-white">
                     Unlock Limitless <br className="hidden md:block" />
-                    <span className="text-emerald-600">Learning</span> Opportunities
+                    <span className="text-emerald-500">Learning</span> Opportunities
                 </h1>
                 <p className="mt-6 text-gray-600 dark:text-gray-300 text-base md:text-lg">
                     Learn from expert educators anytime, anywhere. Gain real-world skills to transform your career at your own pace.
@@ -41,7 +41,7 @@ function CallToAction() {
 
                 {/* BUTTONS */}
                 <div className="mt-8 flex flex-wrap justify-center md:justify-start gap-4">
-                    <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-lg">
+                    <button className="bg-emerald-600 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-lg">
                         Get Started
                     </button>
                 </div>

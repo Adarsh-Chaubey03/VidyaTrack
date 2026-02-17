@@ -107,7 +107,6 @@ export const createPaymentOrder = async (req, res) => {
 // ---------------------------------------------------------------------------
 // 2. Confirm / Verify Payment
 //    Replicates: vendor-dashboard → PaymentModal handler callback
-//    Backend:    khatakhat-backend → order/index.ts → /confirm-payment
 //    Signature verification via HMAC SHA256
 // ---------------------------------------------------------------------------
 

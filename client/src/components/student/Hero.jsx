@@ -7,7 +7,7 @@ function Hero() {
     <div 
       className='pt-20 pb-20 flex flex-col items-center justify-center w-full md:pt-20  px-7 md:px-0 space-y-6 text-center relative '
       style={{
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${assets.hero_bg})`,
+        backgroundImage: `linear-gradient(rgba(6, 78, 59, 0.75), rgba(4, 47, 35, 0.85)), url(${assets.hero_bg})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
