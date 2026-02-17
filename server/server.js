@@ -8,7 +8,9 @@ import courseRouter from './routes/courseRoutes.js';
 import courseProgressRouter from './routes/courseProgressRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import authRouter from './routes/authRoutes.js';
+import paymentRouter from './routes/paymentRoutes.js';
 import { stripeWebhook } from './controllers/userController.js';
+import { razorpayWebhook } from './controllers/paymentController.js';
 
 //initialize express app
 const app = express()
@@ -47,6 +49,19 @@ console.log('✅ Custom authentication system configured');
 
 // Stripe webhook route (needs raw body)
 app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), stripeWebhook)
+
+// Razorpay webhook route (needs raw body for signature verification)
+app.post('/api/payments/webhook/razorpay', express.raw({ type: 'application/json' }), (req, res, next) => {
+  // Preserve raw body for HMAC verification (mirrors khatakhat-backend pattern)
+  req.rawBody = req.body;
+  // Re-parse as JSON for the controller
+  try {
+    req.body = JSON.parse(req.body.toString('utf8'));
+  } catch (e) {
+    return res.status(400).send('Invalid JSON');
+  }
+  next();
+}, razorpayWebhook)
 
 // JSON parser for all other routes
 app.use(express.json());
@@ -138,6 +153,7 @@ app.use('/api/educator', educatorRouter)
 app.use('/api/course', courseRouter)
 app.use('/api/progress', courseProgressRouter)
 app.use('/api/user', userRouter)
+app.use('/api/payments', paymentRouter)
 
 //server port
 const PORT = process.env.PORT || 5000

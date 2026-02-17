@@ -92,6 +92,14 @@ export const API_ENDPOINTS = {
     ADD_COURSE: '/educator/add-course',
     STUDENTS: '/educator/students',
   },
+
+  // Razorpay payment endpoints (replicated from vendor-dashboard pattern)
+  PAYMENTS: {
+    CREATE_ORDER: '/payments/create-order',
+    CONFIRM: '/payments/confirm',
+    STATUS: (transactionId) => `/payments/status/${transactionId}`,
+    HISTORY: '/payments/history',
+  },
   
 };
 
