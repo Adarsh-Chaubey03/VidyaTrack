@@ -43,12 +43,7 @@ function CourseList() {
 
     // Group categories for sidebar
     const groupedCategories = useMemo(() => {
-        const groups = {};
-        categories.forEach(cat => {
-            if (!groups[cat.group]) groups[cat.group] = [];
-            groups[cat.group].push(cat);
-        });
-        return groups;
+        return categories;
     }, [categories]);
 
     // Find active category name
@@ -224,26 +219,21 @@ function CourseList() {
                         {/* Categories */}
                         <div>
                             <h3 className="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Categories</h3>
-                            {Object.entries(groupedCategories).map(([group, cats]) => (
-                                <div key={group} className="mb-4">
-                                    <p className="text-xs text-gray-400 font-semibold mb-1.5 uppercase">{group}</p>
-                                    <div className="space-y-1">
-                                        {cats.map(cat => (
-                                            <button
-                                                key={cat.slug}
-                                                onClick={() => { setSelectedCategory(selectedCategory === cat.slug ? '' : cat.slug); setCurrentPage(1); }}
-                                                className={`w-full text-left text-sm px-3 py-1.5 rounded-lg transition-colors ${selectedCategory === cat.slug
-                                                        ? 'bg-emerald-100 text-emerald-700 font-medium'
-                                                        : 'text-gray-600 hover:bg-gray-100'
-                                                    }`}
-                                            >
-                                                {cat.icon} {cat.name}
-                                                {cat.courseCount > 0 && <span className="text-xs text-gray-400 ml-1">({cat.courseCount})</span>}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
+                            <div className="space-y-1">
+                                {categories.map(cat => (
+                                    <button
+                                        key={cat.slug}
+                                        onClick={() => { setSelectedCategory(selectedCategory === cat.slug ? '' : cat.slug); setCurrentPage(1); }}
+                                        className={`w-full text-left text-sm px-3 py-1.5 rounded-lg transition-colors ${selectedCategory === cat.slug
+                                            ? 'bg-emerald-100 text-emerald-700 font-medium'
+                                            : 'text-gray-600 hover:bg-gray-100'
+                                            }`}
+                                    >
+                                        {cat.icon} {cat.name}
+                                        {cat.courseCount > 0 && <span className="text-xs text-gray-400 ml-1">({cat.courseCount})</span>}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
 
                         {/* Level */}
@@ -255,8 +245,8 @@ function CourseList() {
                                         key={level}
                                         onClick={() => { setSelectedLevel(selectedLevel === level ? '' : level); setCurrentPage(1); }}
                                         className={`w-full text-left text-sm px-3 py-1.5 rounded-lg capitalize transition-colors ${selectedLevel === level
-                                                ? 'bg-emerald-100 text-emerald-700 font-medium'
-                                                : 'text-gray-600 hover:bg-gray-100'
+                                            ? 'bg-emerald-100 text-emerald-700 font-medium'
+                                            : 'text-gray-600 hover:bg-gray-100'
                                             }`}
                                     >
                                         {level}
@@ -274,8 +264,8 @@ function CourseList() {
                                         key={opt.value}
                                         onClick={() => { setSelectedPrice(selectedPrice === opt.value ? '' : opt.value); setCurrentPage(1); }}
                                         className={`w-full text-left text-sm px-3 py-1.5 rounded-lg transition-colors ${selectedPrice === opt.value
-                                                ? 'bg-emerald-100 text-emerald-700 font-medium'
-                                                : 'text-gray-600 hover:bg-gray-100'
+                                            ? 'bg-emerald-100 text-emerald-700 font-medium'
+                                            : 'text-gray-600 hover:bg-gray-100'
                                             }`}
                                     >
                                         {opt.label}
@@ -317,25 +307,20 @@ function CourseList() {
                             {/* Categories (mobile) */}
                             <div className="mb-4">
                                 <h3 className="text-sm font-bold text-gray-800 mb-2 uppercase">Categories</h3>
-                                {Object.entries(groupedCategories).map(([group, cats]) => (
-                                    <div key={group} className="mb-3">
-                                        <p className="text-xs text-gray-400 font-semibold mb-1 uppercase">{group}</p>
-                                        <div className="flex flex-wrap gap-1.5">
-                                            {cats.map(cat => (
-                                                <button
-                                                    key={cat.slug}
-                                                    onClick={() => { setSelectedCategory(selectedCategory === cat.slug ? '' : cat.slug); setCurrentPage(1); }}
-                                                    className={`text-xs px-2.5 py-1 rounded-full transition-colors ${selectedCategory === cat.slug
-                                                            ? 'bg-emerald-600 text-white'
-                                                            : 'bg-gray-100 text-gray-600'
-                                                        }`}
-                                                >
-                                                    {cat.icon} {cat.name}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                ))}
+                                <div className="flex flex-wrap gap-1.5">
+                                    {categories.map(cat => (
+                                        <button
+                                            key={cat.slug}
+                                            onClick={() => { setSelectedCategory(selectedCategory === cat.slug ? '' : cat.slug); setCurrentPage(1); }}
+                                            className={`text-xs px-2.5 py-1 rounded-full transition-colors ${selectedCategory === cat.slug
+                                                ? 'bg-emerald-600 text-white'
+                                                : 'bg-gray-100 text-gray-600'
+                                                }`}
+                                        >
+                                            {cat.icon} {cat.name}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
 
                             {/* Level (mobile) */}
@@ -347,8 +332,8 @@ function CourseList() {
                                             key={level}
                                             onClick={() => { setSelectedLevel(selectedLevel === level ? '' : level); setCurrentPage(1); }}
                                             className={`text-xs px-2.5 py-1 rounded-full capitalize transition-colors ${selectedLevel === level
-                                                    ? 'bg-emerald-600 text-white'
-                                                    : 'bg-gray-100 text-gray-600'
+                                                ? 'bg-emerald-600 text-white'
+                                                : 'bg-gray-100 text-gray-600'
                                                 }`}
                                         >
                                             {level}
@@ -366,8 +351,8 @@ function CourseList() {
                                             key={opt.value}
                                             onClick={() => { setSelectedPrice(selectedPrice === opt.value ? '' : opt.value); setCurrentPage(1); }}
                                             className={`text-xs px-3 py-1 rounded-full transition-colors ${selectedPrice === opt.value
-                                                    ? 'bg-emerald-600 text-white'
-                                                    : 'bg-gray-100 text-gray-600'
+                                                ? 'bg-emerald-600 text-white'
+                                                : 'bg-gray-100 text-gray-600'
                                                 }`}
                                         >
                                             {opt.label}
@@ -473,8 +458,8 @@ function CourseList() {
                                                 key={page}
                                                 onClick={() => setCurrentPage(page)}
                                                 className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${currentPage === page
-                                                        ? 'bg-emerald-600 text-white'
-                                                        : 'border hover:bg-gray-100'
+                                                    ? 'bg-emerald-600 text-white'
+                                                    : 'border hover:bg-gray-100'
                                                     }`}
                                             >
                                                 {page}
