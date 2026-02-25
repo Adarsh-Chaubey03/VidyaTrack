@@ -11,6 +11,7 @@ export const AppContextProvider = ({ children }) => {
   const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [allCourses, setAllCourses] = useState([]);
   const [educatorCourses, setEducatorCourses] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [educatorEnrolledStudents] = useState(dummyStudentEnrolled);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -43,7 +44,19 @@ export const AppContextProvider = ({ children }) => {
 
   useEffect(() => {
     fetchAllCourses();
+    fetchCategories();
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const result = await apiService.courses.getCategories();
+      if (result.success) {
+        setCategories(result.categories);
+      }
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
 
   const fetchUserEnrollmentCourses = async () => {
     try {
@@ -103,13 +116,13 @@ export const AppContextProvider = ({ children }) => {
         throw new Error('Course not found');
       }
 
-        const result = await apiService.user.purchaseCourse({ courseId });
-        if (result.success) {
-          await fetchUserEnrollmentCourses();
-          return { success: true, message: 'Successfully enrolled in free course!' };
-        } else {
-          return { success: false, message: result.message || 'Failed to enroll in course' };
-        }
+      const result = await apiService.user.purchaseCourse({ courseId });
+      if (result.success) {
+        await fetchUserEnrollmentCourses();
+        return { success: true, message: 'Successfully enrolled in free course!' };
+      } else {
+        return { success: false, message: result.message || 'Failed to enroll in course' };
+      }
     } catch (error) {
       console.error('Error enrolling in course:', error);
       return { success: false, message: error.message || 'Failed to enroll in course' };
@@ -132,9 +145,9 @@ export const AppContextProvider = ({ children }) => {
         total +
         (chapter.chapterContent
           ? chapter.chapterContent.reduce(
-              (chapterTotal, lecture) => chapterTotal + (lecture.lectureDuration || 0),
-              0
-            )
+            (chapterTotal, lecture) => chapterTotal + (lecture.lectureDuration || 0),
+            0
+          )
           : 0)
       );
     }, 0);
@@ -191,6 +204,7 @@ export const AppContextProvider = ({ children }) => {
     setEnrolledCourses,
     allCourses,
     setAllCourses,
+    categories,
     loading,
     error,
     calculateChapterTime,

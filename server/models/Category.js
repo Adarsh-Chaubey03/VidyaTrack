@@ -6,6 +6,7 @@ const categorySchema = new mongoose.Schema({
     description: { type: String, default: '' },
     icon: { type: String, default: '📚' },
     group: { type: String, enum: ['Core Tech', 'Career / Exam', 'Trending'], required: true },
+    subTags: [{ type: String }],
     courseCount: { type: Number, default: 0 },
     order: { type: Number, default: 0 },
 }, { timestamps: true });
