@@ -16,31 +16,42 @@ const app = express()
 
 console.log('🚀 Starting VidyaTrack Server...');
 
-// connecting to database
-try {
-    await connectDB()
-} catch (error) {
-    console.log('⚠️  Database connection failed, but server will continue...');
+// Lazy init for serverless — connect on first request
+let dbConnected = false;
+async function ensureConnections() {
+    if (dbConnected) return;
+    try {
+        await connectDB();
+    } catch (error) {
+        console.log('⚠️  Database connection failed, but server will continue...');
+    }
+    try {
+        await connectCloudinary();
+    } catch (error) {
+        console.log('⚠️  Cloudinary connection failed, but server will continue...');
+    }
+    dbConnected = true;
 }
 
-// connecting to cloudinary
-try {
-    await connectCloudinary()
-} catch (error) {
-    console.log('⚠️  Cloudinary connection failed, but server will continue...');
-}
+// Connect on every request (no-op after first call)
+app.use(async (req, res, next) => {
+    await ensureConnections();
+    next();
+});
 
 //middleware
 app.use(cors({
-  origin: [
-    'http://localhost:5174',
-    'http://localhost:5175', 
-    'http://localhost:5176',
-    'http://localhost:5177',
-    'http://localhost:3000',
-    'http://localhost:5173'
-  ],
-  credentials: true
+    origin: [
+        'http://localhost:5174',
+        'http://localhost:5175',
+        'http://localhost:5176',
+        'http://localhost:5177',
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'https://vidya-track-xi.vercel.app',
+        'https://vidya-track-n45f.vercel.app'
+    ],
+    credentials: true
 }))
 
 // Authentication middleware will be applied per route as needed
@@ -48,27 +59,27 @@ console.log('✅ Custom authentication system configured');
 
 // Razorpay webhook route (needs raw body for signature verification)
 app.post('/api/payments/webhook/razorpay', express.raw({ type: 'application/json' }), (req, res, next) => {
-  // Preserve raw body for HMAC verification (mirrors khatakhat-backend pattern)
-  req.rawBody = req.body;
-  // Re-parse as JSON for the controller
-  try {
-    req.body = JSON.parse(req.body.toString('utf8'));
-  } catch (e) {
-    return res.status(400).send('Invalid JSON');
-  }
-  next();
+    // Preserve raw body for HMAC verification (mirrors khatakhat-backend pattern)
+    req.rawBody = req.body;
+    // Re-parse as JSON for the controller
+    try {
+        req.body = JSON.parse(req.body.toString('utf8'));
+    } catch (e) {
+        return res.status(400).send('Invalid JSON');
+    }
+    next();
 }, razorpayWebhook)
 
 // JSON parser for all other routes
 app.use(express.json());
 
 //routes
-app.get('/', (req, res) => { 
-    res.json({ 
-        message: "VidyaTrack API Working", 
+app.get('/', (req, res) => {
+    res.json({
+        message: "VidyaTrack API Working",
         status: "success",
         timestamp: new Date().toISOString()
-    }) 
+    })
 })
 
 // Test endpoint for debugging
@@ -87,7 +98,7 @@ app.get('/api/debug/courses', async (req, res) => {
         const Course = (await import('./models/Course.js')).default;
         const allCourses = await Course.find({});
         const publishedCourses = await Course.find({ isPublished: true });
-        
+
         res.json({
             message: "Courses debug info",
             totalCourses: allCourses.length,
@@ -155,9 +166,15 @@ app.use('/api/payments', paymentRouter)
 const PORT = process.env.PORT || 5000
 
 // listening
-app.listen(PORT, () => {
-    console.log(`✅ Server is running on port ${PORT}`)
-    console.log(`🌐 API Base URL: http://localhost:${PORT}`)
-    console.log(`📚 Course Progress API: http://localhost:${PORT}/api/progress`)
-    console.log(`📖 Courses API: http://localhost:${PORT}/api/course`)
-})
+// Only listen when running locally (not in Vercel serverless)
+if (process.env.VERCEL !== '1') {
+    app.listen(PORT, () => {
+        console.log(`✅ Server is running on port ${PORT}`)
+        console.log(`🌐 API Base URL: http://localhost:${PORT}`)
+        console.log(`📚 Course Progress API: http://localhost:${PORT}/api/progress`)
+        console.log(`📖 Courses API: http://localhost:${PORT}/api/course`)
+    })
+}
+
+// Export for Vercel serverless
+export default app;
