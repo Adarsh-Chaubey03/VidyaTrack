@@ -3,11 +3,14 @@ import mongoose from "mongoose";
 const lectureSchema = new mongoose.Schema({
     lectureId: { type: String, required: true },
     lectureTitle: { type: String, required: true },
-    lectureDescription: { type: Number, required: true },
-    lectureUrl: { type: String, required: true },
-    isPreviewFree: { type: Boolean, required: true },
-    lecturOrder: { type: Number, required: true },
+    lectureDescription: { type: String, default: '' },
+    lectureUrl: { type: String, default: '' },
+    youtubeVideoId: { type: String, default: '' },
+    lectureDuration: { type: Number, default: 0 },
+    isPreviewFree: { type: Boolean, default: false },
+    lecturOrder: { type: Number, default: 0 },
 }, { _id: false })
+
 
 
 const chapterSchema = new mongoose.Schema({
@@ -33,6 +36,6 @@ const courseSchema = new mongoose.Schema({
 
 }, { timestamps: true, minimize: false })
 
-const Course = mongoose.model('Course',courseSchema)
+const Course = mongoose.model('Course', courseSchema)
 
 export default Course;

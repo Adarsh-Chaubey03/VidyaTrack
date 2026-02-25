@@ -4,47 +4,45 @@ import { useAuth } from '../../context/AuthContext.jsx'
 import { AppContext } from '../../context/AppContext.jsx'
 import { apiService } from '../../services/api.js'
 import humanizeDuration from 'humanize-duration'
-import ReactPlayer from 'react-player'
 
 // ─────────────────────────────────────────────────────────────
-// Icons
+// Icons (inline SVGs for zero-dep)
 // ─────────────────────────────────────────────────────────────
 const CheckCircleIcon = () => (
-  <svg className="w-5 h-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+  <svg className="w-5 h-5 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
   </svg>
 )
-
 const PlayCircleIcon = ({ className = "w-5 h-5" }) => (
   <svg className={className} fill="currentColor" viewBox="0 0 20 20">
     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
   </svg>
 )
-
 const CircleIcon = () => (
-  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+  <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
     <circle cx="12" cy="12" r="10" />
   </svg>
 )
-
+const LockIcon = () => (
+  <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+  </svg>
+)
 const ChevronDown = ({ open }) => (
   <svg className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
   </svg>
 )
-
 const MenuIcon = () => (
   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
   </svg>
 )
-
 const XIcon = () => (
   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
   </svg>
 )
-
 const ArrowLeftIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -52,19 +50,133 @@ const ArrowLeftIcon = () => (
 )
 
 // ─────────────────────────────────────────────────────────────
-// Progress helper — localStorage + API sync
+// YouTube IFrame Player API loader (singleton)
+// ─────────────────────────────────────────────────────────────
+let ytApiReady = false
+let ytApiPromise = null
+
+function loadYouTubeAPI() {
+  if (ytApiReady) return Promise.resolve()
+  if (ytApiPromise) return ytApiPromise
+
+  ytApiPromise = new Promise((resolve) => {
+    if (window.YT && window.YT.Player) {
+      ytApiReady = true
+      resolve()
+      return
+    }
+    // Set callback before loading script
+    const prevCallback = window.onYouTubeIframeAPIReady
+    window.onYouTubeIframeAPIReady = () => {
+      ytApiReady = true
+      if (prevCallback) prevCallback()
+      resolve()
+    }
+    // Load the IFrame API script
+    if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+      const tag = document.createElement('script')
+      tag.src = 'https://www.youtube.com/iframe_api'
+      document.head.appendChild(tag)
+    }
+  })
+  return ytApiPromise
+}
+
+// ─────────────────────────────────────────────────────────────
+// YouTube Player Component
+// ─────────────────────────────────────────────────────────────
+function YouTubePlayer({ videoId, onWatchProgress, onVideoEnd, onError }) {
+  const containerRef = useRef(null)
+  const playerRef = useRef(null)
+  const pollRef = useRef(null)
+
+  useEffect(() => {
+    if (!videoId) return
+    let cancelled = false
+
+    async function init() {
+      await loadYouTubeAPI()
+      if (cancelled || !containerRef.current) return
+
+      // Destroy previous player
+      if (playerRef.current) {
+        try { playerRef.current.destroy() } catch { }
+        playerRef.current = null
+      }
+      // Clear poll
+      if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null }
+
+      playerRef.current = new window.YT.Player(containerRef.current, {
+        videoId,
+        width: '100%',
+        height: '100%',
+        playerVars: {
+          autoplay: 1,
+          modestbranding: 1,
+          rel: 0,
+          fs: 1,
+          cc_load_policy: 0,
+          origin: window.location.origin,
+        },
+        events: {
+          onReady: () => {
+            // Start watch-time polling
+            pollRef.current = setInterval(() => {
+              if (!playerRef.current) return
+              try {
+                const current = playerRef.current.getCurrentTime()
+                const total = playerRef.current.getDuration()
+                if (total > 0 && onWatchProgress) {
+                  onWatchProgress(current, total)
+                }
+              } catch { }
+            }, 5000) // Every 5 seconds
+          },
+          onStateChange: (event) => {
+            // YT.PlayerState.ENDED === 0
+            if (event.data === 0 && onVideoEnd) {
+              onVideoEnd()
+            }
+          },
+          onError: (event) => {
+            console.error('YouTube Player error:', event.data)
+            if (onError) onError(event.data)
+          },
+        },
+      })
+    }
+
+    init()
+
+    return () => {
+      cancelled = true
+      if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null }
+      if (playerRef.current) {
+        try { playerRef.current.destroy() } catch { }
+        playerRef.current = null
+      }
+    }
+  }, [videoId])
+
+  return (
+    <div className="w-full h-full">
+      <div ref={containerRef} className="w-full h-full" />
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────
+// LocalStorage progress helpers
 // ─────────────────────────────────────────────────────────────
 function getLocalProgressKey(userId, courseId) {
   return `vt_progress_${userId}_${courseId}`
 }
-
 function loadLocalProgress(userId, courseId) {
   try {
     const raw = localStorage.getItem(getLocalProgressKey(userId, courseId))
     return raw ? JSON.parse(raw) : null
   } catch { return null }
 }
-
 function saveLocalProgress(userId, courseId, data) {
   try {
     localStorage.setItem(getLocalProgressKey(userId, courseId), JSON.stringify(data))
@@ -72,34 +184,36 @@ function saveLocalProgress(userId, courseId, data) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Main Component
+// Utility: get video source from lecture
+// ─────────────────────────────────────────────────────────────
+function getVideoSource(lecture) {
+  if (lecture?.youtubeVideoId) return { type: 'youtube', id: lecture.youtubeVideoId }
+  if (lecture?.lectureUrl) return { type: 'url', url: lecture.lectureUrl }
+  return { type: 'none' }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Main Player Component
 // ─────────────────────────────────────────────────────────────
 const Player = () => {
   const { courseId } = useParams()
   const navigate = useNavigate()
-  const { userId, user, isAuthenticated } = useAuth()
-  const { calculateChapterTime, calculateCourseDuration, enrolledCourses } = React.useContext(AppContext)
+  const { userId, isAuthenticated } = useAuth()
+  const { calculateChapterTime } = React.useContext(AppContext)
 
   // ─── state ─────────────────────────────────────────────────
   const [course, setCourse] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-
-  // Currently selected lecture
   const [currentChapterIdx, setCurrentChapterIdx] = useState(0)
   const [currentLectureIdx, setCurrentLectureIdx] = useState(0)
-
-  // Accordion open state (chapter indexes)
   const [openChapters, setOpenChapters] = useState({})
-
-  // Progress data keyed by "chapterId:lectureId" -> boolean
-  const [completedMap, setCompletedMap] = useState({})
+  const [completedMap, setCompletedMap] = useState({}) // "chapterId:lectureId" -> boolean
+  const [completedTimestamps, setCompletedTimestamps] = useState({}) // "chapterId:lectureId" -> Date string
   const [markingComplete, setMarkingComplete] = useState(false)
-
-  // Mobile sidebar toggle
   const [sidebarOpen, setSidebarOpen] = useState(false)
-
-  const playerRef = useRef(null)
+  const [ytError, setYtError] = useState(false)
+  const autoCompleteTriggeredRef = useRef(new Set()) // Track auto-completed lectures
 
   // ─── derived ───────────────────────────────────────────────
   const allLectures = useMemo(() => {
@@ -125,7 +239,11 @@ const Player = () => {
     return { ...lec, chapterId: ch.chapterId || ch._id, chapterTitle: ch.chapterTitle }
   }, [course, currentChapterIdx, currentLectureIdx])
 
-  const currentLectureKey = currentLecture ? `${currentLecture.chapterId}:${currentLecture.lectureId || currentLecture._id}` : null
+  const currentLectureKey = currentLecture
+    ? `${currentLecture.chapterId}:${currentLecture.lectureId || currentLecture._id}`
+    : null
+
+  const videoSource = useMemo(() => getVideoSource(currentLecture), [currentLecture])
 
   // ─── fetch course ──────────────────────────────────────────
   useEffect(() => {
@@ -134,7 +252,6 @@ const Player = () => {
       setLoading(true)
       setError(null)
       try {
-        // Try enrolled endpoint first, fall back to public
         let result
         if (isAuthenticated()) {
           try {
@@ -145,10 +262,8 @@ const Player = () => {
         } else {
           result = await apiService.courses.getById(courseId)
         }
-
         if (result.success && result.courseData) {
           setCourse(result.courseData)
-          // Open first chapter by default
           setOpenChapters({ 0: true })
         } else {
           setError(result.message || 'Failed to load course')
@@ -165,30 +280,27 @@ const Player = () => {
   // ─── fetch progress ────────────────────────────────────────
   useEffect(() => {
     if (!userId || !courseId || !course) return
-
     const fetchProgress = async () => {
-      // Load from localStorage first for instant UI
       const local = loadLocalProgress(userId, courseId)
       if (local) setCompletedMap(local)
-
-      // Then sync with backend
       try {
         const result = await apiService.progress.get(userId, courseId)
         if (result.success && result.progress) {
           const map = {}
+          const timestamps = {}
             ; (result.progress.chapterProgress || []).forEach(cp => {
               (cp.completedLectures || []).forEach(lec => {
                 if (lec.isCompleted) {
                   map[`${cp.chapterId}:${lec.lectureId}`] = true
+                  if (lec.completedAt) timestamps[`${cp.chapterId}:${lec.lectureId}`] = lec.completedAt
                 }
               })
             })
           setCompletedMap(map)
+          setCompletedTimestamps(timestamps)
           saveLocalProgress(userId, courseId, map)
         }
-      } catch {
-        // Keep using localStorage data
-      }
+      } catch { /* Keep using localStorage */ }
     }
     fetchProgress()
   }, [userId, courseId, course])
@@ -206,6 +318,7 @@ const Player = () => {
       saveLocalProgress(userId, courseId, next)
       return next
     })
+    setCompletedTimestamps(prev => ({ ...prev, [key]: new Date().toISOString() }))
 
     try {
       await apiService.progress.updateLecture(
@@ -222,17 +335,35 @@ const Player = () => {
         saveLocalProgress(userId, courseId, next)
         return next
       })
+      setCompletedTimestamps(prev => {
+        const next = { ...prev }
+        delete next[key]
+        return next
+      })
     } finally {
       setMarkingComplete(false)
     }
   }, [currentLecture, currentLectureKey, userId, courseId, completedMap, markingComplete])
+
+  // ─── YouTube 80% auto-completion ───────────────────────────
+  const handleWatchProgress = useCallback((currentTime, totalDuration) => {
+    if (!currentLectureKey || completedMap[currentLectureKey]) return
+    if (autoCompleteTriggeredRef.current.has(currentLectureKey)) return
+
+    const ratio = currentTime / totalDuration
+    if (ratio >= 0.8) {
+      autoCompleteTriggeredRef.current.add(currentLectureKey)
+      handleMarkComplete()
+    }
+  }, [currentLectureKey, completedMap, handleMarkComplete])
 
   // ─── navigate lectures ─────────────────────────────────────
   const goToLecture = useCallback((chIdx, lecIdx) => {
     setCurrentChapterIdx(chIdx)
     setCurrentLectureIdx(lecIdx)
     setOpenChapters(prev => ({ ...prev, [chIdx]: true }))
-    setSidebarOpen(false) // close mobile sidebar
+    setSidebarOpen(false)
+    setYtError(false)
   }, [])
 
   const goToNextLecture = useCallback(() => {
@@ -254,27 +385,28 @@ const Player = () => {
     }
   }, [course, currentChapterIdx, currentLectureIdx, goToLecture])
 
-  // Toggle chapter accordion
-  const toggleChapter = (idx) => {
-    setOpenChapters(prev => ({ ...prev, [idx]: !prev[idx] }))
-  }
+  const toggleChapter = (idx) => setOpenChapters(prev => ({ ...prev, [idx]: !prev[idx] }))
 
-  // Video end handler — auto-mark + auto-advance
   const handleVideoEnd = () => {
     if (currentLectureKey && !completedMap[currentLectureKey]) {
       handleMarkComplete()
     }
-    // Auto-advance after a brief delay
     setTimeout(() => goToNextLecture(), 800)
   }
 
-  // ─── render helpers ────────────────────────────────────────
   const formatDuration = (mins) => {
     if (!mins) return '0 min'
     return humanizeDuration(mins * 60 * 1000, { units: ['h', 'm'], round: true })
   }
 
-  // ─── loading / error states ────────────────────────────────
+  const formatTimestamp = (dateStr) => {
+    if (!dateStr) return ''
+    try {
+      return new Date(dateStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+    } catch { return '' }
+  }
+
+  // ─── loading / error ──────────────────────────────────────
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -301,7 +433,6 @@ const Player = () => {
     )
   }
 
-  // Chapter completion stats
   const getChapterStats = (chapter) => {
     const total = chapter.chapterContent?.length || 0
     const done = (chapter.chapterContent || []).filter(lec => {
@@ -316,18 +447,13 @@ const Player = () => {
       {/* ═══════════════ HEADER ═══════════════ */}
       <header className="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-[1800px] mx-auto px-4 py-3 flex items-center gap-4">
-          {/* Back button */}
           <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Go back">
             <ArrowLeftIcon />
           </button>
-
-          {/* Course title */}
           <div className="flex-1 min-w-0">
             <h1 className="text-sm md:text-base font-bold text-gray-900 truncate">{course.courseTitle}</h1>
             <p className="text-xs text-gray-500 hidden md:block">{course.educator?.name || 'Instructor'}</p>
           </div>
-
-          {/* Progress pill */}
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2">
               <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -344,12 +470,7 @@ const Player = () => {
               </span>
             )}
           </div>
-
-          {/* Mobile menu toggle */}
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors">
             {sidebarOpen ? <XIcon /> : <MenuIcon />}
           </button>
         </div>
@@ -363,13 +484,9 @@ const Player = () => {
           bg-white border-r border-gray-200 overflow-y-auto transition-transform duration-300
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}>
-          {/* Sidebar header */}
           <div className="sticky top-0 bg-white border-b border-gray-100 px-4 py-3 z-10">
             <h2 className="font-bold text-gray-800 text-sm">Course Content</h2>
-            <p className="text-xs text-gray-500 mt-0.5">
-              {completedCount}/{totalLectures} lectures completed
-            </p>
-            {/* Mobile progress */}
+            <p className="text-xs text-gray-500 mt-0.5">{completedCount}/{totalLectures} lectures completed</p>
             <div className="sm:hidden mt-2">
               <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
                 <div className="h-full bg-emerald-500 rounded-full transition-all duration-500" style={{ width: `${progressPercent}%` }} />
@@ -378,51 +495,50 @@ const Player = () => {
             </div>
           </div>
 
-          {/* Chapter list */}
           <div className="divide-y divide-gray-100">
             {(course.courseContent || []).map((chapter, chIdx) => {
               const stats = getChapterStats(chapter)
               const isOpen = !!openChapters[chIdx]
               return (
-                <div key={chapter._id || chIdx}>
-                  {/* Chapter header */}
-                  <button
-                    onClick={() => toggleChapter(chIdx)}
-                    className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3"
-                  >
+                <div key={chapter.chapterId || chapter._id || chIdx}>
+                  <button onClick={() => toggleChapter(chIdx)} className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3">
                     <ChevronDown open={isOpen} />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-gray-800 truncate">{chapter.chapterTitle}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">
-                        {stats.done}/{stats.total} • {calculateChapterTime(chapter)}
-                      </p>
+                      <p className="text-xs text-gray-500 mt-0.5">{stats.done}/{stats.total} • {calculateChapterTime(chapter)}</p>
                     </div>
-                    {stats.done === stats.total && stats.total > 0 && (
-                      <CheckCircleIcon />
-                    )}
+                    {stats.done === stats.total && stats.total > 0 && <CheckCircleIcon />}
                   </button>
 
-                  {/* Lecture list */}
                   {isOpen && (
                     <div className="bg-gray-50/50">
                       {(chapter.chapterContent || []).map((lecture, lecIdx) => {
                         const lecKey = `${chapter.chapterId || chapter._id}:${lecture.lectureId || lecture._id}`
                         const isActive = currentChapterIdx === chIdx && currentLectureIdx === lecIdx
                         const isDone = !!completedMap[lecKey]
+                        const timestamp = completedTimestamps[lecKey]
                         return (
                           <button
-                            key={lecture._id || lecIdx}
+                            key={lecture.lectureId || lecture._id || lecIdx}
                             onClick={() => goToLecture(chIdx, lecIdx)}
                             className={`w-full text-left px-4 py-2.5 pl-12 flex items-center gap-3 transition-colors text-sm
-                              ${isActive ? 'bg-emerald-50 border-l-3 border-emerald-500' : 'hover:bg-gray-100'}
+                              ${isActive ? 'bg-emerald-50 border-l-[3px] border-emerald-500' : 'hover:bg-gray-100'}
                             `}
                           >
-                            {isDone ? <CheckCircleIcon /> : isActive ? <PlayCircleIcon className="w-5 h-5 text-emerald-600" /> : <CircleIcon />}
+                            {isDone ? <CheckCircleIcon /> : isActive ? <PlayCircleIcon className="w-5 h-5 text-emerald-600 shrink-0" /> : <CircleIcon />}
                             <div className="flex-1 min-w-0">
                               <p className={`truncate ${isActive ? 'text-emerald-700 font-medium' : isDone ? 'text-gray-500' : 'text-gray-700'}`}>
                                 {lecture.lectureTitle}
                               </p>
-                              <p className="text-xs text-gray-400 mt-0.5">{formatDuration(lecture.lectureDuration)}</p>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <span className="text-xs text-gray-400">{formatDuration(lecture.lectureDuration)}</span>
+                                {isDone && timestamp && (
+                                  <span className="text-[10px] text-emerald-500 font-medium">✓ {formatTimestamp(timestamp)}</span>
+                                )}
+                                {lecture.youtubeVideoId && (
+                                  <span className="text-[10px] text-red-400 font-medium">▶ YT</span>
+                                )}
+                              </div>
                             </div>
                           </button>
                         )
@@ -442,21 +558,40 @@ const Player = () => {
 
         {/* ─── MAIN CONTENT ─── */}
         <main className="flex-1 min-w-0">
-          {/* Video Player */}
-          <div className="bg-black aspect-video w-full max-h-[70vh]">
-            {currentLecture?.lectureUrl ? (
-              <ReactPlayer
-                ref={playerRef}
-                url={currentLecture.lectureUrl}
-                width="100%"
-                height="100%"
-                controls
-                playing
-                onEnded={handleVideoEnd}
-                config={{
-                  youtube: { playerVars: { modestbranding: 1, rel: 0 } },
-                  file: { attributes: { controlsList: 'nodownload' } }
-                }}
+          {/* Video Player Area */}
+          <div className="bg-black aspect-video w-full max-h-[70vh] relative">
+            {videoSource.type === 'youtube' ? (
+              ytError ? (
+                /* YouTube error fallback */
+                <div className="w-full h-full flex items-center justify-center text-white">
+                  <div className="text-center p-6">
+                    <div className="text-5xl mb-4">⚠️</div>
+                    <h3 className="text-lg font-bold mb-2">Video Unavailable</h3>
+                    <p className="text-gray-300 text-sm mb-4">This YouTube video couldn't be loaded. It may be blocked or removed.</p>
+                    <button
+                      onClick={() => setYtError(false)}
+                      className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <YouTubePlayer
+                  videoId={videoSource.id}
+                  onWatchProgress={handleWatchProgress}
+                  onVideoEnd={handleVideoEnd}
+                  onError={() => setYtError(true)}
+                />
+              )
+            ) : videoSource.type === 'url' ? (
+              <iframe
+                src={videoSource.url}
+                className="w-full h-full"
+                title="Lecture Video"
+                frameBorder="0"
+                allowFullScreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -477,18 +612,26 @@ const Player = () => {
                 <h2 className="text-xl md:text-2xl font-bold text-gray-900">{currentLecture?.lectureTitle || 'Select a lecture'}</h2>
                 <p className="text-sm text-gray-500 mt-1">
                   {currentLecture?.chapterTitle} • {formatDuration(currentLecture?.lectureDuration)}
+                  {videoSource.type === 'youtube' && (
+                    <span className="ml-2 text-xs text-red-500 font-medium">YouTube</span>
+                  )}
                 </p>
               </div>
               <div className="flex items-center gap-3">
                 {currentLectureKey && completedMap[currentLectureKey] ? (
-                  <span className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-100 text-emerald-700 rounded-xl text-sm font-semibold">
+                  <span className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-100 text-emerald-700 rounded-xl text-sm font-semibold cursor-default">
                     <CheckCircleIcon /> Completed
+                    {completedTimestamps[currentLectureKey] && (
+                      <span className="text-xs text-emerald-500 ml-1">
+                        {formatTimestamp(completedTimestamps[currentLectureKey])}
+                      </span>
+                    )}
                   </span>
                 ) : (
                   <button
                     onClick={handleMarkComplete}
                     disabled={markingComplete || !currentLecture}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
                   >
                     {markingComplete ? (
                       <>
@@ -503,7 +646,15 @@ const Player = () => {
               </div>
             </div>
 
-            {/* Navigation - prev/next */}
+            {/* Auto-completion hint */}
+            {videoSource.type === 'youtube' && currentLectureKey && !completedMap[currentLectureKey] && (
+              <div className="mb-4 px-4 py-2.5 bg-blue-50 border border-blue-100 rounded-lg text-xs text-blue-700 flex items-center gap-2">
+                <span>💡</span>
+                <span>This lecture will be automatically marked as completed when you watch 80% of the video.</span>
+              </div>
+            )}
+
+            {/* Prev / Next */}
             <div className="flex items-center justify-between py-4 border-t border-gray-200">
               <button
                 onClick={goToPrevLecture}
@@ -515,11 +666,9 @@ const Player = () => {
                 </svg>
                 Previous
               </button>
-
               <span className="text-xs text-gray-400">
                 Lecture {allLectures.findIndex(l => l.chapterIdx === currentChapterIdx && l.lectureIdx === currentLectureIdx) + 1} of {totalLectures}
               </span>
-
               <button
                 onClick={goToNextLecture}
                 disabled={currentChapterIdx === (course.courseContent?.length || 1) - 1 &&
@@ -541,7 +690,7 @@ const Player = () => {
               </div>
             )}
 
-            {/* Course info section */}
+            {/* Course info card */}
             <div className="mt-8 p-6 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100">
               <div className="flex items-center gap-4 mb-4">
                 {course.courseThumbnail && (
@@ -568,12 +717,15 @@ const Player = () => {
               </div>
             </div>
 
-            {/* Completion banner */}
+            {/* Completion banner + certificate unlock */}
             {isComplete && (
               <div className="mt-6 p-6 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl text-white text-center">
                 <div className="text-4xl mb-2">🎓</div>
                 <h3 className="text-xl font-bold mb-1">Congratulations!</h3>
-                <p className="text-emerald-100">You've completed this course. Well done!</p>
+                <p className="text-emerald-100 mb-3">You've completed this course. Well done!</p>
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-lg text-sm font-medium">
+                  <span>📜</span> Certificate Unlocked — Download Coming Soon
+                </div>
               </div>
             )}
           </div>
