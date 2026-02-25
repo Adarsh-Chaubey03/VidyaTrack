@@ -18,12 +18,12 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
+
     // For FormData, let the browser set the Content-Type automatically
     if (config.data instanceof FormData) {
       delete config.headers['Content-Type'];
     }
-    
+
     return config;
   },
   (error) => {
@@ -57,25 +57,26 @@ export const API_ENDPOINTS = {
     EDUCATOR_LOGIN: '/auth/educator-login',
     ME: '/auth/me',
   },
-  
+
   // Course endpoints
   COURSES: {
     ALL: '/course/all',
     BY_ID: (id) => `/course/${id}`,
+    ENROLLED_BY_ID: (id) => `/course/enrolled/${id}`,
   },
-  
+
   // Progress endpoints
   PROGRESS: {
     GET: (userId, courseId) => `/progress/${userId}/${courseId}`,
-    UPDATE_LECTURE: (userId, courseId, chapterId, lectureId) => 
+    UPDATE_LECTURE: (userId, courseId, chapterId, lectureId) =>
       `/progress/${userId}/${courseId}/${chapterId}/${lectureId}`,
-    UPDATE_WATCH_TIME: (userId, courseId, chapterId, lectureId) => 
+    UPDATE_WATCH_TIME: (userId, courseId, chapterId, lectureId) =>
       `/progress/${userId}/${courseId}/${chapterId}/${lectureId}/watchtime`,
     USER_PROGRESS: (userId) => `/progress/user/${userId}`,
     RESET: (userId, courseId) => `/progress/${userId}/${courseId}`,
     ANALYTICS: (courseId) => `/progress/analytics/${courseId}`,
   },
-  
+
   // User endpoints
   USER: {
     PROFILE: '/user/data',
@@ -83,7 +84,7 @@ export const API_ENDPOINTS = {
     PURCHASE_COURSE: '/user/purchase-course',
     ENROLL_FREE_COURSE: '/user/enroll-free-course',
   },
-  
+
   // Educator endpoints
   EDUCATOR: {
     DASHBOARD: '/educator/dashboard',
@@ -99,7 +100,7 @@ export const API_ENDPOINTS = {
     STATUS: (transactionId) => `/payments/status/${transactionId}`,
     HISTORY: '/payments/history',
   },
-  
+
 };
 
 // API service functions
@@ -110,43 +111,48 @@ export const apiService = {
       const response = await api.post(API_ENDPOINTS.AUTH.LOGIN, data);
       return response.data;
     },
-    
+
     register: async (data) => {
       const response = await api.post(API_ENDPOINTS.AUTH.REGISTER, data);
       return response.data;
     },
-    
+
     educatorLogin: async (data) => {
       const response = await api.post(API_ENDPOINTS.AUTH.EDUCATOR_LOGIN, data);
       return response.data;
     },
-    
+
     getMe: async () => {
       const response = await api.get(API_ENDPOINTS.AUTH.ME);
       return response.data;
     },
   },
-  
+
   // Course services
   courses: {
     getAll: async () => {
       const response = await api.get(API_ENDPOINTS.COURSES.ALL);
       return response.data;
     },
-    
+
     getById: async (id) => {
       const response = await api.get(API_ENDPOINTS.COURSES.BY_ID(id));
       return response.data;
     },
+
+    getEnrolledById: async (id) => {
+      const response = await api.get(API_ENDPOINTS.COURSES.ENROLLED_BY_ID(id));
+      return response.data;
+    },
   },
-  
+
   // Progress services
   progress: {
     get: async (userId, courseId) => {
       const response = await api.get(API_ENDPOINTS.PROGRESS.GET(userId, courseId));
       return response.data;
     },
-    
+
     updateLecture: async (userId, courseId, chapterId, lectureId, data) => {
       const response = await api.put(
         API_ENDPOINTS.PROGRESS.UPDATE_LECTURE(userId, courseId, chapterId, lectureId),
@@ -154,7 +160,7 @@ export const apiService = {
       );
       return response.data;
     },
-    
+
     updateWatchTime: async (userId, courseId, chapterId, lectureId, data) => {
       const response = await api.patch(
         API_ENDPOINTS.PROGRESS.UPDATE_WATCH_TIME(userId, courseId, chapterId, lectureId),
@@ -162,30 +168,30 @@ export const apiService = {
       );
       return response.data;
     },
-    
+
     getUserProgress: async (userId) => {
       const response = await api.get(API_ENDPOINTS.PROGRESS.USER_PROGRESS(userId));
       return response.data;
     },
-    
+
     reset: async (userId, courseId) => {
       const response = await api.delete(API_ENDPOINTS.PROGRESS.RESET(userId, courseId));
       return response.data;
     },
-    
+
     getAnalytics: async (courseId) => {
       const response = await api.get(API_ENDPOINTS.PROGRESS.ANALYTICS(courseId));
       return response.data;
     },
   },
-  
+
   // User services
   user: {
     getProfile: async () => {
       const response = await api.get(API_ENDPOINTS.USER.PROFILE);
       return response.data;
     },
-    
+
     updateProfile: async (data) => {
       const response = await api.put(API_ENDPOINTS.USER.UPDATE, data);
       return response.data;
@@ -201,24 +207,24 @@ export const apiService = {
       return response.data;
     },
   },
-  
+
   // Educator services
   educator: {
     getDashboard: async () => {
       const response = await api.get(API_ENDPOINTS.EDUCATOR.DASHBOARD);
       return response.data;
     },
-    
+
     getCourses: async () => {
       const response = await api.get(API_ENDPOINTS.EDUCATOR.COURSES);
       return response.data;
     },
-    
+
     addCourse: async (data) => {
       const response = await api.post(API_ENDPOINTS.EDUCATOR.ADD_COURSE, data);
       return response.data;
     },
-    
+
     getStudents: async () => {
       const response = await api.get(API_ENDPOINTS.EDUCATOR.STUDENTS);
       return response.data;

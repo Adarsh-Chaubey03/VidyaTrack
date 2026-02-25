@@ -4,6 +4,7 @@ import PaymentTransaction from '../models/PaymentTransaction.js';
 import User from '../models/User.js';
 import Course from '../models/Course.js';
 import Purchase from '../models/Purchase.js';
+import CourseProgress from '../models/CourseProgress.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -16,18 +17,8 @@ const mapRazorpayMethod = (method) => {
 
 // ---------------------------------------------------------------------------
 // 1. Create Payment Order
-//    Replicates: vendor-dashboard → PaymentModal → ENDPOINTS.vendor.createPaymentOrder
-//    Backend:    khatakhat-backend → order/index.ts → razorpay.orders.create
 // ---------------------------------------------------------------------------
 
-/**
- * POST /api/payments/create-order
- *
- * Body: { amount, currency?, referenceId, referenceType?, metadata? }
- *
- * Creates a Razorpay order and persists a PaymentTransaction record.
- * Returns the data the client needs to open the Razorpay checkout.
- */
 export const createPaymentOrder = async (req, res) => {
   try {
     if (!razorpay) {
@@ -46,7 +37,6 @@ export const createPaymentOrder = async (req, res) => {
       metadata = {},
     } = req.body;
 
-    // ---- Validation ----
     if (!amount || amount <= 0) {
       return res.status(400).json({ success: false, message: 'A positive amount is required' });
     }
@@ -54,29 +44,24 @@ export const createPaymentOrder = async (req, res) => {
       return res.status(400).json({ success: false, message: 'referenceId is required' });
     }
 
-    // ---- Verify reference exists (course-specific, extensible) ----
     if (referenceType === 'course') {
       const course = await Course.findById(referenceId);
       if (!course) {
         return res.status(404).json({ success: false, message: 'Course not found' });
       }
-
-      // Check already enrolled
       const user = await User.findById(userId);
       if (user.enrolledCourses?.includes(referenceId)) {
         return res.status(400).json({ success: false, message: 'Already enrolled in this course' });
       }
     }
 
-    // ---- Create Razorpay order ----
     const razorpayOrder = await razorpay.orders.create({
-      amount: Math.round(amount * 100), // convert to paise
+      amount: Math.round(amount * 100),
       currency,
       receipt: `vt_${referenceType}_${Date.now()}`,
-      payment_capture: 1, // auto-capture
+      payment_capture: 1,
     });
 
-    // ---- Persist transaction record ----
     const txn = await PaymentTransaction.create({
       userId,
       referenceId,
@@ -94,7 +79,7 @@ export const createPaymentOrder = async (req, res) => {
         transactionId: txn._id,
         razorpayOrderId: razorpayOrder.id,
         razorpayKeyId: process.env.RAZORPAY_KEY_ID,
-        amount: razorpayOrder.amount, // in paise
+        amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
       },
     });
@@ -106,20 +91,8 @@ export const createPaymentOrder = async (req, res) => {
 
 // ---------------------------------------------------------------------------
 // 2. Confirm / Verify Payment
-//    Replicates: vendor-dashboard → PaymentModal handler callback
-//    Signature verification via HMAC SHA256
 // ---------------------------------------------------------------------------
 
-/**
- * POST /api/payments/confirm
- *
- * Body: { razorpayOrderId, razorpayPaymentId, razorpaySignature }
- *
- * 1. Verifies the Razorpay signature (HMAC SHA256).
- * 2. Fetches the payment from Razorpay API to double-check status & amount.
- * 3. Updates the PaymentTransaction record.
- * 4. Fulfils the domain action (e.g. enrol user in course).
- */
 export const confirmPayment = async (req, res) => {
   try {
     if (!razorpay) {
@@ -132,7 +105,6 @@ export const confirmPayment = async (req, res) => {
     const userId = req.user._id;
     const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
 
-    // ---- Validate ----
     if (!razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
       return res.status(400).json({
         success: false,
@@ -140,18 +112,15 @@ export const confirmPayment = async (req, res) => {
       });
     }
 
-    // ---- Find transaction ----
     const txn = await PaymentTransaction.findOne({ razorpayOrderId, userId });
     if (!txn) {
       return res.status(404).json({ success: false, message: 'Transaction not found' });
     }
 
-    // Idempotency — already confirmed
     if (txn.status === 'paid') {
       return res.json({ success: true, message: 'Payment already confirmed', data: txn });
     }
 
-    // ---- Signature verification (HMAC SHA256) ----
     const secret = process.env.RAZORPAY_KEY_SECRET;
     if (!secret) {
       return res.status(500).json({ success: false, message: 'Razorpay secret not configured' });
@@ -171,7 +140,6 @@ export const confirmPayment = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid payment signature' });
     }
 
-    // ---- Fetch payment from Razorpay for additional verification ----
     const razorpayPayment = await razorpay.payments.fetch(razorpayPaymentId);
     const amountInRupees = razorpayPayment.amount / 100;
 
@@ -186,7 +154,6 @@ export const confirmPayment = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Payment verification failed' });
     }
 
-    // ---- Update transaction ----
     txn.status = 'paid';
     txn.razorpayPaymentId = razorpayPaymentId;
     txn.razorpaySignature = razorpaySignature;
@@ -194,7 +161,6 @@ export const confirmPayment = async (req, res) => {
     txn.paidAt = new Date();
     await txn.save();
 
-    // ---- Domain fulfilment (education-specific) ----
     await fulfillPayment(txn);
 
     return res.json({
@@ -216,17 +182,8 @@ export const confirmPayment = async (req, res) => {
 
 // ---------------------------------------------------------------------------
 // 3. Razorpay Webhook Handler
-//    Replicates: khatakhat-backend → webhook/index.ts → /razorpay
-//    Server-to-server callback — handles cases where the client callback
-//    never fires (network drop, tab closed, etc.).
 // ---------------------------------------------------------------------------
 
-/**
- * POST /api/payments/webhook/razorpay
- *
- * Verifies HMAC SHA256 signature from Razorpay webhook,
- * then processes `payment.captured` and `payment.failed` events.
- */
 export const razorpayWebhook = async (req, res) => {
   try {
     const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -241,7 +198,6 @@ export const razorpayWebhook = async (req, res) => {
       return res.status(400).send('Missing signature');
     }
 
-    // Use raw body for signature verification
     const body = req.rawBody
       ? req.rawBody.toString('utf8')
       : JSON.stringify(req.body);
@@ -271,10 +227,9 @@ export const razorpayWebhook = async (req, res) => {
 
       if (!txn) {
         console.warn(`Webhook: No transaction for razorpayOrderId ${razorpayOrderId}`);
-        return res.status(200).send('OK'); // ack to Razorpay anyway
+        return res.status(200).send('OK');
       }
 
-      // Idempotency
       if (txn.status === 'paid') {
         return res.status(200).send('OK');
       }
@@ -285,7 +240,6 @@ export const razorpayWebhook = async (req, res) => {
       txn.paidAt = new Date();
       await txn.save();
 
-      // Domain fulfilment
       await fulfillPayment(txn);
     } else if (event === 'payment.failed') {
       await PaymentTransaction.findOneAndUpdate(
@@ -309,11 +263,6 @@ export const razorpayWebhook = async (req, res) => {
 // 4. Get Payment Status
 // ---------------------------------------------------------------------------
 
-/**
- * GET /api/payments/status/:transactionId
- *
- * Returns the current status of a payment transaction.
- */
 export const getPaymentStatus = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -348,11 +297,6 @@ export const getPaymentStatus = async (req, res) => {
 // 5. Get Payment History
 // ---------------------------------------------------------------------------
 
-/**
- * GET /api/payments/history
- *
- * Returns all payment transactions for the authenticated user.
- */
 export const getPaymentHistory = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -388,29 +332,21 @@ export const getPaymentHistory = async (req, res) => {
 };
 
 // ---------------------------------------------------------------------------
-// Domain Fulfilment (education-platform specific)
+// Domain Fulfilment
 // ---------------------------------------------------------------------------
 
-/**
- * Called after a payment is confirmed (either from client callback or webhook).
- * Maps `referenceType` to the appropriate fulfilment action.
- * Easily extensible — add new cases as VidyaTrack grows.
- */
 async function fulfillPayment(txn) {
   switch (txn.referenceType) {
     case 'course':
       await fulfillCoursePurchase(txn);
       break;
     case 'subscription':
-      // Future: activate subscription period
       console.log(`Subscription fulfilment not yet implemented for txn ${txn._id}`);
       break;
     case 'test_series':
-      // Future: unlock test series
       console.log(`Test-series fulfilment not yet implemented for txn ${txn._id}`);
       break;
     case 'mentorship':
-      // Future: book mentorship session
       console.log(`Mentorship fulfilment not yet implemented for txn ${txn._id}`);
       break;
     default:
@@ -432,6 +368,52 @@ async function fulfillCoursePurchase(txn) {
     user.enrolledCourses = user.enrolledCourses || [];
     user.enrolledCourses.push(txn.referenceId);
     await user.save();
+  }
+
+  // Add user to course enrolledStudent list (idempotent)
+  try {
+    const course = await Course.findById(txn.referenceId);
+    if (course && !course.enrolledStudent?.map(String).includes(txn.userId.toString())) {
+      course.enrolledStudent = course.enrolledStudent || [];
+      course.enrolledStudent.push(txn.userId);
+      await course.save();
+    }
+  } catch (err) {
+    console.error('Error adding student to course:', err);
+  }
+
+  // Auto-create CourseProgress record (idempotent)
+  try {
+    const existingProgress = await CourseProgress.findOne({ userId: txn.userId, courseId: txn.referenceId });
+    if (!existingProgress) {
+      const course = await Course.findById(txn.referenceId);
+      if (course) {
+        let totalLectures = 0;
+        const chapterProgress = (course.courseContent || []).map(chapter => {
+          const lectures = (chapter.chapterContent || []).map(lecture => {
+            totalLectures++;
+            return {
+              lectureId: lecture.lectureId || lecture._id?.toString() || `lec_${totalLectures}`,
+              isCompleted: false
+            };
+          });
+          return {
+            chapterId: chapter.chapterId || chapter._id?.toString(),
+            completedLectures: lectures
+          };
+        });
+
+        await CourseProgress.create({
+          userId: txn.userId,
+          courseId: txn.referenceId,
+          totalLectures,
+          chapterProgress
+        });
+        console.log(`CourseProgress created for user ${txn.userId}, course ${txn.referenceId}`);
+      }
+    }
+  } catch (err) {
+    console.error('Error creating CourseProgress:', err);
   }
 
   // Update legacy Purchase record for backwards compatibility

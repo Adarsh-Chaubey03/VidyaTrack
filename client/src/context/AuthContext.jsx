@@ -106,8 +106,11 @@ export const AuthProvider = ({ children }) => {
     return user?.role === 'educator';
   };
 
+  const userId = user?._id || user?.id || null;
+
   const value = {
     user,
+    userId,
     loading,
     login,
     educatorLogin,

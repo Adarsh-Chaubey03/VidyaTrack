@@ -1,7 +1,7 @@
 import Course from "../models/Course.js";
 // get all courses 
 
-export const getAllCourses = async (req,res)=>{
+export const getAllCourses = async (req, res) => {
     try {
         // let courses = await Course.find({
         //     isPublished:true
@@ -22,10 +22,10 @@ export const getAllCourses = async (req,res)=>{
 
 
 
-        res.json({success: true, courses})
+        res.json({ success: true, courses })
     } catch (error) {
         console.error('Error in getAllCourses:', error);
-        res.json({success: false, message: error.message})  
+        res.json({ success: false, message: error.message })
     }
 }
 
@@ -174,7 +174,7 @@ const createDemoCourses = async () => {
             const course = new Course(courseData);
             await course.save();
         }
-        
+
         console.log('Demo courses created successfully');
     } catch (error) {
         console.error('Error creating demo courses:', error);
@@ -183,24 +183,54 @@ const createDemoCourses = async () => {
 
 // Get Course by Id 
 
-export const getCourseId = async (req,res)=>{
-    const {id} = req.params
+export const getCourseId = async (req, res) => {
+    const { id } = req.params
 
     try {
-        const courseData = await Course.findById(id).populate({path:'educator'})
+        const courseData = await Course.findById(id).populate({ path: 'educator' })
 
         // remove lecture url if isPreviewFree is False
         courseData.courseContent.forEach(chapter => {
-            chapter.chapterContent.forEach(lecture =>{
-                if(!lecture.isPreviewFree){
+            chapter.chapterContent.forEach(lecture => {
+                if (!lecture.isPreviewFree) {
                     lecture.lectureUrl = ""
                 }
             })
         })
 
-        res.json({success: true, courseData})
-        
+        res.json({ success: true, courseData })
+
     } catch (error) {
-        res.json({success: false, message: error.message})
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// Get enrolled course detail — returns ALL lecture URLs (post-purchase)
+export const getEnrolledCourseDetail = async (req, res) => {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+    try {
+        const User = (await import('../models/User.js')).default;
+        const user = await User.findById(userId);
+
+        if (!user || !user.enrolledCourses?.map(String).includes(id)) {
+            return res.status(403).json({
+                success: false,
+                message: 'You are not enrolled in this course'
+            });
+        }
+
+        const courseData = await Course.findById(id).populate({ path: 'educator' });
+
+        if (!courseData) {
+            return res.status(404).json({ success: false, message: 'Course not found' });
+        }
+
+        // Return full course data with ALL lecture URLs (enrolled users get everything)
+        res.json({ success: true, courseData });
+    } catch (error) {
+        console.error('Error fetching enrolled course detail:', error);
+        res.status(500).json({ success: false, message: error.message });
     }
 }
