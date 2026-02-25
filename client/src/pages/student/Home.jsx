@@ -13,6 +13,7 @@ import TestSeries from '../../components/student/TestSeries'
 import arrowIcon from '../../assets/arrow_icon.svg';
 import StatsSection from '../../components/student/StatsSection';
 import ExtraFeaturesSection from '../../components/student/ExtraFeaturesSection';
+import CategoryGrid from '../../components/student/CategoryGrid';
 
 function Home() {
     const scrollRef = useRef(null);
@@ -36,11 +37,12 @@ function Home() {
             <Hero />
             <Feature />
             <StatsSection />
+            <CategoryGrid />
             <CousreSection />
             <ExtraFeaturesSection />
             <TestimonialSection />
             <CallToAction />
-   
+
             <Footer />
         </div>
     )

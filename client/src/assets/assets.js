@@ -4,7 +4,7 @@ import search_icon from './search_icon.svg'
 import cross_icon from './cross_icon.svg'
 import upload_area from './upload_area.svg'
 import sketch from './sktech.svg'
-import learning from'./learning.png'
+import learning from './learning.png'
 import microsoft_logo from './microsoft_logo.svg'
 import walmart_logo from './walmart_logo.svg'
 import accenture_logo from './accenture_logo.svg'
@@ -50,6 +50,7 @@ import b1 from './b1.jpg';
 import b2 from './b2.jpg';
 import g1 from './g1.jpg';
 import g2 from './g2.jpg';
+import default_thumbnail from './dthumbnaail.png';
 
 
 export const assets = {
@@ -104,7 +105,8 @@ export const assets = {
     lesson_icon,
     learning,
     eduLogo,
-    mentor_bg
+    mentor_bg,
+    default_thumbnail
 }
 
 export const dummyEducatorData = {
@@ -1121,64 +1123,64 @@ export const dummyCourses = [
 ]
 
 export const mentors = [
-  {
-    id: 1,
-    name: 'Priya Sharma',
-    image: g1,
-    title: 'Developer Advocate',
-    company: 'Microsoft',
-    rating: 4.3,
-    reviews: 10,
-    description: 'Senior Developer Advocate @Microsoft, Google Developer Expert in Flutter and 14 years of experience in Web Technologies, Android, Flutter, Microsoft 365 and HarmonyOS.',
-    tags: ['Engineering & Data', 'Flutter', 'Dart', 'UI', 'Android', 'Project Management', 'Career Guidance'],
-    price: 450,
-    spotsLeft: 5,
-    freeTrial: true,
-    profileUrl: '#',
-  },
-  {
-    id: 2,
-    name: 'Amit Verma',
-    image: b1,
-    title: 'AI Product Manager',
-    company: 'Google',
-    rating: 4.8,
-    reviews: 22,
-    description: 'AI Product Manager at Google with 10+ years in AI/ML, product strategy, and team leadership. Mentor for aspiring PMs and AI enthusiasts.',
-    tags: ['AI', 'Product Management', 'Leadership', 'Career Guidance'],
-    price: 600,
-    spotsLeft: 3,
-    freeTrial: true,
-    profileUrl: '#',
-  },
-  {
-    id: 3,
-    name: 'Neha Singh',
-    image: g2,
-    title: 'Startup Coach',
-    company: 'Airbnb',
-    rating: 4.6,
-    reviews: 15,
-    description: 'Startup Coach and ex-Airbnb founder with a passion for helping new entrepreneurs build, launch, and scale their ideas.',
-    tags: ['Startup', 'Design', 'Marketing', 'Leadership'],
-    price: 350,
-    spotsLeft: 2,
-    freeTrial: false,
-    profileUrl: '#',
-  },
-  {
-    id: 4,
-    name: 'Rahul Desai',
-    image: b2,
-    title: 'Marketing Coach',
-    company: 'Netflix',
-    rating: 4.9,
-    reviews: 30,
-    description: 'Marketing Coach at Netflix, expert in digital marketing, branding, and growth strategies for tech startups.',
-    tags: ['Marketing', 'Growth', 'Branding', 'Career Guidance'],
-    price: 500,
-    spotsLeft: 1,
-    freeTrial: true,
-    profileUrl: '#',
-  },
+    {
+        id: 1,
+        name: 'Priya Sharma',
+        image: g1,
+        title: 'Developer Advocate',
+        company: 'Microsoft',
+        rating: 4.3,
+        reviews: 10,
+        description: 'Senior Developer Advocate @Microsoft, Google Developer Expert in Flutter and 14 years of experience in Web Technologies, Android, Flutter, Microsoft 365 and HarmonyOS.',
+        tags: ['Engineering & Data', 'Flutter', 'Dart', 'UI', 'Android', 'Project Management', 'Career Guidance'],
+        price: 450,
+        spotsLeft: 5,
+        freeTrial: true,
+        profileUrl: '#',
+    },
+    {
+        id: 2,
+        name: 'Amit Verma',
+        image: b1,
+        title: 'AI Product Manager',
+        company: 'Google',
+        rating: 4.8,
+        reviews: 22,
+        description: 'AI Product Manager at Google with 10+ years in AI/ML, product strategy, and team leadership. Mentor for aspiring PMs and AI enthusiasts.',
+        tags: ['AI', 'Product Management', 'Leadership', 'Career Guidance'],
+        price: 600,
+        spotsLeft: 3,
+        freeTrial: true,
+        profileUrl: '#',
+    },
+    {
+        id: 3,
+        name: 'Neha Singh',
+        image: g2,
+        title: 'Startup Coach',
+        company: 'Airbnb',
+        rating: 4.6,
+        reviews: 15,
+        description: 'Startup Coach and ex-Airbnb founder with a passion for helping new entrepreneurs build, launch, and scale their ideas.',
+        tags: ['Startup', 'Design', 'Marketing', 'Leadership'],
+        price: 350,
+        spotsLeft: 2,
+        freeTrial: false,
+        profileUrl: '#',
+    },
+    {
+        id: 4,
+        name: 'Rahul Desai',
+        image: b2,
+        title: 'Marketing Coach',
+        company: 'Netflix',
+        rating: 4.9,
+        reviews: 30,
+        description: 'Marketing Coach at Netflix, expert in digital marketing, branding, and growth strategies for tech startups.',
+        tags: ['Marketing', 'Growth', 'Branding', 'Career Guidance'],
+        price: 500,
+        spotsLeft: 1,
+        freeTrial: true,
+        profileUrl: '#',
+    },
 ];

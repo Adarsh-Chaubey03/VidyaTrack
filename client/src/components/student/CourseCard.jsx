@@ -18,6 +18,18 @@ function CourseCard({ course }) {
   const hasHalfStar = rating - fullStars >= 0.5;
   const totalRatings = course?.courseRatings?.length || 0;
 
+  // Thumbnail fallback: use default if missing/broken
+  const thumbnailSrc = course.courseThumbnail || assets.default_thumbnail;
+
+  // Badge logic
+  const badge = course.isTrending
+    ? { label: '🔥 Trending', className: 'bg-orange-100 text-orange-700' }
+    : course.isNew
+      ? { label: '✨ New', className: 'bg-blue-100 text-blue-700' }
+      : course.isBestseller
+        ? { label: '⭐ Bestseller', className: 'bg-yellow-100 text-yellow-700' }
+        : null;
+
   return (
     <Link
       to={`/course/${course._id}`}
@@ -29,14 +41,29 @@ function CourseCard({ course }) {
         overflow-hidden transition-all duration-300 mx-auto group
         rounded-xl
         hover:scale-105
+        relative
     "
     >
-      {/* Thumbnail at the top */}
-      <img
-        src={course.courseThumbnail}
-        alt="Course Thumbnail"
-        className="w-full h-32 sm:h-48 object-cover rounded-t-xl"
-      />
+      {/* Badge ribbon */}
+      {badge && (
+        <div className={`absolute top-2 left-2 z-10 px-2 py-0.5 rounded-full text-xs font-semibold ${badge.className}`}>
+          {badge.label}
+        </div>
+      )}
+
+      {/* Thumbnail — object-contain to avoid stretching, with fallback */}
+      <div className="w-full h-32 sm:h-48 bg-gray-100 dark:bg-gray-800 flex items-center justify-center rounded-t-xl overflow-hidden">
+        <img
+          src={thumbnailSrc}
+          alt={course.courseTitle}
+          className="w-full h-full object-contain"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = assets.default_thumbnail;
+          }}
+        />
+      </div>
+
       <div className="border-t border-gray-200 dark:border-gray-700 w-full" />
       <div className="p-3 sm:p-5 ">
         <h3 className="
@@ -54,6 +81,13 @@ function CourseCard({ course }) {
         ">
           VidyaTrack
         </p>
+
+        {/* Level tag */}
+        {course.level && (
+          <span className="inline-block mt-1.5 px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 capitalize">
+            {course.level}
+          </span>
+        )}
 
         <div className="flex items-center gap-2 mt-2 sm:mt-3 text-xs sm:text-sm text-gray-700 dark:text-gray-300">
           <span className="text-red-600 font-semibold">{rating.toFixed(1)}</span>
@@ -81,7 +115,7 @@ function CourseCard({ course }) {
               <span className="text-sm font-semibold text-emerald-600">{currency}{discountedPrice}</span>
             </div>
           )}
-          <span className="text-xs text-gray-500">{course.enrolledStudents?.length || 0} students</span>
+          <span className="text-xs text-gray-500">{course.enrolledStudent?.length || 0} students</span>
         </div>
       </div>
       <div className="border-b border-gray-200 dark:border-gray-700 w-full" />
