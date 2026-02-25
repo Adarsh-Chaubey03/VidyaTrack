@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
 
 const CARD_STYLE = {
-    bg: 'bg-gradient-to-br from-blue-50 to-indigo-50',
-    border: 'border-blue-200/60',
-    iconBg: 'bg-blue-100',
+    bg: 'bg-white',
+    border: 'border-gray-200',
+    iconBg: 'bg-gray-100',
 };
 
 function CategoryGrid() {
