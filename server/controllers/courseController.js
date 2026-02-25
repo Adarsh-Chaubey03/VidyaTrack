@@ -1,183 +1,99 @@
 import Course from "../models/Course.js";
-// get all courses 
+import Category from "../models/Category.js";
 
+// Get all courses with filtering, sorting, and pagination
 export const getAllCourses = async (req, res) => {
     try {
-        // let courses = await Course.find({
-        //     isPublished:true
-        // }).select(['-courseContent','-enrolledStudents']).populate({path:'educator'})
+        const {
+            category,
+            level,
+            price,      // 'free' | 'paid'
+            rating,     // minimum rating, e.g. '4'
+            search,
+            sort,       // 'newest' | 'popular' | 'price-asc' | 'price-desc'
+            page = 1,
+            limit = 12,
+        } = req.query;
 
-        // // If no courses exist, create some demo courses
-        // if (courses.length === 0) {
-        //     console.log('No courses found, creating demo courses...');
-        //     await createDemoCourses();
-        //     courses = await Course.find({
-        //         isPublished:true
-        //     }).select(['-courseContent','-enrolledStudents']).populate({path:'educator'})
-        // }
+        // Build filter
+        const filter = { isPublished: true };
 
-        const courses = await Course.find({})
-        console.log(courses)
-
-
-
-
-        res.json({ success: true, courses })
-    } catch (error) {
-        console.error('Error in getAllCourses:', error);
-        res.json({ success: false, message: error.message })
-    }
-}
-
-// Function to create demo courses
-const createDemoCourses = async () => {
-    try {
-        const demoCourses = [
-            {
-                courseTitle: "Natural Learning Process",
-                courseDescription: "Master the Art of Natural Learning - Discover the science behind how humans naturally acquire knowledge and skills. This comprehensive course explores cognitive psychology, memory techniques, and learning strategies that align with how your brain naturally processes information.",
-                courseThumbnail: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=250&fit=crop&crop=center",
-                coursePrice: 0,
-                discount: 0,
-                isPublished: true,
-                educator: "demo-educator-1",
-                enrolledStudents: [],
-                courseContent: [
-                    {
-                        chapterTitle: "Understanding Natural Learning",
-                        chapterContent: [
-                            {
-                                lectureTitle: "Introduction to Natural Learning",
-                                lectureDuration: 18,
-                                isPreviewFree: true
-                            },
-                            {
-                                lectureTitle: "How the Brain Learns Naturally",
-                                lectureDuration: 22,
-                                isPreviewFree: true
-                            },
-                            {
-                                lectureTitle: "Cognitive Load Theory",
-                                lectureDuration: 15,
-                                isPreviewFree: true
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                courseTitle: "OpenCV Computer Vision Masterclass",
-                courseDescription: "Complete OpenCV Course for Computer Vision - Master computer vision with OpenCV, the most popular library for image processing and computer vision applications. This comprehensive course covers everything from basic image manipulation to advanced computer vision techniques.",
-                courseThumbnail: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=250&fit=crop&crop=center",
-                coursePrice: 0,
-                discount: 0,
-                isPublished: true,
-                educator: "demo-educator-1",
-                enrolledStudents: [],
-                courseContent: [
-                    {
-                        chapterTitle: "OpenCV Fundamentals",
-                        chapterContent: [
-                            {
-                                lectureTitle: "Introduction to OpenCV",
-                                lectureDuration: 15,
-                                isPreviewFree: true
-                            },
-                            {
-                                lectureTitle: "Installing and Setting Up OpenCV",
-                                lectureDuration: 12,
-                                isPreviewFree: true
-                            },
-                            {
-                                lectureTitle: "Basic Image Operations",
-                                lectureDuration: 18,
-                                isPreviewFree: true
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                courseTitle: "Master React JS",
-                courseDescription: "Learn React from scratch to advanced concepts with hands-on projects",
-                courseThumbnail: "https://via.placeholder.com/400x250/4ade80/ffffff?text=React+JS",
-                coursePrice: 99.99,
-                discount: 25,
-                isPublished: true,
-                educator: "demo-educator-1",
-                enrolledStudents: [],
-                courseContent: [
-                    {
-                        chapterTitle: "Introduction to React",
-                        chapterContent: [
-                            {
-                                lectureTitle: "What is React?",
-                                lectureDuration: 15,
-                                isPreviewFree: true
-                            },
-                            {
-                                lectureTitle: "Setting up your environment",
-                                lectureDuration: 20,
-                                isPreviewFree: false
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                courseTitle: "Complete Node.js Developer",
-                courseDescription: "Build real-world applications with Node.js, Express, and MongoDB",
-                courseThumbnail: "https://via.placeholder.com/400x250/3b82f6/ffffff?text=Node.js",
-                coursePrice: 129.99,
-                discount: 30,
-                isPublished: true,
-                educator: "demo-educator-2",
-                enrolledStudents: [],
-                courseContent: [
-                    {
-                        chapterTitle: "Node.js Fundamentals",
-                        chapterContent: [
-                            {
-                                lectureTitle: "Introduction to Node.js",
-                                lectureDuration: 18,
-                                isPreviewFree: true
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                courseTitle: "Python for Data Science",
-                courseDescription: "Master Python programming for data analysis and machine learning",
-                courseThumbnail: "https://via.placeholder.com/400x250/f59e0b/ffffff?text=Python",
-                coursePrice: 149.99,
-                discount: 20,
-                isPublished: true,
-                educator: "demo-educator-3",
-                enrolledStudents: [],
-                courseContent: [
-                    {
-                        chapterTitle: "Python Basics",
-                        chapterContent: [
-                            {
-                                lectureTitle: "Getting Started with Python",
-                                lectureDuration: 25,
-                                isPreviewFree: true
-                            }
-                        ]
-                    }
-                ]
-            }
-        ];
-
-        for (const courseData of demoCourses) {
-            const course = new Course(courseData);
-            await course.save();
+        if (category && category !== 'all') {
+            filter.category = category;
+        }
+        if (level) {
+            filter.level = level;
+        }
+        if (price === 'free') {
+            filter.coursePrice = 0;
+        } else if (price === 'paid') {
+            filter.coursePrice = { $gt: 0 };
+        }
+        if (search) {
+            filter.$or = [
+                { courseTitle: { $regex: search, $options: 'i' } },
+                { courseDescription: { $regex: search, $options: 'i' } },
+                { tags: { $regex: search, $options: 'i' } },
+            ];
         }
 
-        console.log('Demo courses created successfully');
+        // Build sort
+        let sortObj = { createdAt: -1 }; // default: newest
+        if (sort === 'popular') {
+            sortObj = { 'enrolledStudent': -1, createdAt: -1 };
+        } else if (sort === 'price-asc') {
+            sortObj = { coursePrice: 1 };
+        } else if (sort === 'price-desc') {
+            sortObj = { coursePrice: -1 };
+        } else if (sort === 'newest') {
+            sortObj = { createdAt: -1 };
+        }
+
+        const pageNum = Math.max(1, parseInt(page));
+        const limitNum = Math.min(50, Math.max(1, parseInt(limit)));
+        const skip = (pageNum - 1) * limitNum;
+
+        const [courses, totalCourses] = await Promise.all([
+            Course.find(filter)
+                .sort(sortObj)
+                .skip(skip)
+                .limit(limitNum)
+                .populate({ path: 'educator', select: 'name imageUrl' }),
+            Course.countDocuments(filter),
+        ]);
+
+        // Post-query rating filter (since ratings are embedded)
+        let filtered = courses;
+        if (rating) {
+            const minRating = parseFloat(rating);
+            filtered = courses.filter(c => {
+                if (!c.courseRatings || c.courseRatings.length === 0) return false;
+                const avg = c.courseRatings.reduce((s, r) => s + r.rating, 0) / c.courseRatings.length;
+                return avg >= minRating;
+            });
+        }
+
+        res.json({
+            success: true,
+            courses: filtered,
+            totalCourses: rating ? filtered.length : totalCourses,
+            totalPages: Math.ceil(totalCourses / limitNum),
+            currentPage: pageNum,
+        });
     } catch (error) {
-        console.error('Error creating demo courses:', error);
+        console.error('Error in getAllCourses:', error);
+        res.json({ success: false, message: error.message });
+    }
+};
+
+// Get all categories
+export const getCategories = async (req, res) => {
+    try {
+        const categories = await Category.find({}).sort({ group: 1, order: 1 });
+        res.json({ success: true, categories });
+    } catch (error) {
+        console.error('Error in getCategories:', error);
+        res.json({ success: false, message: error.message });
     }
 };
 

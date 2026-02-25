@@ -27,6 +27,13 @@ const courseSchema = new mongoose.Schema({
     coursePrice: { type: Number, required: true },
     isPublished: { type: Boolean, default: true },
     discount: { type: Number, required: true, min: 0, max: 100 },
+    category: { type: String, default: 'uncategorized', index: true },
+    level: { type: String, enum: ['beginner', 'intermediate', 'advanced'], default: 'beginner' },
+    tags: [{ type: String }],
+    language: { type: String, default: 'English' },
+    isTrending: { type: Boolean, default: false },
+    isNew: { type: Boolean, default: false },
+    isBestseller: { type: Boolean, default: false },
     courseContent: [],
     courseRatings: [
         { userID: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, rating: { type: Number, min: 1, max: 5 } }

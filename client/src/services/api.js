@@ -61,6 +61,7 @@ export const API_ENDPOINTS = {
   // Course endpoints
   COURSES: {
     ALL: '/course/all',
+    CATEGORIES: '/course/categories',
     BY_ID: (id) => `/course/${id}`,
     ENROLLED_BY_ID: (id) => `/course/enrolled/${id}`,
   },
@@ -130,8 +131,13 @@ export const apiService = {
 
   // Course services
   courses: {
-    getAll: async () => {
-      const response = await api.get(API_ENDPOINTS.COURSES.ALL);
+    getAll: async (params = {}) => {
+      const response = await api.get(API_ENDPOINTS.COURSES.ALL, { params });
+      return response.data;
+    },
+
+    getCategories: async () => {
+      const response = await api.get(API_ENDPOINTS.COURSES.CATEGORIES);
       return response.data;
     },
 
