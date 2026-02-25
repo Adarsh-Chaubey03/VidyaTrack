@@ -1,425 +1,586 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { AppContext } from '../../context/AppContext';
-import { assets } from '../../assets/assets';
-import humanizeDuration from 'humanize-duration';
-import ReactPlayer from 'react-player';
-import Footer from '../../components/student/Footer';
-import Rating from '../../components/student/Rating';
-import { useAuth } from '../../context/AuthContext.jsx';
-import { apiService } from '../../services/api.js';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext.jsx'
+import { AppContext } from '../../context/AppContext.jsx'
+import { apiService } from '../../services/api.js'
+import humanizeDuration from 'humanize-duration'
+import ReactPlayer from 'react-player'
 
-// Mock data for similar courses
-const similarCourses = [
-  { id: 1, title: 'React Basics', img: assets.course_1 },
-  { id: 2, title: 'Advanced JS', img: assets.course_2 },
-  { id: 3, title: 'Node Mastery', img: assets.course_3 },
-  { id: 4, title: 'UI/UX Design', img: assets.course_4 },
-  { id: 5, title: 'Python Bootcamp', img: assets.course_1 },
-  { id: 6, title: 'Data Structures', img: assets.course_2 },
-];
+// ─────────────────────────────────────────────────────────────
+// Icons
+// ─────────────────────────────────────────────────────────────
+const CheckCircleIcon = () => (
+  <svg className="w-5 h-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+  </svg>
+)
 
-function Player() {
-  const { courseId } = useParams();
-  const { enrolledCourses, calculateChapterTime } = useContext(AppContext);
-  const { userId } = useAuth();
-  const [courseData, setCourseData] = useState(null);
-  const [openChapters, setOpenChapters] = useState({});
-  const [currentLecture, setCurrentLecture] = useState(null);
-  const [currentChapter, setCurrentChapter] = useState(0);
-  const [currentLectureIndex, setCurrentLectureIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [showFullDescription, setShowFullDescription] = useState(false);
-  const [expandedChapter, setExpandedChapter] = useState(null); // null or index
-  const [courseRating, setCourseRating] = useState(0);
-  const [isCompleted, setIsCompleted] = useState(false);
-  const [progressMap, setProgressMap] = useState({}); // keys: `${chapterId}_${lectureId}` => true
+const PlayCircleIcon = ({ className = "w-5 h-5" }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 20 20">
+    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+  </svg>
+)
 
+const CircleIcon = () => (
+  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+    <circle cx="12" cy="12" r="10" />
+  </svg>
+)
+
+const ChevronDown = ({ open }) => (
+  <svg className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+  </svg>
+)
+
+const MenuIcon = () => (
+  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+  </svg>
+)
+
+const XIcon = () => (
+  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+  </svg>
+)
+
+const ArrowLeftIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+  </svg>
+)
+
+// ─────────────────────────────────────────────────────────────
+// Progress helper — localStorage + API sync
+// ─────────────────────────────────────────────────────────────
+function getLocalProgressKey(userId, courseId) {
+  return `vt_progress_${userId}_${courseId}`
+}
+
+function loadLocalProgress(userId, courseId) {
+  try {
+    const raw = localStorage.getItem(getLocalProgressKey(userId, courseId))
+    return raw ? JSON.parse(raw) : null
+  } catch { return null }
+}
+
+function saveLocalProgress(userId, courseId, data) {
+  try {
+    localStorage.setItem(getLocalProgressKey(userId, courseId), JSON.stringify(data))
+  } catch { /* storage full or private browsing */ }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Main Component
+// ─────────────────────────────────────────────────────────────
+const Player = () => {
+  const { courseId } = useParams()
+  const navigate = useNavigate()
+  const { userId, user, isAuthenticated } = useAuth()
+  const { calculateChapterTime, calculateCourseDuration, enrolledCourses } = React.useContext(AppContext)
+
+  // ─── state ─────────────────────────────────────────────────
+  const [course, setCourse] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  // Currently selected lecture
+  const [currentChapterIdx, setCurrentChapterIdx] = useState(0)
+  const [currentLectureIdx, setCurrentLectureIdx] = useState(0)
+
+  // Accordion open state (chapter indexes)
+  const [openChapters, setOpenChapters] = useState({})
+
+  // Progress data keyed by "chapterId:lectureId" -> boolean
+  const [completedMap, setCompletedMap] = useState({})
+  const [markingComplete, setMarkingComplete] = useState(false)
+
+  // Mobile sidebar toggle
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  const playerRef = useRef(null)
+
+  // ─── derived ───────────────────────────────────────────────
+  const allLectures = useMemo(() => {
+    if (!course?.courseContent) return []
+    const list = []
+    course.courseContent.forEach((ch, ci) => {
+      (ch.chapterContent || []).forEach((lec, li) => {
+        list.push({ ...lec, chapterIdx: ci, lectureIdx: li, chapterId: ch.chapterId || ch._id, chapterTitle: ch.chapterTitle })
+      })
+    })
+    return list
+  }, [course])
+
+  const totalLectures = allLectures.length
+  const completedCount = Object.values(completedMap).filter(Boolean).length
+  const progressPercent = totalLectures > 0 ? Math.round((completedCount / totalLectures) * 100) : 0
+  const isComplete = progressPercent === 100
+
+  const currentLecture = useMemo(() => {
+    if (!course?.courseContent?.[currentChapterIdx]?.chapterContent?.[currentLectureIdx]) return null
+    const ch = course.courseContent[currentChapterIdx]
+    const lec = ch.chapterContent[currentLectureIdx]
+    return { ...lec, chapterId: ch.chapterId || ch._id, chapterTitle: ch.chapterTitle }
+  }, [course, currentChapterIdx, currentLectureIdx])
+
+  const currentLectureKey = currentLecture ? `${currentLecture.chapterId}:${currentLecture.lectureId || currentLecture._id}` : null
+
+  // ─── fetch course ──────────────────────────────────────────
   useEffect(() => {
-    getCourseData();
-    // eslint-disable-next-line
-  }, [courseId, enrolledCourses]);
-
-  useEffect(() => {
-    if (courseData && courseData.courseContent && courseData.courseContent.length > 0) {
-      const firstChapter = courseData.courseContent[0];
-      if (firstChapter.chapterContent && firstChapter.chapterContent.length > 0) {
-        setCurrentLecture(firstChapter.chapterContent[0]);
-        setCurrentChapter(0);
-        setCurrentLectureIndex(0);
-      }
-    }
-  }, [courseData]);
-
-  // Load progress for this course (backend if available, fallback to localStorage)
-  useEffect(() => {
-    let mounted = true
-    const loadProgress = async () => {
-      if (!courseId || !userId) return
-      // local key
-      const localKey = `vt_progress_${userId}_${courseId}`
-      // start with local copy
-      let local = {}
-      try { local = JSON.parse(localStorage.getItem(localKey) || '{}') || {} } catch(e) { local = {} }
-
-      // try backend
+    if (!courseId) return
+    const fetchCourse = async () => {
+      setLoading(true)
+      setError(null)
       try {
-        const res = await apiService.progress.get(userId, courseId)
-        if (res?.success && res.progress) {
-          // backend may include a list of completed lecture ids
-          const p = res.progress
-          // support multiple shapes
-          let ids = []
-          if (Array.isArray(p.completedLectureIds)) {
-            ids = p.completedLectureIds
-          } else if (Array.isArray(p.completedLecturesList)) {
-            ids = p.completedLecturesList
-          } else if (p.completedByChapter) {
-            // object shape { chapterId: [lectureId,...] }
-            ids = Object.entries(p.completedByChapter).flatMap(([ch, arr]) => arr.map(l => `${ch}_${l}`))
-          }
-          const map = { ...(local.completed || {}) }
-          ids.forEach(id => {
-            // if id already encoded as chapter_lecture keep, otherwise assume it's an object-like string
-            if (typeof id === 'string' && id.includes('_')) map[id] = true
-            else if (id && typeof id === 'object' && id.chapterId !== undefined && id.lectureId !== undefined) map[`${id.chapterId}_${id.lectureId}`] = true
-          })
-          if (mounted) setProgressMap(map)
-          // merge back to local storage for offline fallback
-          try { localStorage.setItem(localKey, JSON.stringify({ completed: map })) } catch (e) {}
-          return
-        }
-      } catch (e) {
-        // ignore backend errors and keep local
-      }
-
-      // fallback: use local stored completed map
-      if (local && local.completed) {
-        if (mounted) setProgressMap(local.completed)
-      }
-    }
-    loadProgress()
-    return () => { mounted = false }
-  }, [userId, courseId])
-
-  // Try to sync any pending local progress entries for this course to the backend when possible
-  useEffect(() => {
-    let mounted = true
-    const trySyncPending = async () => {
-      if (!userId || !courseId) return
-      const localKey = `vt_progress_${userId}_${courseId}`
-      let store = {}
-      try { store = JSON.parse(localStorage.getItem(localKey) || '{}') || {} } catch (e) { store = {} }
-      const pending = store.pending || {}
-      const keys = Object.keys(pending)
-      if (!keys.length) return
-      for (const k of keys) {
-        const [chId, lecId] = k.split('_')
-        try {
-          await apiService.progress.updateLecture(userId, courseId, chId, lecId, { isCompleted: !!store.completed?.[k] })
-          // clear pending for this key
+        // Try enrolled endpoint first, fall back to public
+        let result
+        if (isAuthenticated()) {
           try {
-            const s2 = JSON.parse(localStorage.getItem(localKey) || '{}') || { completed: {}, pending: {} }
-            if (s2.pending) delete s2.pending[k]
-            localStorage.setItem(localKey, JSON.stringify(s2))
-            // notify dashboard to refresh
-            try { window.dispatchEvent(new CustomEvent('vt_progressUpdated', { detail: { courseId } })) } catch(e) {}
-          } catch (e) {}
-        } catch (err) {
-          // leave pending for later retry
-          console.error('Pending sync failed for', k, err)
+            result = await apiService.courses.getEnrolledById(courseId)
+          } catch {
+            result = await apiService.courses.getById(courseId)
+          }
+        } else {
+          result = await apiService.courses.getById(courseId)
         }
+
+        if (result.success && result.courseData) {
+          setCourse(result.courseData)
+          // Open first chapter by default
+          setOpenChapters({ 0: true })
+        } else {
+          setError(result.message || 'Failed to load course')
+        }
+      } catch (err) {
+        setError(err.message || 'Failed to load course')
+      } finally {
+        setLoading(false)
       }
     }
-    trySyncPending()
-    return () => { mounted = false }
-  }, [userId, courseId])
+    fetchCourse()
+  }, [courseId])
 
-  // keep isCompleted in sync with current lecture
+  // ─── fetch progress ────────────────────────────────────────
   useEffect(() => {
-    if (!currentLecture) return
-    const chapter = courseData?.courseContent?.[currentChapter]
-    const chapterId = chapter?._id ?? currentChapter
-    const lectureId = currentLecture?._id ?? currentLectureIndex
-    const key = `${chapterId}_${lectureId}`
-    setIsCompleted(!!progressMap[key])
-  }, [currentLecture, currentChapter, currentLectureIndex, progressMap, courseData])
+    if (!userId || !courseId || !course) return
 
-  const getCourseData = () => {
-    setLoading(true);
-    setError(null);
-    if (!enrolledCourses || enrolledCourses.length === 0) {
-      setError('No enrolled courses found');
-      setLoading(false);
-      return;
+    const fetchProgress = async () => {
+      // Load from localStorage first for instant UI
+      const local = loadLocalProgress(userId, courseId)
+      if (local) setCompletedMap(local)
+
+      // Then sync with backend
+      try {
+        const result = await apiService.progress.get(userId, courseId)
+        if (result.success && result.progress) {
+          const map = {}
+            ; (result.progress.chapterProgress || []).forEach(cp => {
+              (cp.completedLectures || []).forEach(lec => {
+                if (lec.isCompleted) {
+                  map[`${cp.chapterId}:${lec.lectureId}`] = true
+                }
+              })
+            })
+          setCompletedMap(map)
+          saveLocalProgress(userId, courseId, map)
+        }
+      } catch {
+        // Keep using localStorage data
+      }
     }
-    const course = enrolledCourses.find((course) => course._id === courseId);
-    if (course) {
-      setCourseData(course);
-    } else {
-      setError(`Course with ID ${courseId} not found`);
+    fetchProgress()
+  }, [userId, courseId, course])
+
+  // ─── mark complete ─────────────────────────────────────────
+  const handleMarkComplete = useCallback(async () => {
+    if (!currentLecture || !userId || markingComplete) return
+    const key = currentLectureKey
+    if (completedMap[key]) return // already done
+
+    setMarkingComplete(true)
+    // Optimistic update
+    setCompletedMap(prev => {
+      const next = { ...prev, [key]: true }
+      saveLocalProgress(userId, courseId, next)
+      return next
+    })
+
+    try {
+      await apiService.progress.updateLecture(
+        userId, courseId,
+        currentLecture.chapterId,
+        currentLecture.lectureId || currentLecture._id,
+        { isCompleted: true }
+      )
+    } catch {
+      // Revert on failure
+      setCompletedMap(prev => {
+        const next = { ...prev }
+        delete next[key]
+        saveLocalProgress(userId, courseId, next)
+        return next
+      })
+    } finally {
+      setMarkingComplete(false)
     }
-    setLoading(false);
-  };
+  }, [currentLecture, currentLectureKey, userId, courseId, completedMap, markingComplete])
 
-  const toggleChapter = (index) => setOpenChapters((prev) => ({ ...prev, [index]: !prev[index] }));
+  // ─── navigate lectures ─────────────────────────────────────
+  const goToLecture = useCallback((chIdx, lecIdx) => {
+    setCurrentChapterIdx(chIdx)
+    setCurrentLectureIdx(lecIdx)
+    setOpenChapters(prev => ({ ...prev, [chIdx]: true }))
+    setSidebarOpen(false) // close mobile sidebar
+  }, [])
 
-  const handleLectureClick = (chapterIndex, lectureIndex, lecture) => {
-    setCurrentLecture(lecture);
-    setCurrentChapter(chapterIndex);
-    setCurrentLectureIndex(lectureIndex);
-  };
+  const goToNextLecture = useCallback(() => {
+    if (!course?.courseContent) return
+    const ch = course.courseContent[currentChapterIdx]
+    if (currentLectureIdx < (ch?.chapterContent?.length || 0) - 1) {
+      goToLecture(currentChapterIdx, currentLectureIdx + 1)
+    } else if (currentChapterIdx < course.courseContent.length - 1) {
+      goToLecture(currentChapterIdx + 1, 0)
+    }
+  }, [course, currentChapterIdx, currentLectureIdx, goToLecture])
 
-  // Use real similar courses (enrolledCourses except current)
-  const similarCourses = (enrolledCourses || []).filter(c => c._id !== courseId);
+  const goToPrevLecture = useCallback(() => {
+    if (currentLectureIdx > 0) {
+      goToLecture(currentChapterIdx, currentLectureIdx - 1)
+    } else if (currentChapterIdx > 0) {
+      const prevCh = course.courseContent[currentChapterIdx - 1]
+      goToLecture(currentChapterIdx - 1, (prevCh?.chapterContent?.length || 1) - 1)
+    }
+  }, [course, currentChapterIdx, currentLectureIdx, goToLecture])
 
+  // Toggle chapter accordion
+  const toggleChapter = (idx) => {
+    setOpenChapters(prev => ({ ...prev, [idx]: !prev[idx] }))
+  }
+
+  // Video end handler — auto-mark + auto-advance
+  const handleVideoEnd = () => {
+    if (currentLectureKey && !completedMap[currentLectureKey]) {
+      handleMarkComplete()
+    }
+    // Auto-advance after a brief delay
+    setTimeout(() => goToNextLecture(), 800)
+  }
+
+  // ─── render helpers ────────────────────────────────────────
+  const formatDuration = (mins) => {
+    if (!mins) return '0 min'
+    return humanizeDuration(mins * 60 * 1000, { units: ['h', 'm'], round: true })
+  }
+
+  // ─── loading / error states ────────────────────────────────
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading course...</p>
+          <div className="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-500 text-lg">Loading course...</p>
         </div>
       </div>
-    );
+    )
   }
-  if (error) {
+
+  if (error || !course) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Course Not Found</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button
-            onClick={() => window.history.back()}
-            className="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors"
-          >
-            Go Back
-          </button>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <div className="text-6xl mb-4">📚</div>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">Course Not Found</h2>
+          <p className="text-gray-500 mb-6">{error || 'This course is not available.'}</p>
+          <Link to="/course-list" className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors font-medium">
+            <ArrowLeftIcon /> Browse Courses
+          </Link>
         </div>
       </div>
-    );
+    )
   }
-  if (!courseData) {
-    return null;
+
+  // Chapter completion stats
+  const getChapterStats = (chapter) => {
+    const total = chapter.chapterContent?.length || 0
+    const done = (chapter.chapterContent || []).filter(lec => {
+      const key = `${chapter.chapterId || chapter._id}:${lec.lectureId || lec._id}`
+      return completedMap[key]
+    }).length
+    return { total, done }
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <div className="flex flex-col lg:flex-row gap-6 md:gap-10 px-2 md:px-8 py-4 md:py-10 flex-1 items-start">
-        {/* Left Column - Fixed Width */}
-        <aside className="w-80 lg:w-96 flex-shrink-0 flex flex-col gap-6 bg-white rounded-2xl shadow-md p-4 md:p-6">
-          {/* Course Info */}
-          <div className="mb-2">
-            <h1 className="text-2xl font-bold text-gray-800 mb-1">{courseData.courseTitle}</h1>
-            <div className="text-gray-600 text-sm mb-2" dangerouslySetInnerHTML={{ __html: showFullDescription ? courseData.courseDescription : courseData.courseDescription.slice(0, 120) + (courseData.courseDescription.length > 120 ? '...' : '') }} />
-            {courseData.courseDescription.length > 120 && (
-              <button
-                className="text-emerald-600 text-xs underline mt-1"
-                onClick={() => setShowFullDescription((prev) => !prev)}
-              >
-                {showFullDescription ? 'Show Less' : 'Read More'}
-              </button>
+    <div className="min-h-screen bg-gray-50">
+      {/* ═══════════════ HEADER ═══════════════ */}
+      <header className="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-[1800px] mx-auto px-4 py-3 flex items-center gap-4">
+          {/* Back button */}
+          <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Go back">
+            <ArrowLeftIcon />
+          </button>
+
+          {/* Course title */}
+          <div className="flex-1 min-w-0">
+            <h1 className="text-sm md:text-base font-bold text-gray-900 truncate">{course.courseTitle}</h1>
+            <p className="text-xs text-gray-500 hidden md:block">{course.educator?.name || 'Instructor'}</p>
+          </div>
+
+          {/* Progress pill */}
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-2">
+              <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-500"
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+              <span className="text-sm font-semibold text-gray-700">{progressPercent}%</span>
+            </div>
+            {isComplete && (
+              <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold">
+                🎓 Completed
+              </span>
             )}
           </div>
-          {/* Achievements/Stats */}
-          <div className="flex flex-wrap gap-4 mb-2">
-            <div className="flex flex-col items-center">
-              <span className="text-lg font-semibold text-emerald-600">{courseData.courseContent.length}</span>
-              <span className="text-xs text-gray-500">Chapters</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-lg font-semibold text-emerald-600">{courseData.courseContent.reduce((total, chapter) => total + chapter.chapterContent.length, 0)}</span>
-              <span className="text-xs text-gray-500">Lectures</span>
+
+          {/* Mobile menu toggle */}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            {sidebarOpen ? <XIcon /> : <MenuIcon />}
+          </button>
+        </div>
+      </header>
+
+      {/* ═══════════════ MAIN LAYOUT ═══════════════ */}
+      <div className="max-w-[1800px] mx-auto flex">
+        {/* ─── SIDEBAR ─── */}
+        <aside className={`
+          fixed lg:sticky top-[57px] left-0 z-20 w-80 lg:w-[340px] h-[calc(100vh-57px)]
+          bg-white border-r border-gray-200 overflow-y-auto transition-transform duration-300
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        `}>
+          {/* Sidebar header */}
+          <div className="sticky top-0 bg-white border-b border-gray-100 px-4 py-3 z-10">
+            <h2 className="font-bold text-gray-800 text-sm">Course Content</h2>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {completedCount}/{totalLectures} lectures completed
+            </p>
+            {/* Mobile progress */}
+            <div className="sm:hidden mt-2">
+              <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                <div className="h-full bg-emerald-500 rounded-full transition-all duration-500" style={{ width: `${progressPercent}%` }} />
+              </div>
+              <p className="text-xs text-gray-500 mt-1">{progressPercent}% complete</p>
             </div>
           </div>
-          {/* Course Structure */}
-          <div>
-            <h2 className="text-lg font-semibold mb-2">Course Structure</h2>
-            <div className="space-y-3">
-              {courseData.courseContent.map((chapter, chapterIndex) => (
-                <div
-                  key={chapterIndex}
-                  className={`border border-gray-200 ${openChapters[chapterIndex] ? 'bg-transparent' : 'bg-gray-50'} rounded-md w-full`}
-                >
-                  <div
-                    className="flex items-center justify-between px-3 py-2 cursor-pointer select-none w-full"
-                    onClick={() => toggleChapter(chapterIndex)}
+
+          {/* Chapter list */}
+          <div className="divide-y divide-gray-100">
+            {(course.courseContent || []).map((chapter, chIdx) => {
+              const stats = getChapterStats(chapter)
+              const isOpen = !!openChapters[chIdx]
+              return (
+                <div key={chapter._id || chIdx}>
+                  {/* Chapter header */}
+                  <button
+                    onClick={() => toggleChapter(chIdx)}
+                    className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3"
                   >
-                    <div className="flex items-center gap-2">
-                      <img
-                        src={assets.down_arrow_icon}
-                        alt="arrow"
-                        className={`w-4 h-4 transform transition-transform duration-200 ${openChapters[chapterIndex] ? 'rotate-180' : ''}`}
-                      />
-                      <span className="font-medium text-gray-800 text-sm">{chapter.chapterTitle}</span>
+                    <ChevronDown open={isOpen} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-800 truncate">{chapter.chapterTitle}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        {stats.done}/{stats.total} • {calculateChapterTime(chapter)}
+                      </p>
                     </div>
-                    <span className="text-xs text-gray-500">{chapter.chapterContent.length} lectures • {calculateChapterTime(chapter)}</span>
-                  </div>
-                  {openChapters[chapterIndex] && (
-                    <ul className="mt-1 pb-2 space-y-1 w-full">
-                      {chapter.chapterContent.map((lecture, lectureIndex) => (
-                        <li
-                          key={lectureIndex}
-                          className={`flex items-center gap-2 px-6 py-1.5 rounded cursor-pointer transition-colors w-full ${
-                            currentChapter === chapterIndex && currentLectureIndex === lectureIndex
-                              ? 'bg-emerald-100 border-l-4 border-emerald-500'
-                              : 'hover:bg-gray-100'
-                          }`}
-                          onClick={() => handleLectureClick(chapterIndex, lectureIndex, lecture)}
-                        >
-                          <img src={assets.play_icon} alt="play" className="w-4 h-4" />
-                          <span className={`text-xs ${currentChapter === chapterIndex && currentLectureIndex === lectureIndex ? 'text-emerald-700 font-semibold' : 'text-gray-700'}`}>{lecture.lectureTitle}</span>
-                          {lecture.isPreviewFree && (
-                            <span className="ml-2 px-1.5 py-0.5 border border-emerald-500 text-emerald-500 rounded text-[10px]">Preview</span>
-                          )}
-                          <span className="ml-auto text-[10px] text-gray-400">{humanizeDuration(lecture.lectureDuration * 60 * 1000, { units: ['m'], round: true })}</span>
-                        </li>
-                      ))}
-                       
-                    </ul>
+                    {stats.done === stats.total && stats.total > 0 && (
+                      <CheckCircleIcon />
+                    )}
+                  </button>
+
+                  {/* Lecture list */}
+                  {isOpen && (
+                    <div className="bg-gray-50/50">
+                      {(chapter.chapterContent || []).map((lecture, lecIdx) => {
+                        const lecKey = `${chapter.chapterId || chapter._id}:${lecture.lectureId || lecture._id}`
+                        const isActive = currentChapterIdx === chIdx && currentLectureIdx === lecIdx
+                        const isDone = !!completedMap[lecKey]
+                        return (
+                          <button
+                            key={lecture._id || lecIdx}
+                            onClick={() => goToLecture(chIdx, lecIdx)}
+                            className={`w-full text-left px-4 py-2.5 pl-12 flex items-center gap-3 transition-colors text-sm
+                              ${isActive ? 'bg-emerald-50 border-l-3 border-emerald-500' : 'hover:bg-gray-100'}
+                            `}
+                          >
+                            {isDone ? <CheckCircleIcon /> : isActive ? <PlayCircleIcon className="w-5 h-5 text-emerald-600" /> : <CircleIcon />}
+                            <div className="flex-1 min-w-0">
+                              <p className={`truncate ${isActive ? 'text-emerald-700 font-medium' : isDone ? 'text-gray-500' : 'text-gray-700'}`}>
+                                {lecture.lectureTitle}
+                              </p>
+                              <p className="text-xs text-gray-400 mt-0.5">{formatDuration(lecture.lectureDuration)}</p>
+                            </div>
+                          </button>
+                        )
+                      })}
+                    </div>
                   )}
                 </div>
-              ))}
-            </div>
-            <div className='flex items-center gap-2 py-3 mt-10'>
-              <h1 className='text-xl font-bold'>Rate This Course</h1>
-            </div>
-            <div className='mb-4'>
-              <Rating 
-                initialRating={courseRating}
-                onRatingChange={(rating) => {
-                  setCourseRating(rating);
-                  // Here you can add API call to save the rating
-                  console.log(`Rating for course ${courseId}: ${rating} stars`);
-                }}
-              />
-              {courseRating > 0 && (
-                <p className='text-sm text-gray-600 mt-2'>
-                  You rated this course {courseRating} star{courseRating !== 1 ? 's' : ''}
-                </p>
-              )}
-            </div>
+              )
+            })}
           </div>
         </aside>
 
-        {/* Right Column - Video and Progress */}
-        <div className="flex-1 flex flex-col gap-6 min-h-full">
+        {/* Mobile backdrop */}
+        {sidebarOpen && (
+          <div className="fixed inset-0 bg-black/30 z-10 lg:hidden" onClick={() => setSidebarOpen(false)} />
+        )}
+
+        {/* ─── MAIN CONTENT ─── */}
+        <main className="flex-1 min-w-0">
           {/* Video Player */}
-          <div className="bg-white rounded-2xl shadow-md p-0 md:p-4 flex flex-col md:flex-row gap-4 items-start">
-            <div className="w-full aspect-video max-w-3xl rounded-xl overflow-hidden bg-black flex items-center justify-center">
-              {currentLecture && currentLecture.lectureUrl ? (
-                <ReactPlayer
-                  url={currentLecture.lectureUrl}
-                  controls
-                  width="100%"
-                  height="100%"
-                  style={{ background: 'black' }}
-                />
-              ) : (
-                <div className="text-white text-center w-full">Select a lecture to start learning</div>
-              )}
-            </div>
-            {/* Lecture Info */}
-            <div className="flex-1 flex flex-col gap-2 p-2">
-              <h3 className="text-lg font-semibold text-gray-800 mb-1">{currentLecture?.lectureTitle || 'Lecture Title'}</h3>
-              <div className="text-xs text-gray-500 mb-2">Duration: {currentLecture ? humanizeDuration(currentLecture.lectureDuration * 60 * 1000, { units: ['m'], round: true }) : '--'}</div>
-              <div className="text-xs text-gray-500">Chapter: {courseData.courseContent[currentChapter]?.chapterTitle}</div>
-              
-              {/* Mark as Completed Button */}
-              <div className="mt-4">
-                <button
-                  onClick={async () => {
-                    const chapter = courseData?.courseContent?.[currentChapter];
-                    const chapterId = chapter?._id ?? currentChapter;
-                    const lectureId = currentLecture?._id ?? currentLectureIndex;
-                    if (chapterId === undefined || lectureId === undefined) return;
-
-                    const key = `${chapterId}_${lectureId}`;
-                    const next = !Boolean(progressMap[key]);
-
-                    // optimistic update
-                    const newMap = { ...progressMap, ...(next ? { [key]: true } : {}) };
-                    if (!next) delete newMap[key];
-                    setProgressMap(newMap);
-                    setIsCompleted(next);
-
-                    const localKey = `vt_progress_${userId}_${courseId}`;
-                    // write optimistic state to localStorage immediately and mark as pending sync
-                    try {
-                      const s = JSON.parse(localStorage.getItem(localKey) || '{}') || { completed: {}, pending: {} };
-                      s.completed = { ...(s.completed || {}), ...newMap };
-                      s.pending = { ...(s.pending || {}) };
-                      s.pending[key] = true;
-                      localStorage.setItem(localKey, JSON.stringify(s));
-                    } catch (e) {
-                      // ignore storage errors
-                    }
-
-                    // attempt backend sync; do not remove local completed on error so refresh preserves user's action
-                    (async () => {
-                      try {
-                        if (userId) {
-                          await apiService.progress.updateLecture(userId, courseId, chapterId, lectureId, { isCompleted: next });
-                        }
-                        // on success, clear pending flag for this key
-                        try {
-                          const s2 = JSON.parse(localStorage.getItem(localKey) || '{}') || { completed: {}, pending: {} };
-                          if (s2.pending) delete s2.pending[key];
-                          s2.completed = { ...(s2.completed || {}), ...newMap };
-                          localStorage.setItem(localKey, JSON.stringify(s2));
-                        } catch (e) {}
-                        try { window.dispatchEvent(new CustomEvent('vt_progressUpdated', { detail: { courseId } })); } catch (e) {}
-                      } catch (err) {
-                        // keep pending flag so sync can be retried later
-                        try {
-                          const s3 = JSON.parse(localStorage.getItem(localKey) || '{}') || { completed: {}, pending: {} };
-                          s3.completed = { ...(s3.completed || {}), ...newMap };
-                          s3.pending = { ...(s3.pending || {}) };
-                          s3.pending[key] = true;
-                          localStorage.setItem(localKey, JSON.stringify(s3));
-                        } catch (e) {}
-                        console.error('Failed to sync progress to server', err);
-                      }
-                    })();
-                  }}
-                  className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${isCompleted ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
-                >
-                  {isCompleted ? '✓ Completed' : 'Mark as Completed'}
-                </button>
+          <div className="bg-black aspect-video w-full max-h-[70vh]">
+            {currentLecture?.lectureUrl ? (
+              <ReactPlayer
+                ref={playerRef}
+                url={currentLecture.lectureUrl}
+                width="100%"
+                height="100%"
+                controls
+                playing
+                onEnded={handleVideoEnd}
+                config={{
+                  youtube: { playerVars: { modestbranding: 1, rel: 0 } },
+                  file: { attributes: { controlsList: 'nodownload' } }
+                }}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-gray-400">
+                <div className="text-center">
+                  <PlayCircleIcon className="w-16 h-16 mx-auto mb-3 opacity-50" />
+                  <p className="text-lg">No video available for this lecture</p>
+                  <p className="text-sm mt-1">This lecture may only contain text content</p>
+                </div>
               </div>
-              
-              {/* Placeholder for chat/now watching */}
-              <div className="mt-4">
-                <div className="bg-gray-100 rounded-lg p-2 text-xs text-gray-400 text-center">Chat & Now Watching coming soon...</div>
-              </div>
-            </div>
+            )}
           </div>
 
-          {/* Feedback Form (Course progress section removed per request) */}
-          <FeedbackForm />
-        </div>
+          {/* Lecture Info */}
+          <div className="p-4 md:p-6 lg:p-8 max-w-4xl">
+            {/* Title + actions */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+              <div className="flex-1">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900">{currentLecture?.lectureTitle || 'Select a lecture'}</h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  {currentLecture?.chapterTitle} • {formatDuration(currentLecture?.lectureDuration)}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                {currentLectureKey && completedMap[currentLectureKey] ? (
+                  <span className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-100 text-emerald-700 rounded-xl text-sm font-semibold">
+                    <CheckCircleIcon /> Completed
+                  </span>
+                ) : (
+                  <button
+                    onClick={handleMarkComplete}
+                    disabled={markingComplete || !currentLecture}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {markingComplete ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        Marking...
+                      </>
+                    ) : (
+                      <>✓ Mark as Complete</>
+                    )}
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Navigation - prev/next */}
+            <div className="flex items-center justify-between py-4 border-t border-gray-200">
+              <button
+                onClick={goToPrevLecture}
+                disabled={currentChapterIdx === 0 && currentLectureIdx === 0}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Previous
+              </button>
+
+              <span className="text-xs text-gray-400">
+                Lecture {allLectures.findIndex(l => l.chapterIdx === currentChapterIdx && l.lectureIdx === currentLectureIdx) + 1} of {totalLectures}
+              </span>
+
+              <button
+                onClick={goToNextLecture}
+                disabled={currentChapterIdx === (course.courseContent?.length || 1) - 1 &&
+                  currentLectureIdx === (course.courseContent?.[currentChapterIdx]?.chapterContent?.length || 1) - 1}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                Next
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Lecture description */}
+            {currentLecture?.lectureDescription && (
+              <div className="mt-6 prose prose-gray max-w-none">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">About this lecture</h3>
+                <p className="text-gray-600 leading-relaxed">{currentLecture.lectureDescription}</p>
+              </div>
+            )}
+
+            {/* Course info section */}
+            <div className="mt-8 p-6 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100">
+              <div className="flex items-center gap-4 mb-4">
+                {course.courseThumbnail && (
+                  <img src={course.courseThumbnail} alt="" className="w-16 h-16 rounded-xl object-cover" />
+                )}
+                <div>
+                  <h3 className="font-bold text-gray-900">{course.courseTitle}</h3>
+                  <p className="text-sm text-gray-600">{course.educator?.name}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <p className="text-2xl font-bold text-emerald-700">{totalLectures}</p>
+                  <p className="text-xs text-gray-500">Lectures</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-emerald-700">{course.courseContent?.length || 0}</p>
+                  <p className="text-xs text-gray-500">Chapters</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-emerald-700">{progressPercent}%</p>
+                  <p className="text-xs text-gray-500">Complete</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Completion banner */}
+            {isComplete && (
+              <div className="mt-6 p-6 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl text-white text-center">
+                <div className="text-4xl mb-2">🎓</div>
+                <h3 className="text-xl font-bold mb-1">Congratulations!</h3>
+                <p className="text-emerald-100">You've completed this course. Well done!</p>
+              </div>
+            )}
+          </div>
+        </main>
       </div>
-      <Footer className="mt-10"/>
     </div>
-  );
+  )
 }
 
-// FeedbackForm component
-function FeedbackForm() {
-  const [mood, setMood] = React.useState(null);
-  const emojis = [
-    { label: 'sad', icon: '😞' },
-    { label: 'normal', icon: '😐' },
-    { label: 'happy', icon: '🙂' },
-  ];
-  return (
-    <form className="flex flex-col gap-3 items-stretch">
-      <textarea className="border border-gray-300 rounded-lg p-2 min-h-[80px] resize-vertical" placeholder="Your feedback..." />
-      <button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-lg transition w-full">Submit</button>
-    </form>
-  );
-}
-
-export default Player;
+export default Player
