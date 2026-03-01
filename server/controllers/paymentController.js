@@ -416,10 +416,10 @@ async function fulfillCoursePurchase(txn) {
     console.error('Error creating CourseProgress:', err);
   }
 
-  // Update legacy Purchase record for backwards compatibility
+  // Update legacy Purchase record for backwards compatibility & earnings tracking
   await Purchase.findOneAndUpdate(
     { courseId: txn.referenceId, userId: txn.userId },
-    { status: 'completed' },
+    { status: 'completed', amount: txn.amount },
     { upsert: true, setDefaultsOnInsert: true }
   );
 }

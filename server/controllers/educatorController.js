@@ -64,22 +64,18 @@ export const educatorDashboardData = async (req, res) => {
 
         const courseIds = courses.map(course => course._id);
 
-        // calculate total earning from purchases
-        const purchases = await Purchase.find({
-            courseId: {
-                $in: courseIds
-            },
-            status: 'completed'
+        // Calculate total earnings = sum of (coursePrice × number of enrolled students) for each course
+        let totalEarnings = 0;
 
-        });
-
-        const totalEarnings = purchases.reduce((sum, purchase) => sum + purchase.amount, 0);
-
-        // const unique enrolled students IDs with their course titles
+        // Collect unique enrolled students with their course titles
         const enrolledStudentsData = [];
         for (const course of courses) {
+            const enrolledCount = (course.enrolledStudent || []).length;
+            const effectivePrice = course.coursePrice - (course.coursePrice * (course.discount || 0) / 100);
+            totalEarnings += effectivePrice * enrolledCount;
+
             const students = await User.find({
-                _id: { $in: course.enrolledStudents }
+                _id: { $in: course.enrolledStudent || [] }
             }, 'name imageUrl')
 
             students.forEach(element => {
@@ -104,27 +100,57 @@ export const educatorDashboardData = async (req, res) => {
     }
 }
 
-//get enrolled students data with purchase data
+//get enrolled students data — uses User.enrolledCourses as source of truth
+// (works for both free and paid enrollments)
 export const getEnrolledStudentData = async (req, res) => {
     try {
         const educatorId = req.user._id
         const courses = await Course.find({ educator: educatorId })
-        const courseIds = courses.map(course => course._id);
+        if (!courses.length) {
+            return res.json({ success: true, enrolledStudents: [] })
+        }
 
+        const courseIds = courses.map(course => course._id)
+        // Build a quick lookup: courseId → courseTitle
+        const courseTitleMap = {}
+        courses.forEach(c => { courseTitleMap[c._id.toString()] = c.courseTitle })
+
+        // Find all users who have any of this educator's courses
+        const users = await User.find(
+            { enrolledCourses: { $in: courseIds } },
+            'name imageUrl enrolledCourses'
+        )
+
+        // Build a purchaseDate lookup from Purchase records (if any exist)
         const purchases = await Purchase.find({
-            courseId: {$in: courseIds},
+            courseId: { $in: courseIds },
             status: 'completed'
-        }).populate('userId', 'name imageUrl').populate('courseId','courseTitle')
+        })
+        const purchaseDateMap = {} // key: "userId_courseId" → createdAt
+        purchases.forEach(p => {
+            if (p.userId && p.courseId) {
+                purchaseDateMap[`${p.userId}_${p.courseId}`] = p.createdAt
+            }
+        })
 
-        const enrolledStudents = purchases.map(purchase => ({
-            student: purchase.userId,
-            courseTitle: purchase.courseId.courseTitle,
-            purchaseDate: purchase.createdAt
-        }))
+        // Flatten: one row per (student, course) pair
+        const enrolledStudents = []
+        for (const user of users) {
+            for (const cId of user.enrolledCourses) {
+                const cStr = cId.toString()
+                if (courseTitleMap[cStr]) {
+                    enrolledStudents.push({
+                        student: { _id: user._id, name: user.name, imageUrl: user.imageUrl },
+                        courseTitle: courseTitleMap[cStr],
+                        purchaseDate: purchaseDateMap[`${user._id}_${cStr}`] || user.createdAt
+                    })
+                }
+            }
+        }
 
-        res.json({success: true, enrolledStudents})
-
+        res.json({ success: true, enrolledStudents })
     } catch (error) {
-        res.json({success: false, message: error.message})
+        console.error('getEnrolledStudentData error:', error)
+        res.status(500).json({ success: false, message: error.message })
     }
 }

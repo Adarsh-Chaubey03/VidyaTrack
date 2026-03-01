@@ -1,12 +1,17 @@
 import React from 'react'
+import { SkeletonCard } from '../skeleton/Skeleton'
 
 function Loading() {
     return (
-        <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-rose-50 flex items-center justify-center">
-            <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-4"></div>
-                <h2 className="text-xl font-semibold text-gray-700 mb-2">Loading Courses...</h2>
-                <p className="text-gray-500">Please wait while we fetch the latest courses</p>
+        <div className="min-h-screen bg-gray-50 skeleton-fade-in">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                <div className="skeleton-shimmer rounded h-8 w-48 mb-2" />
+                <div className="skeleton-shimmer rounded h-4 w-72 mb-8" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <SkeletonCard key={i} />
+                    ))}
+                </div>
             </div>
         </div>
     )

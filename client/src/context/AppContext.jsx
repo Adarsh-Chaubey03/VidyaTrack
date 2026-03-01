@@ -1,6 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { dummyCourses, dummyStudentEnrolled } from '../assets/assets';
-import { useNavigate } from 'react-router-dom';
 import humanizeDuration from 'humanize-duration';
 import { useAuth } from './AuthContext.jsx';
 import { apiService } from '../services/api.js';
@@ -26,15 +25,12 @@ export const AppContextProvider = ({ children }) => {
       const result = await apiService.courses.getAll();
 
       if (result.success) {
-        console.log('Fetched courses from API:', result.courses);
         setAllCourses(result.courses);
       } else {
-        console.error('API response unsuccessful:', result.message);
         setError(result.message);
         setAllCourses([]);
       }
     } catch (error) {
-      console.error('Error fetching courses:', error.message, error.stack);
       setError(error.message);
       setAllCourses([]);
     } finally {
@@ -54,7 +50,7 @@ export const AppContextProvider = ({ children }) => {
         setCategories(result.categories);
       }
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      // silently ignore category fetch errors
     }
   };
 
@@ -74,7 +70,6 @@ export const AppContextProvider = ({ children }) => {
               const courseResult = await apiService.courses.getById(courseId);
               return courseResult.success ? courseResult.courseData : null;
             } catch (error) {
-              console.error(`Error fetching course ${courseId}:`, error);
               return null;
             }
           })
@@ -85,7 +80,6 @@ export const AppContextProvider = ({ children }) => {
         setEnrolledCourses([]);
       }
     } catch (error) {
-      console.error('Error fetching enrolled courses:', error);
       setEnrolledCourses([]);
     }
   };
@@ -98,7 +92,6 @@ export const AppContextProvider = ({ children }) => {
         setEducatorCourses(result.courses);
       }
     } catch (error) {
-      console.error('Error fetching educator courses:', error);
       setEducatorCourses(dummyCourses);
     }
   };
@@ -124,7 +117,6 @@ export const AppContextProvider = ({ children }) => {
         return { success: false, message: result.message || 'Failed to enroll in course' };
       }
     } catch (error) {
-      console.error('Error enrolling in course:', error);
       return { success: false, message: error.message || 'Failed to enroll in course' };
     }
   };

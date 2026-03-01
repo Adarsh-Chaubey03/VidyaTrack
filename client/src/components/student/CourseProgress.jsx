@@ -23,7 +23,6 @@ const CourseProgress = ({ courseId, onProgressUpdate }) => {
             }
         } catch (err) {
             setError('Failed to fetch progress');
-            console.error('Error fetching progress:', err);
         } finally {
             setLoading(false);
         }
@@ -49,7 +48,6 @@ const CourseProgress = ({ courseId, onProgressUpdate }) => {
             }
         } catch (err) {
             setError('Failed to update progress');
-            console.error('Error updating progress:', err);
         }
     };
 
@@ -63,7 +61,7 @@ const CourseProgress = ({ courseId, onProgressUpdate }) => {
                 { watchTime, totalWatchTime }
             );
         } catch (err) {
-            console.error('Failed to update watch time:', err);
+            // silently ignore watch time update errors
         }
     };
 

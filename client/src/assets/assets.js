@@ -43,7 +43,6 @@ import profile_img from './profile_img.png'
 import profile_img2 from './profile_img2.png'
 import profile_img3 from './profile_img3.png'
 import lesson_icon from './lesson_icon.svg'
-import hero_bg from './hero_bg.jpg'
 import eduLogo from './edu_logo.png'
 import mentor_bg from './mentor_bg.png'
 import b1 from './b1.jpg';
@@ -59,7 +58,6 @@ export const assets = {
     b2,
     g1,
     g2,
-    hero_bg,
     search_icon,
     sketch,
     microsoft_logo,

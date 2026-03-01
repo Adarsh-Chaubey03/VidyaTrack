@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "server": "nodemon",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "seed:educator": "node scripts/seedEducator.js"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,7 @@
     "mongodb": "^6.17.0",
     "mongoose": "^8.16.1",
     "multer": "^2.0.1",
+    "nodemailer": "^8.0.1",
     "nodemon": "^3.1.10",
     "razorpay": "^2.9.6"
   }

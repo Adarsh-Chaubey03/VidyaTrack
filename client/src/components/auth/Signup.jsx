@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import loginBg from '../../assets/login.jpg';
+import { assets } from '../../assets/assets.js';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -10,7 +10,6 @@ const Signup = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'user',
   });
   const [loading, setLoading] = useState(false);
 
@@ -43,41 +42,50 @@ const Signup = () => {
       const result = await register(
         formData.name,
         formData.email,
-        formData.password,
-        formData.role
+        formData.password
       );
 
-      if (result.success) {
-        toast.success(result.message);
-        navigate('/');
+      if (result && result.success === true) {
+        toast.success(result.message || 'Registration successful');
+        setTimeout(() => navigate('/'), 100);
       } else {
-        toast.error(result.message);
+        toast.error(result?.message || 'Registration failed. Please try again.');
       }
     } catch (error) {
-      toast.error('An error occurred during registration');
+      toast.error(error?.message || 'An error occurred during registration');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div
-      className="min-h-screen relative flex items-center justify-center bg-cover bg-center bg-no-repeat py-12 px-4 sm:px-6 lg:px-8"
-      style={{ backgroundImage: `url(${loginBg})` }}
+    <div className="min-h-screen relative flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      style={{ background: 'linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 20%, #fff1f2 50%, #fce7f3 75%, #ecfdf5 100%)' }}
     >
-      <div className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl ring-1 ring-black/5 p-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+      {/* Decorative blurred orbs */}
+      <div className="absolute top-[-120px] left-[-80px] w-[400px] h-[400px] rounded-full opacity-30 blur-3xl pointer-events-none" style={{ background: 'radial-gradient(circle, #34d399, transparent 70%)' }} />
+      <div className="absolute bottom-[-100px] right-[-60px] w-[350px] h-[350px] rounded-full opacity-25 blur-3xl pointer-events-none" style={{ background: 'radial-gradient(circle, #fb7185, transparent 70%)' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full opacity-15 blur-3xl pointer-events-none" style={{ background: 'radial-gradient(circle, #f9a8d4, transparent 70%)' }} />
+
+      <div className="relative max-w-md w-full bg-white/70 backdrop-blur-2xl rounded-3xl shadow-xl ring-1 ring-white/60 p-8 sm:p-10">
+        {/* Brand logo */}
+        <div className="flex justify-center mb-2">
+          <img src={assets.logo} alt="VidyaTrack" className="h-9" />
+        </div>
+
+        <div className="text-center mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
             Create your account
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-1.5 text-sm text-gray-500">
             Join VidyaTrack and start your learning journey
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+
+        <form className="space-y-5" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                 Full Name
               </label>
               <input
@@ -85,7 +93,7 @@ const Signup = () => {
                 name="name"
                 type="text"
                 required
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-400"
                 placeholder="Enter your full name"
                 value={formData.name}
                 onChange={handleChange}
@@ -93,7 +101,7 @@ const Signup = () => {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email Address
               </label>
               <input
@@ -102,31 +110,15 @@ const Signup = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                placeholder="Enter your email"
+                className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-400"
+                placeholder="you@example.com"
                 value={formData.email}
                 onChange={handleChange}
               />
             </div>
 
             <div>
-              <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-                Account Type
-              </label>
-              <select
-                id="role"
-                name="role"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                value={formData.role}
-                onChange={handleChange}
-              >
-                <option value="user">Student</option>
-                <option value="educator">Educator</option>
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
               <input
@@ -135,15 +127,15 @@ const Signup = () => {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                placeholder="Create a password"
+                className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-400"
+                placeholder="Create a password (min 6 chars)"
                 value={formData.password}
                 onChange={handleChange}
               />
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
                 Confirm Password
               </label>
               <input
@@ -152,7 +144,7 @@ const Signup = () => {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-400"
                 placeholder="Confirm your password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
@@ -160,21 +152,21 @@ const Signup = () => {
             </div>
           </div>
 
-          <div className="flex items-center">
+          <div className="flex items-start">
             <input
               id="agree-terms"
               name="agree-terms"
               type="checkbox"
               required
-              className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+              className="h-4 w-4 mt-0.5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
             />
-            <label htmlFor="agree-terms" className="ml-2 block text-sm text-gray-900">
+            <label htmlFor="agree-terms" className="ml-2 block text-sm text-gray-600 leading-snug">
               I agree to the{' '}
-              <a href="#" className="text-indigo-600 hover:text-indigo-500">
+              <a href="#" className="text-emerald-600 hover:text-emerald-500 transition-colors font-medium">
                 Terms and Conditions
               </a>{' '}
               and{' '}
-              <a href="#" className="text-indigo-600 hover:text-indigo-500">
+              <a href="#" className="text-emerald-600 hover:text-emerald-500 transition-colors font-medium">
                 Privacy Policy
               </a>
             </label>
@@ -184,20 +176,25 @@ const Signup = () => {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+              className="w-full flex justify-center py-2.5 px-4 text-sm font-semibold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Creating account...' : 'Create account'}
+              {loading
+                ? (
+                  <span className="flex items-center gap-2">
+                    <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                    Creating account…
+                  </span>
+                )
+                : 'Create account'}
             </button>
           </div>
 
-          <div className="text-center">
-            <span className="text-sm text-gray-600">
-              Already have an account?{' '}
-              <a href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-                Sign in
-              </a>
-            </span>
-          </div>
+          <p className="text-center text-sm text-gray-500">
+            Already have an account?{' '}
+            <a href="/login" className="font-semibold text-emerald-600 hover:text-emerald-500 transition-colors">
+              Sign in
+            </a>
+          </p>
         </form>
       </div>
     </div>

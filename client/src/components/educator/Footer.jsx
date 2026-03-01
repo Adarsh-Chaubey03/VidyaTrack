@@ -1,29 +1,19 @@
 import React from 'react'
-import { assets } from '../../assets/assets'
 
 function Footer() {
     return (
-      <footer className="w-full bg-white border-t border-gray-200 py-6 ">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 px-4">
-          {/* Left: Logo and copyright */}
-          <div className="flex items-center gap-3">
-            <img src={assets.eduLogo} alt="VidyaTrack Educator Logo" className="w-28 h-auto pl-5" />
-            <span className="text-gray-500 text-sm ml-10">&copy; {new Date().getFullYear()} VidyaTrack. All rights reserved.</span>
-          </div>
-          {/* Right: Social icons */}
-          <div className="flex items-center gap-4 pr-10">
-            <a href="#" aria-label="Facebook">
-              <img src={assets.facebook_icon} alt="Facebook" className="w-6 h-6 hover:opacity-80 transition" />
-            </a>
-            <a href="#" aria-label="Instagram">
-              <img src={assets.instagram_icon} alt="Instagram" className="w-6 h-6 hover:opacity-80 transition" />
-            </a>
-            <a href="#" aria-label="Twitter">
-              <img src={assets.twitter_icon} alt="Twitter" className="w-6 h-6 hover:opacity-80 transition" />
-            </a>
-          </div>
-        </div>
-      </footer>
+        <footer className="border-t border-slate-200 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+                <p className="text-xs text-slate-400">
+                    &copy; {new Date().getFullYear()} VidyaTrack. All rights reserved.
+                </p>
+                <div className="flex items-center gap-4">
+                    <a href="#" className="text-xs text-slate-400 hover:text-slate-600 transition-colors">Privacy</a>
+                    <a href="#" className="text-xs text-slate-400 hover:text-slate-600 transition-colors">Terms</a>
+                    <a href="#" className="text-xs text-slate-400 hover:text-slate-600 transition-colors">Support</a>
+                </div>
+            </div>
+        </footer>
     )
 }
 

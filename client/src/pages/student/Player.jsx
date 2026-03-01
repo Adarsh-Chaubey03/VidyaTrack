@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext.jsx'
 import { AppContext } from '../../context/AppContext.jsx'
 import { apiService } from '../../services/api.js'
 import humanizeDuration from 'humanize-duration'
+import { SkeletonPlayer } from '../../components/skeleton/Skeleton'
 
 // ─────────────────────────────────────────────────────────────
 // Icons (inline SVGs for zero-dep)
@@ -83,12 +84,35 @@ function loadYouTubeAPI() {
 }
 
 // ─────────────────────────────────────────────────────────────
+// Utility: format helpers (pure, module-scoped)
+// ─────────────────────────────────────────────────────────────
+const formatDuration = (mins) => {
+  if (!mins) return '0 min'
+  return humanizeDuration(mins * 60 * 1000, { units: ['h', 'm'], round: true })
+}
+
+const formatTimestamp = (dateStr) => {
+  if (!dateStr) return ''
+  try {
+    return new Date(dateStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+  } catch { return '' }
+}
+
+// ─────────────────────────────────────────────────────────────
 // YouTube Player Component
 // ─────────────────────────────────────────────────────────────
 function YouTubePlayer({ videoId, onWatchProgress, onVideoEnd, onError }) {
   const containerRef = useRef(null)
   const playerRef = useRef(null)
   const pollRef = useRef(null)
+
+  // Store callbacks in refs to avoid stale closures in YT Player events
+  const onWatchProgressRef = useRef(onWatchProgress)
+  const onVideoEndRef = useRef(onVideoEnd)
+  const onErrorRef = useRef(onError)
+  onWatchProgressRef.current = onWatchProgress
+  onVideoEndRef.current = onVideoEnd
+  onErrorRef.current = onError
 
   useEffect(() => {
     if (!videoId) return
@@ -126,21 +150,20 @@ function YouTubePlayer({ videoId, onWatchProgress, onVideoEnd, onError }) {
               try {
                 const current = playerRef.current.getCurrentTime()
                 const total = playerRef.current.getDuration()
-                if (total > 0 && onWatchProgress) {
-                  onWatchProgress(current, total)
+                if (total > 0 && onWatchProgressRef.current) {
+                  onWatchProgressRef.current(current, total)
                 }
               } catch { }
             }, 5000) // Every 5 seconds
           },
           onStateChange: (event) => {
             // YT.PlayerState.ENDED === 0
-            if (event.data === 0 && onVideoEnd) {
-              onVideoEnd()
+            if (event.data === 0 && onVideoEndRef.current) {
+              onVideoEndRef.current()
             }
           },
           onError: (event) => {
-            console.error('YouTube Player error:', event.data)
-            if (onError) onError(event.data)
+            if (onErrorRef.current) onErrorRef.current(event.data)
           },
         },
       })
@@ -387,35 +410,16 @@ const Player = () => {
 
   const toggleChapter = (idx) => setOpenChapters(prev => ({ ...prev, [idx]: !prev[idx] }))
 
-  const handleVideoEnd = () => {
+  const handleVideoEnd = useCallback(() => {
     if (currentLectureKey && !completedMap[currentLectureKey]) {
       handleMarkComplete()
     }
     setTimeout(() => goToNextLecture(), 800)
-  }
-
-  const formatDuration = (mins) => {
-    if (!mins) return '0 min'
-    return humanizeDuration(mins * 60 * 1000, { units: ['h', 'm'], round: true })
-  }
-
-  const formatTimestamp = (dateStr) => {
-    if (!dateStr) return ''
-    try {
-      return new Date(dateStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
-    } catch { return '' }
-  }
+  }, [currentLectureKey, completedMap, handleMarkComplete, goToNextLecture])
 
   // ─── loading / error ──────────────────────────────────────
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-500 text-lg">Loading course...</p>
-        </div>
-      </div>
-    )
+    return <SkeletonPlayer />
   }
 
   if (error || !course) {

@@ -4,6 +4,7 @@ import { AppContext } from '../../context/AppContext';
 import { apiService } from '../../services/api';
 import CourseCard from '../../components/student/CourseCard';
 import Footer from '../../components/student/Footer';
+import { SkeletonCard } from '../../components/skeleton/Skeleton';
 
 const LEVELS = ['beginner', 'intermediate', 'advanced'];
 const SORT_OPTIONS = [
@@ -41,11 +42,6 @@ function CourseList() {
     const [selectedSort, setSelectedSort] = useState(sortFromUrl);
     const [searchQuery, setSearchQuery] = useState(searchFromUrl);
 
-    // Group categories for sidebar
-    const groupedCategories = useMemo(() => {
-        return categories;
-    }, [categories]);
-
     // Find active category name
     const activeCategoryName = useMemo(() => {
         const cat = categories.find(c => c.slug === selectedCategory);
@@ -72,7 +68,7 @@ function CourseList() {
                 setTotalPages(result.totalPages);
             }
         } catch (error) {
-            console.error('Error fetching courses:', error);
+            // fetch failed
         } finally {
             setLoading(false);
         }
@@ -94,7 +90,7 @@ function CourseList() {
     useEffect(() => {
         fetchCourses();
         syncFiltersToUrl();
-    }, [selectedCategory, selectedLevel, selectedPrice, selectedSort, searchQuery, currentPage]);
+    }, [fetchCourses, syncFiltersToUrl]);
 
     // Sync URL params into state on mount / back-navigate
     useEffect(() => {
@@ -117,17 +113,7 @@ function CourseList() {
 
     const hasActiveFilters = selectedCategory || selectedLevel || selectedPrice || searchQuery;
 
-    // Skeleton component
-    const SkeletonCard = () => (
-        <div className="rounded-xl border border-gray-200 overflow-hidden animate-pulse">
-            <div className="h-32 sm:h-48 bg-gray-200" />
-            <div className="p-4 space-y-3">
-                <div className="h-4 bg-gray-200 rounded w-3/4" />
-                <div className="h-3 bg-gray-200 rounded w-1/2" />
-                <div className="h-3 bg-gray-200 rounded w-1/3" />
-            </div>
-        </div>
-    );
+
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -157,7 +143,9 @@ function CourseList() {
                                 {activeCategoryName || (searchQuery ? `Results for "${searchQuery}"` : 'All Courses')}
                             </h1>
                             <p className="text-gray-500 text-sm mt-1">
-                                {loading ? 'Loading...' : `${totalCourses} course${totalCourses !== 1 ? 's' : ''} found`}
+                                {loading ? (
+                                    <span className="skeleton-shimmer inline-block rounded h-4 w-32" />
+                                ) : `${totalCourses} course${totalCourses !== 1 ? 's' : ''} found`}
                             </p>
                         </div>
 
@@ -414,7 +402,7 @@ function CourseList() {
 
                     {/* Loading skeleton */}
                     {loading ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                             {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
                         </div>
                     ) : courses.length === 0 ? (
@@ -435,7 +423,7 @@ function CourseList() {
                     ) : (
                         <>
                             {/* Course grid */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                                 {courses.map(course => (
                                     <CourseCard key={course._id} course={course} />
                                 ))}

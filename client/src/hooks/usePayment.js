@@ -28,8 +28,8 @@ export default function usePayment({ onSuccess, onFailure, onDismiss } = {}) {
       .then(() => {
         if (mountedRef.current) setSdkReady(true);
       })
-      .catch((err) => {
-        console.warn('Razorpay SDK preload failed:', err.message);
+      .catch(() => {
+        // silently ignore SDK preload failures
       });
 
     return () => {

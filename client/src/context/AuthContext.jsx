@@ -16,6 +16,9 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem('token'));
 
+  // Derive active role from user data (single source of truth)
+  const activeRole = user?.activeRole || 'user';
+
   // Check if user is authenticated on app load
   useEffect(() => {
     const checkAuth = async () => {
@@ -25,12 +28,10 @@ export const AuthProvider = ({ children }) => {
           if (response.success) {
             setUser(response.data);
           } else {
-            // Token is invalid, clear it
             localStorage.removeItem('token');
             setToken(null);
           }
         } catch (error) {
-          console.error('Auth check failed:', error);
           localStorage.removeItem('token');
           setToken(null);
         }
@@ -41,54 +42,65 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, [token]);
 
-  const login = async (email, password) => {
+  // ─── Unified login — accepts role for RBAC validation ───
+  const login = async (email, password, role = 'user') => {
     try {
-      const response = await apiService.auth.login({ email, password });
-      if (response.success) {
+      const response = await apiService.auth.login({ email, password, role });
+
+      // Strict triple-check: success flag + token exists + is a string
+      const tkn = response?.data?.token;
+      if (response?.success === true && typeof tkn === 'string' && tkn.length > 0) {
         const { token: newToken, ...userData } = response.data;
         localStorage.setItem('token', newToken);
         setToken(newToken);
         setUser(userData);
-        return { success: true, message: response.message };
-      } else {
-        return { success: false, message: response.message };
+        return { success: true, message: response.message || 'Login successful' };
       }
+
+      return { success: false, message: response?.message || 'Authentication failed' };
     } catch (error) {
-      return { success: false, message: error.response?.data?.message || 'Login failed' };
+      const msg =
+        error.response?.data?.message ||
+        error.message ||
+        'Login failed. Please try again.';
+      return { success: false, message: msg };
     }
   };
 
+  // ─── Educator login (delegates to unified login with role='educator') ───
+  // Kept for backward compatibility (EducatorLogin page)
   const educatorLogin = async (email, password) => {
-    try {
-      const response = await apiService.auth.educatorLogin({ email, password });
-      if (response.success) {
-        const { token: newToken, ...userData } = response.data;
-        localStorage.setItem('token', newToken);
-        setToken(newToken);
-        setUser(userData);
-        return { success: true, message: response.message };
-      } else {
-        return { success: false, message: response.message };
-      }
-    } catch (error) {
-      return { success: false, message: error.response?.data?.message || 'Educator login failed' };
-    }
+    return login(email, password, 'educator');
   };
 
-  const register = async (name, email, password, role = 'user') => {
+  // ─── Switch from educator back to student mode ──────────
+  // With full RBAC, role-switch requires re-authentication.
+  // This helper logs out the current session — caller should redirect to login.
+  const switchToStudent = async () => {
+    logout();
+    return { success: true };
+  };
+
+  const register = async (name, email, password) => {
     try {
-      const response = await apiService.auth.register({ name, email, password, role });
-      if (response.success) {
+      const response = await apiService.auth.register({ name, email, password });
+
+      const tkn = response?.data?.token;
+      if (response?.success === true && typeof tkn === 'string' && tkn.length > 0) {
         const { token: newToken, ...userData } = response.data;
         localStorage.setItem('token', newToken);
         setToken(newToken);
         setUser(userData);
-        return { success: true, message: response.message };
-      } else {
-        return { success: false, message: response.message };
+        return { success: true, message: response.message || 'Registration successful' };
       }
+
+      return { success: false, message: response?.message || 'Registration failed' };
     } catch (error) {
-      return { success: false, message: error.response?.data?.message || 'Registration failed' };
+      const msg =
+        error.response?.data?.message ||
+        error.message ||
+        'Registration failed. Please try again.';
+      return { success: false, message: msg };
     }
   };
 
@@ -103,7 +115,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const isEducator = () => {
-    return user?.role === 'educator';
+    return user?.role === 'educator' && user?.educatorApproved === true;
+  };
+
+  const isActiveEducator = () => {
+    return isEducator() && activeRole === 'educator';
+  };
+
+  const isAdmin = () => {
+    return user?.role === 'admin';
   };
 
   const userId = user?._id || user?.id || null;
@@ -112,12 +132,16 @@ export const AuthProvider = ({ children }) => {
     user,
     userId,
     loading,
+    activeRole,
     login,
     educatorLogin,
+    switchToStudent,
     register,
     logout,
     isAuthenticated,
     isEducator,
+    isActiveEducator,
+    isAdmin,
   };
 
   return (

@@ -1,39 +1,102 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { AppContext } from '../../context/AppContext'
+import { BookOpen, Users, RefreshCw, Plus } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { assets } from '../../assets/assets'
 
 function MyCourses() {
     const { educatorCourses, refreshEducatorCourses } = useContext(AppContext);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const handleRefresh = async () => {
+        setRefreshing(true);
+        await refreshEducatorCourses();
+        setTimeout(() => setRefreshing(false), 500);
+    };
+
     return (
-        <div className="w-full max-w-5xl mx-auto p-4">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">My Courses</h1>
-                <button
-                    onClick={refreshEducatorCourses}
-                    className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2"
-                >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    Refresh
-                </button>
+        <div className="space-y-6">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-xl font-semibold text-slate-900">My Courses</h1>
+                    <p className="text-sm text-slate-500 mt-0.5">{educatorCourses.length} course{educatorCourses.length !== 1 ? 's' : ''} published</p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={handleRefresh}
+                        disabled={refreshing}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+                    >
+                        <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+                        Refresh
+                    </button>
+                    <Link
+                        to="/educator/add-courses"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors"
+                    >
+                        <Plus className="w-3.5 h-3.5" />
+                        New Course
+                    </Link>
+                </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {educatorCourses.map(course => (
-                    <div key={course._id} className="bg-white rounded-xl shadow-md p-4 flex flex-col">
-                        <img src={course.courseThumbnail || assets.course_1} alt={course.courseTitle} className="w-full h-40 object-cover rounded-lg mb-4" />
-                        <h2 className="text-lg font-semibold mb-2 line-clamp-2">{course.courseTitle}</h2>
-                        <p className="text-gray-500 text-sm mb-2 line-clamp-3" dangerouslySetInnerHTML={{__html: course.courseDescription.slice(0, 80) + (course.courseDescription.length > 80 ? '...' : '')}} />
-                        <div className="flex items-center justify-between mt-auto pt-4">
-                            <span className="text-emerald-600 font-semibold text-sm flex items-center gap-1">
-                                <img src={assets.person_tick_icon} alt="enrolled" className="w-5 h-5" />
-                                {course.enrolledStudents.length} Enrolled
-                            </span>
-                            <button className="bg-emerald-500 text-white px-4 py-1 rounded-full text-sm font-semibold hover:bg-emerald-600 transition">View</button>
+
+            {/* Empty state */}
+            {educatorCourses.length === 0 ? (
+                <div className="bg-white rounded-xl border border-slate-200 px-6 py-16 text-center">
+                    <BookOpen className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                    <h3 className="text-sm font-semibold text-slate-700 mb-1">No courses yet</h3>
+                    <p className="text-xs text-slate-400 mb-4">Create your first course to start teaching</p>
+                    <Link
+                        to="/educator/add-courses"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors"
+                    >
+                        <Plus className="w-4 h-4" />
+                        Create Course
+                    </Link>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {educatorCourses.map(course => (
+                        <div key={course._id} className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-sm transition-shadow group">
+                            <div className="aspect-video w-full overflow-hidden bg-slate-100">
+                                <img
+                                    src={course.courseThumbnail || assets.default_thumbnail}
+                                    alt={course.courseTitle}
+                                    className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+                                />
+                            </div>
+                            <div className="p-4">
+                                <h2 className="text-sm font-semibold text-slate-800 line-clamp-2 leading-snug mb-2">
+                                    {course.courseTitle}
+                                </h2>
+                                <p
+                                    className="text-xs text-slate-400 line-clamp-2 mb-3"
+                                    dangerouslySetInnerHTML={{
+                                        __html: course.courseDescription?.slice(0, 100) + (course.courseDescription?.length > 100 ? '...' : '')
+                                    }}
+                                />
+                                <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                                    <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                                        <Users className="w-3.5 h-3.5" />
+                                        <span>{course.enrolledStudents?.length || 0} enrolled</span>
+                                    </div>
+                                    {course.coursePrice > 0 && (
+                                        <span className="text-xs font-semibold text-emerald-600">
+                                            ${course.coursePrice}
+                                        </span>
+                                    )}
+                                    {course.coursePrice === 0 && (
+                                        <span className="text-xs font-semibold text-blue-600">
+                                            Free
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
         </div>
     )
 }

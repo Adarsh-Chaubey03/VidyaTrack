@@ -1,31 +1,79 @@
-import React, { useContext } from 'react'
-import { assets } from '../../assets/assets'
+import React from 'react'
 import { NavLink } from 'react-router-dom';
-import { AppContext } from '../../context/AppContext';
+import { LayoutDashboard, PlusCircle, BookOpen, Users, X } from 'lucide-react';
 
-function Sidebar(){
-    const {isEducator} = useContext(AppContext)
+const menuItems = [
+    { name: 'Dashboard', path: '/educator', icon: LayoutDashboard },
+    { name: 'Add Course', path: '/educator/add-courses', icon: PlusCircle },
+    { name: 'My Courses', path: '/educator/my-courses', icon: BookOpen },
+    { name: 'Students', path: '/educator/student-enrolled', icon: Users },
+];
 
-    const menuItems = [
-        {name:'Dashboard', path:'/educator', icon: assets.home_icon},
-        {name: 'Add Courses', path:'/educator/add-courses', icon: assets.add_icon},
-        {name: 'My Courses', path: '/educator/my-courses', icon:assets.my_course_icon},
-        {name:'Student Enrolled', path:'/educator/student-enrolled', icon: assets.person_tick_icon}
-    ];
+function Sidebar({ isOpen, onClose }) {
     return (
-       <div className='md:w-64 w-16 border-r min-h-screen text-base border-gray-500 py-2 flex flex-col'>
-       {menuItems.map((item)=> (
-    <NavLink 
-    to={item.path}
-    key={item.name}
-    end={item.path==='/educator'}
-    className={({isActive})=> `flex items-center md:flex-row flex-col md:justify-start justify-center py-3.5 md:px-10 gap-3 ${isActive ? 'bg-emerald-100 text-emerald-700 font-bold' : 'text-gray-700'}`}
-    >
-        <img src={item.icon} alt="" className='w-6 h-6' />
-        <p className='md:block hidden text-center'>{item.name}</p>
-    </NavLink>
-   ))}
-       </div> 
+        <>
+            {/* Desktop sidebar */}
+            <aside className="hidden md:flex md:w-60 lg:w-64 flex-col border-r border-slate-200 bg-white">
+                <nav className="flex-1 py-4 px-3 space-y-1">
+                    {menuItems.map((item) => {
+                        const Icon = item.icon;
+                        return (
+                            <NavLink
+                                to={item.path}
+                                key={item.name}
+                                end={item.path === '/educator'}
+                                className={({ isActive }) =>
+                                    `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150
+                                    ${isActive
+                                        ? 'bg-emerald-50 text-emerald-700'
+                                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                                    }`
+                                }
+                            >
+                                <Icon className="w-[18px] h-[18px] flex-shrink-0" />
+                                <span>{item.name}</span>
+                            </NavLink>
+                        );
+                    })}
+                </nav>
+            </aside>
+
+            {/* Mobile drawer */}
+            <aside
+                className={`fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-slate-200 transform transition-transform duration-200 ease-in-out md:hidden
+                    ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
+            >
+                <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                    <span className="text-sm font-semibold text-slate-800">Menu</span>
+                    <button onClick={onClose} className="p-1.5 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100">
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
+                <nav className="py-3 px-3 space-y-1">
+                    {menuItems.map((item) => {
+                        const Icon = item.icon;
+                        return (
+                            <NavLink
+                                to={item.path}
+                                key={item.name}
+                                end={item.path === '/educator'}
+                                onClick={onClose}
+                                className={({ isActive }) =>
+                                    `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150
+                                    ${isActive
+                                        ? 'bg-emerald-50 text-emerald-700'
+                                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                                    }`
+                                }
+                            >
+                                <Icon className="w-[18px] h-[18px] flex-shrink-0" />
+                                <span>{item.name}</span>
+                            </NavLink>
+                        );
+                    })}
+                </nav>
+            </aside>
+        </>
     )
 }
 

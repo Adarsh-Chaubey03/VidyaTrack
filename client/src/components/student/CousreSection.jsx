@@ -82,7 +82,6 @@ const CourseSection = () => {
 
       <Link
         to="/course-list"
-        onClick={() => scrollTo(0, 0)}
         className="
           inline-block mt-6 px-8 py-3
           text-base font-semibold

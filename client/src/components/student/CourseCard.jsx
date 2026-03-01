@@ -38,7 +38,6 @@ function CourseCard({ course }) {
   return (
     <Link
       to={`/course/${course._id}`}
-      onClick={() => window.scrollTo(0, 0)}
       className="
         group flex flex-col bg-white border border-gray-200
         rounded-xl overflow-hidden

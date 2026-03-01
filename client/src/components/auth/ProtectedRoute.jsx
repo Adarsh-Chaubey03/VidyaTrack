@@ -3,8 +3,8 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import Loading from '../student/Loading.jsx';
 
-const ProtectedRoute = ({ children, requireEducator = false }) => {
-  const { user, loading, isAuthenticated, isEducator } = useAuth();
+const ProtectedRoute = ({ children, requireEducator = false, requireAdmin = false }) => {
+  const { user, loading, isAuthenticated, isEducator, isActiveEducator, isAdmin } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -16,9 +16,13 @@ const ProtectedRoute = ({ children, requireEducator = false }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (requireEducator && !isEducator()) {
-    // Redirect to home if user is not an educator
+  if (requireAdmin && !isAdmin()) {
     return <Navigate to="/" replace />;
+  }
+
+  if (requireEducator && !isEducator()) {
+    // Redirect to educator access page instead of home
+    return <Navigate to="/educator-access" replace />;
   }
 
   return children;

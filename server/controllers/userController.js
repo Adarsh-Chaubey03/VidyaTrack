@@ -61,10 +61,17 @@ export const purchaseCourse = async (req, res) => {
     }
 
     if (course.isFree || course.coursePrice === 0) {
-      // free course enrollment
+      // free course enrollment — update both User and Course for consistency
       user.enrolledCourses = user.enrolledCourses || [];
       user.enrolledCourses.push(courseId);
       await user.save();
+
+      // Also add student to course.enrolledStudent (mirrors paid flow)
+      if (!course.enrolledStudent?.map(String).includes(userId.toString())) {
+        course.enrolledStudent = course.enrolledStudent || [];
+        course.enrolledStudent.push(userId);
+        await course.save();
+      }
 
       return res.json({
         success: true,

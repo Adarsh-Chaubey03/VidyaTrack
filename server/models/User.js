@@ -6,7 +6,9 @@ const userSchema = new mongoose.Schema(
         name: {type: String, required: true},
         email: {type: String, required: true, unique: true},
         password: {type: String, required: true},
-        role: {type: String, enum: ['user', 'educator'], default: 'user'},
+        role: {type: String, enum: ['user', 'educator', 'admin'], default: 'user'},
+        activeRole: {type: String, enum: ['user', 'educator'], default: 'user'},
+        educatorApproved: {type: Boolean, default: false},
         imageUrl: {type: String, default: 'https://via.placeholder.com/150'},
         enrolledCourses: [
             {

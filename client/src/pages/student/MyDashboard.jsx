@@ -3,9 +3,9 @@ import { AppContext } from '../../context/AppContext'
 import { Link } from 'react-router-dom'
 import Footer from '../../components/student/Footer'
 import DashboardCard from '../../components/student/DashboardCard'
+import MentorDashboard from '../../components/student/MentorDashboard'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { apiService } from '../../services/api.js'
-import humanizeDuration from 'humanize-duration'
 
 const MyDashboard = () => {
     const { enrolledCourses, calculateCourseDuration } = useContext(AppContext)
@@ -81,9 +81,9 @@ const MyDashboard = () => {
         <div className='bg-gradient-to-br from-slate-50 via-white to-slate-100 min-h-screen flex flex-col'>
             <div className='container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-8 flex-1'>
                 {/* Header */}
-                <div className='mb-8'>
-                    <h1 className='text-3xl md:text-4xl font-bold text-gray-900 mb-2'>My Dashboard</h1>
-                    <p className='text-gray-600 text-sm'>Track your learning progress and explore opportunities</p>
+                <div className='mb-4 md:mb-8'>
+                    <h1 className='text-2xl md:text-4xl font-bold text-gray-900 mb-1 md:mb-2'>My Dashboard</h1>
+                    <p className='text-gray-600 text-xs md:text-sm'>Track your learning progress and explore opportunities</p>
                 </div>
 
                 <div className='flex flex-col lg:flex-row gap-6'>
@@ -163,7 +163,7 @@ const MyDashboard = () => {
                                         </Link>
                                     </div>
                                 ) : (
-                                    <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5'>
+                                    <div className='grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-5'>
                                         {sortedCourses.map((course) => {
                                             const p = progressByCourse[course._id] || { completed: 0, total: 0, percent: 0 }
                                             const isCompleted = p.percent === 100
@@ -195,12 +195,12 @@ const MyDashboard = () => {
                                                     </div>
 
                                                     {/* Content */}
-                                                    <div className='p-4'>
-                                                        <h3 className='font-bold text-gray-900 text-sm line-clamp-2 mb-2 min-h-[2.5rem]'>
+                                                    <div className='p-2.5 md:p-4'>
+                                                        <h3 className='font-bold text-gray-900 text-xs md:text-sm line-clamp-2 mb-1 md:mb-2 min-h-[2rem] md:min-h-[2.5rem]'>
                                                             {course.courseTitle}
                                                         </h3>
 
-                                                        <p className='text-xs text-gray-500 mb-3'>
+                                                        <p className='text-[10px] md:text-xs text-gray-500 mb-2 md:mb-3'>
                                                             {course.educator?.name || 'Instructor'} • {calculateCourseDuration(course)}
                                                         </p>
 
@@ -234,12 +234,12 @@ const MyDashboard = () => {
                                                         {/* Action button */}
                                                         <Link
                                                             to={`/player/${course._id}`}
-                                                            className={`w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${isCompleted
+                                                            className={`w-full inline-flex items-center justify-center gap-1 md:gap-2 px-2 py-1.5 md:px-4 md:py-2.5 rounded-lg text-xs md:text-sm font-semibold transition-all duration-200 ${isCompleted
                                                                 ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                                                 : 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm hover:shadow-md'
                                                                 }`}
                                                         >
-                                                            {isCompleted ? '📖 Review Course' : '▶ Continue Learning'}
+                                                            {isCompleted ? '📖 Review' : '▶ Continue'}
                                                         </Link>
                                                     </div>
                                                 </div>
@@ -251,17 +251,7 @@ const MyDashboard = () => {
                         )}
 
                         {active === 'mentors' && (
-                            <div>
-                                <div className='mb-6'>
-                                    <h2 className='text-2xl font-bold text-gray-900'>My Mentors</h2>
-                                    <p className='text-sm text-gray-600 mt-1'>Connect with experienced professionals</p>
-                                </div>
-                                <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6'>
-                                    <DashboardCard title="No Mentor Yet" subtitle="Find mentors who match your goals" actionLabel="Explore Mentors" to="/mentor">
-                                        Connect with experienced industry mentors for guidance.
-                                    </DashboardCard>
-                                </div>
-                            </div>
+                            <MentorDashboard />
                         )}
 
                         {active === 'others' && (
@@ -270,12 +260,12 @@ const MyDashboard = () => {
                                     <h2 className='text-2xl font-bold text-gray-900'>Additional Resources</h2>
                                     <p className='text-sm text-gray-600 mt-1'>Enhance your skills with extra tools</p>
                                 </div>
-                                <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6'>
+                                <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6'>
                                     <DashboardCard title="Resume Review" subtitle="Improve your CV" actionLabel="View" to="/resumereview">
                                         Submit your resume and get expert feedback to stand out.
                                     </DashboardCard>
-                                    <DashboardCard title="Test Series" subtitle="Practice and improve" actionLabel="View Tests" to="/testseries">
-                                        Take timed tests to sharpen your problem-solving skills.
+                                    <DashboardCard title="AI Career Copilot" subtitle="Plan your career" actionLabel="Try AI Copilot" to="/ai-career-copilot">
+                                        Get a personalized career roadmap powered by AI.
                                     </DashboardCard>
                                 </div>
                             </div>

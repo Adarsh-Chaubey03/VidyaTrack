@@ -5,38 +5,39 @@ import { protect } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-// Generate JWT token
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET || 'fallback_secret_key', {
+// ─── JWT Helper ───────────────────────────────────────────
+// Payload: { id, role, email } — role = session-scoped role
+const generateToken = (id, role, email) => {
+    if (!process.env.JWT_SECRET) {
+        throw new Error('JWT_SECRET is not defined in environment variables');
+    }
+    return jwt.sign({ id, role, email }, process.env.JWT_SECRET, {
         expiresIn: '30d'
     });
 };
 
-// @desc    Register user
-// @route   POST /api/auth/register
-// @access  Public
+// ─── Register ─────────────────────────────────────────────
+// POST /api/auth/register  — always creates a student ('user') account
 export const register = async (req, res) => {
     try {
-        const { name, email, password, role = 'user' } = req.body;
+        const { name, email, password } = req.body;
 
-        // Check if user already exists
+        // SECURITY: Never accept role from client — always default to 'user'
+        // Educator/admin roles are assigned server-side only (seed script, admin panel)
+        const role = 'user';
+
         const userExists = await User.findOne({ email });
         if (userExists) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'User already exists with this email' 
+            return res.status(400).json({
+                success: false,
+                message: 'User already exists with this email'
             });
         }
 
-        // Create user
-        const user = await User.create({
-            name,
-            email,
-            password,
-            role
-        });
+        const user = await User.create({ name, email, password, role });
 
         if (user) {
+            // New registrations always start as student
             res.status(201).json({
                 success: true,
                 message: 'User registered successfully',
@@ -45,144 +46,104 @@ export const register = async (req, res) => {
                     name: user.name,
                     email: user.email,
                     role: user.role,
+                    activeRole: user.activeRole || 'user',
+                    educatorApproved: user.educatorApproved || false,
                     imageUrl: user.imageUrl,
-                    token: generateToken(user._id)
+                    token: generateToken(user._id, user.role, user.email)
                 }
             });
         } else {
-            res.status(400).json({
-                success: false,
-                message: 'Invalid user data'
-            });
+            res.status(400).json({ success: false, message: 'Invalid user data' });
         }
     } catch (error) {
         console.error('Registration error:', error);
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 
-// @desc    Login user
-// @route   POST /api/auth/login
-// @access  Public
+// ─── Unified Login (role-validated) ───────────────────────
+// POST /api/auth/login
+// Body: { email, password, role? }
+//   role = 'user' (student, default) | 'educator'
+//
+// RBAC rules:
+//   • role='user'     → any authenticated user is allowed (students, educators, admins)
+//   • role='educator' → must have DB role='educator' AND educatorApproved=true
+//   • Invalid / missing role defaults to 'user'
+//
+// On success the JWT is scoped to the selected role and activeRole is updated.
 export const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, role: requestedRole } = req.body;
+        const selectedRole = (requestedRole === 'educator') ? 'educator' : 'user';
 
-        // Check for user
+        // ── Credentials check ──
         const user = await User.findOne({ email }).select('+password');
         if (!user) {
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid credentials'
-            });
+            return res.status(401).json({ success: false, message: 'Invalid credentials' });
         }
 
-        // Check password
         const isPasswordMatch = await user.comparePassword(password);
         if (!isPasswordMatch) {
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid credentials'
-            });
+            return res.status(401).json({ success: false, message: 'Invalid credentials' });
         }
+
+        // ── Role validation ──
+        if (selectedRole === 'educator') {
+            if (user.role !== 'educator' || !user.educatorApproved) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Educator access not approved. Please apply through the Educator Access page.'
+                });
+            }
+        }
+
+        // ── Update activeRole & issue session-scoped JWT ──
+        user.activeRole = selectedRole;
+        await user.save();
+
+        const jwtRole = selectedRole;
 
         res.json({
             success: true,
-            message: 'Login successful',
+            message: selectedRole === 'educator' ? 'Educator login successful' : 'Login successful',
             data: {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                activeRole: selectedRole,
+                educatorApproved: user.educatorApproved || false,
                 imageUrl: user.imageUrl,
-                token: generateToken(user._id)
+                token: generateToken(user._id, jwtRole, user.email)
             }
         });
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 
-// @desc    Get current user
-// @route   GET /api/auth/me
-// @access  Private
+// ─── Get Current User ─────────────────────────────────────
+// GET /api/auth/me
 export const getMe = async (req, res) => {
     try {
         const user = await User.findById(req.user._id).select('-password');
-        res.json({
-            success: true,
-            data: user
-        });
+        res.json({ success: true, data: user });
     } catch (error) {
         console.error('Get me error:', error);
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 
-// @desc    Educator login with specific credentials
-// @route   POST /api/auth/educator-login
-// @access  Public
+// ─── Legacy educator-login (kept for backward compat) ─────
+// POST /api/auth/educator-login  → delegates to unified login
 export const educatorLogin = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-
-        // Check for specific educator credentials
-        if (email === 'teacher@gmail.com' && password === '12345678') {
-            // Check if educator user exists, if not create one
-            let educator = await User.findOne({ email });
-            
-            if (!educator) {
-                educator = await User.create({
-                    name: 'The Educator',
-                    email: 'teacher@gmail.com',
-                    password: '12345678',
-                    role: 'educator',
-                    imageUrl: 'https://via.placeholder.com/150'
-                });
-            } else if (educator.role !== 'educator') {
-                // Update role if user exists but doesn't have educator role
-                educator.role = 'educator';
-                await educator.save();
-            }
-
-            res.json({
-                success: true,
-                message: 'Educator login successful',
-                data: {
-                    _id: educator._id,
-                    name: educator.name,
-                    email: educator.email,
-                    role: educator.role,
-                    imageUrl: educator.imageUrl,
-                    token: generateToken(educator._id)
-                }
-            });
-        } else {
-            res.status(401).json({
-                success: false,
-                message: 'Invalid educator credentials'
-            });
-        }
-    } catch (error) {
-        console.error('Educator login error:', error);
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
-    }
+    req.body.role = 'educator';
+    return login(req, res);
 };
 
-// Routes
+// ─── Routes ───────────────────────────────────────────────
 router.post('/register', register);
 router.post('/login', login);
 router.post('/educator-login', educatorLogin);

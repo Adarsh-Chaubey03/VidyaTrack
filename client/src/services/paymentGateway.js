@@ -185,7 +185,6 @@ export async function initiateCheckout({
             onFailure?.(new Error(result.message || 'Payment confirmation failed'));
           }
         } catch (confirmError) {
-          console.error('Payment confirmation error:', confirmError);
           onFailure?.(confirmError);
         }
       },
@@ -208,13 +207,11 @@ export async function initiateCheckout({
     const rzp = new RazorpayClass(options);
 
     rzp.on('payment.failed', (failedResponse) => {
-      console.error('Payment failed:', failedResponse.error);
       onFailure?.(new Error(failedResponse.error?.description || 'Payment failed'));
     });
 
     rzp.open();
   } catch (error) {
-    console.error('Payment initiation error:', error);
     onFailure?.(error);
   }
 }

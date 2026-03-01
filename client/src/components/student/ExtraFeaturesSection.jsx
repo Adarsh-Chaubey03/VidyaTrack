@@ -1,64 +1,59 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import Mentor from './Mentor';
 import ResumeReview from './ResumeReview';
-import TestSeries from './TestSeries';
+import AICareerCopilotCard from './AICareerCopilotCard';
 
 const ExtraFeaturesSection = () => {
   const scrollRef = useRef(null);
-  const [scrollPos, setScrollPos] = useState(0);
   const cardWidth = 500 + 32; // 500px card + 2rem (32px) gap
 
-  const scrollLeft = () => {
+  const scrollLeft = useCallback(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollBy({ left: -cardWidth, behavior: 'smooth' });
-      setScrollPos(scrollRef.current.scrollLeft - cardWidth);
     }
-  };
-  const scrollRight = () => {
+  }, [cardWidth]);
+  const scrollRight = useCallback(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollBy({ left: cardWidth, behavior: 'smooth' });
-      setScrollPos(scrollRef.current.scrollLeft + cardWidth);
     }
-  };
+  }, [cardWidth]);
 
   return (
-    <div className="relative py-16 bg-gray-50 overflow-hidden flex flex-col items-center w-full">
+    <div className="relative py-8 sm:py-12 md:py-16 overflow-hidden flex flex-col items-center w-full" style={{ background: 'linear-gradient(180deg, #ffffff 0%, #f0fdf4 40%, #ecfdf5 100%)' }}>
       {/* Horizontally scrollable cards */}
       <div className="relative w-full">
         {/* Left Arrow */}
         <button
           onClick={scrollLeft}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white shadow-lg rounded-full p-2 hover:bg-gray-100"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-20 bg-white/90 backdrop-blur-sm shadow-md shadow-emerald-100 rounded-full p-1.5 sm:p-2.5 hover:bg-emerald-50 hover:shadow-lg transition-all duration-200 border border-emerald-100"
           aria-label="Scroll Left"
         >
-          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          <svg width="20" height="20" fill="none" stroke="#065f46" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 16l-5-5 5-5"/></svg>
         </button>
         {/* Cards */}
         <div
           ref={scrollRef}
-          className="w-full flex overflow-x-hidden gap-8 px-8 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-emerald-200 scrollbar-track-gray-100"
+          className="w-full flex overflow-x-auto md:overflow-x-hidden gap-4 sm:gap-6 md:gap-8 px-8 sm:px-10 md:px-12 snap-x snap-mandatory"
           style={{ scrollBehavior: 'smooth' }}
         >
-          <Link to="/mentor" className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-orange-200 border border-orange-200 bg-white/60 backdrop-blur-md">
+          <Link to="/mentor" className="snap-center shrink-0 w-[280px] h-[200px] sm:w-[420px] sm:h-[260px] md:w-[700px] md:h-[320px] flex items-center justify-center rounded-2xl md:rounded-3xl shadow-lg shadow-emerald-100/60 border border-emerald-100/80 bg-white/70 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:shadow-emerald-200/60 hover:-translate-y-1">
             <Mentor />
           </Link>
-          <Link to="/resumereview" className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-blue-200 border border-blue-200 bg-white/60 backdrop-blur-md">
+          <Link to="/resumereview" className="snap-center shrink-0 w-[280px] h-[200px] sm:w-[420px] sm:h-[260px] md:w-[700px] md:h-[320px] flex items-center justify-center rounded-2xl md:rounded-3xl shadow-lg shadow-teal-100/60 border border-teal-100/80 bg-white/70 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:shadow-teal-200/60 hover:-translate-y-1">
             <ResumeReview />
           </Link>
-          <Link to="/testseries" className="snap-center shrink-0 w-[700px] h-[320px] flex items-center justify-center rounded-full shadow-2xl shadow-yellow-200 border border-yellow-200 bg-white/60 backdrop-blur-md">
-            <TestSeries />
+          <Link to="/ai-career-copilot" className="snap-center shrink-0 w-[280px] h-[200px] sm:w-[420px] sm:h-[260px] md:w-[700px] md:h-[320px] flex items-center justify-center rounded-2xl md:rounded-3xl shadow-lg shadow-emerald-100/60 border border-emerald-100/80 bg-white/70 backdrop-blur-md transition-all duration-300 hover:shadow-xl hover:shadow-emerald-200/60 hover:-translate-y-1">
+            <AICareerCopilotCard />
           </Link>
         </div>
         {/* Right Arrow */}
         <button
           onClick={scrollRight}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white shadow-lg rounded-full p-2 hover:bg-gray-100"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-20 bg-white/90 backdrop-blur-sm shadow-md shadow-emerald-100 rounded-full p-1.5 sm:p-2.5 hover:bg-emerald-50 hover:shadow-lg transition-all duration-200 border border-emerald-100"
           aria-label="Scroll Right"
         >
-          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          <svg width="20" height="20" fill="none" stroke="#065f46" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 16l5-5-5-5"/></svg>
         </button>
       </div>
     </div>

@@ -3,6 +3,7 @@ import cors from 'cors';
 import 'dotenv/config'
 import connectDB from './configs/mongodb.js';
 import educatorRouter from './routes/educatorRoutes.js';
+import educatorAccessRouter from './routes/educatorAccessRoutes.js';
 import connectCloudinary from './configs/cloudinary.js';
 import courseRouter from './routes/courseRoutes.js';
 import courseProgressRouter from './routes/courseProgressRoutes.js';
@@ -10,6 +11,8 @@ import userRouter from './routes/userRoutes.js';
 import authRouter from './routes/authRoutes.js';
 import paymentRouter from './routes/paymentRoutes.js';
 import { razorpayWebhook } from './controllers/paymentController.js';
+import blogRouter from './routes/blogRoutes.js';
+import feedbackRouter from './routes/feedbackRoutes.js';
 
 //initialize express app
 const app = express()
@@ -157,10 +160,13 @@ app.get('/api/test-token', async (req, res) => {
 });
 
 app.use('/api/educator', educatorRouter)
+app.use('/api/educator-access', educatorAccessRouter)
 app.use('/api/course', courseRouter)
 app.use('/api/progress', courseProgressRouter)
 app.use('/api/user', userRouter)
 app.use('/api/payments', paymentRouter)
+app.use('/api/posts', blogRouter)
+app.use('/api/feedback', feedbackRouter)
 
 //server port
 const PORT = process.env.PORT || 5000

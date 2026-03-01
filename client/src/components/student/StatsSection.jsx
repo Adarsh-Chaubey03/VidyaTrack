@@ -73,26 +73,31 @@ const formatNumber = (num) => {
   return num.toLocaleString('en-IN');
 };
 
+// Extracted so useCountUp is called at component top level (Rules of Hooks)
+const StatItem = ({ icon, label, value, suffix, duration }) => {
+  const count = useCountUp(value, duration);
+  return (
+    <div className="flex flex-col items-center min-w-[100px] sm:min-w-[140px] md:min-w-[180px]">
+      <div className="mb-1 sm:mb-2 [&_svg]:w-8 [&_svg]:h-8 sm:[&_svg]:w-10 sm:[&_svg]:h-10 md:[&_svg]:w-12 md:[&_svg]:h-12">{icon}</div>
+      <div className="text-white text-xl sm:text-2xl md:text-4xl font-bold">
+        {formatNumber(count)}{suffix}
+      </div>
+      <div className="text-white text-xs sm:text-sm md:text-lg mt-0.5 sm:mt-1 font-medium opacity-90 text-center">{label}</div>
+    </div>
+  );
+};
+
 const StatsSection = () => {
   return (
-    <section className="w-full py-16 bg-emerald-500 relative overflow-hidden ">
+    <section className="w-full py-8 sm:py-12 md:py-16 bg-emerald-500 relative overflow-hidden ">
       {/* Grid overlay */}
       <div className="absolute inset-0 pointer-events-none" style={{backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '40px 40px'}}></div>
-      <div className="relative z-10 flex flex-col items-center justify-center">
-        <h2 className="text-white text-4xl md:text-5xl font-bold text-center mb-4">Empowering Learning: <br />Let’s Spark Transformation </h2>
-        <div className="flex flex-wrap justify-center gap-12 mt-10 w-full max-w-6xl">
-          {stats.map((stat, idx) => {
-            const count = useCountUp(stat.value, stat.duration);
-            return (
-              <div key={stat.label} className="flex flex-col items-center min-w-[180px]">
-                <div className="mb-2">{stat.icon}</div>
-                <div className="text-white text-3xl md:text-4xl font-bold">
-                  {formatNumber(count)}{stat.suffix}
-                </div>
-                <div className="text-white text-lg mt-1 font-medium opacity-90 text-center">{stat.label}</div>
-              </div>
-            );
-          })}
+      <div className="relative z-10 flex flex-col items-center justify-center px-4 md:px-0">
+        <h2 className="text-white text-2xl sm:text-3xl md:text-5xl font-bold text-center mb-2 sm:mb-4">Empowering Learning: <br />Let's Spark Transformation </h2>
+        <div className="flex flex-wrap justify-center gap-4 sm:gap-8 md:gap-12 mt-6 sm:mt-10 w-full max-w-6xl">
+          {stats.map((stat) => (
+            <StatItem key={stat.label} {...stat} />
+          ))}
         </div>
       </div>
     </section>

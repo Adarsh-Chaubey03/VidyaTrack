@@ -1,5 +1,5 @@
 import React from 'react';
-import { assets } from '../../assets/assets';
+import { useNavigate } from 'react-router-dom';
 
 const featureCards = [
   {
@@ -26,38 +26,43 @@ const featureCards = [
 ];
 
 function CallToAction() {
+    const navigate = useNavigate();
     return (
-        <section className="mb-10 w-full min-h-[60vh] bg-emerald-100 dark:bg-emerald-800 px-6 md:px-32 py-20 flex flex-col-reverse md:flex-row items-center justify-between gap-12">
+        <section className="mb-10 w-full min-h-[40vh] md:min-h-[60vh] bg-emerald-100 dark:bg-emerald-800 px-4 sm:px-6 md:px-32 py-10 md:py-20 flex flex-col-reverse md:flex-row items-center justify-between gap-6 md:gap-12">
 
             {/* LEFT - TEXT */}
             <div className="max-w-xl text-center md:text-left flex flex-col justify-center">
-                <h1 className="text-4xl md:text-5xl font-extrabold leading-tight text-gray-900 dark:text-white">
+                <h1 className="text-2xl sm:text-3xl md:text-5xl font-extrabold leading-tight text-gray-900 dark:text-white">
                     Unlock Limitless <br className="hidden md:block" />
                     <span className="text-emerald-500">Learning</span> Opportunities
                 </h1>
-                <p className="mt-6 text-gray-600 dark:text-gray-300 text-base md:text-lg">
+                <p className="mt-3 md:mt-6 text-gray-600 dark:text-gray-300 text-sm md:text-lg">
                     Learn from expert educators anytime, anywhere. Gain real-world skills to transform your career at your own pace.
                 </p>
 
                 {/* BUTTONS */}
-                <div className="mt-8 flex flex-wrap justify-center md:justify-start gap-4">
-                    <button className="bg-emerald-600 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-lg">
+                <div className="mt-4 md:mt-8 flex flex-wrap justify-center md:justify-start gap-4">
+                    <button className="bg-emerald-600 hover:bg-emerald-600 text-white px-4 py-2 md:px-6 md:py-3 rounded-xl font-medium transition-all shadow-lg text-sm md:text-base">
                         Get Started
                     </button>
                 </div>
             </div>
             {/* RIGHT - CARDS */}
-            <div className="w-full md:w-[400px] flex flex-col items-center gap-6">
+            <div className="w-full md:w-[400px] flex flex-col items-center gap-3 md:gap-6">
                 {featureCards.map((card, idx) => {
                   const isCareer = card.title === 'Career Growth';
+                  const isBlog = card.title === 'Read Blog';
+                  const isClickable = isCareer || isBlog;
                   const handleClick = () => {
-                    if (isCareer) {
+                    if (isBlog) {
+                      navigate('/blog');
+                    } else if (isCareer) {
                       const el = document.getElementById('our-services');
                       el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
                   };
                   const handleKeyDown = (e) => {
-                    if (!isCareer) return;
+                    if (!isClickable) return;
                     if (e.key === 'Enter' || e.key === ' ') handleClick();
                   };
 
@@ -66,16 +71,16 @@ function CallToAction() {
                       key={idx}
                       onClick={handleClick}
                       onKeyDown={handleKeyDown}
-                      role={isCareer ? 'button' : undefined}
-                      tabIndex={isCareer ? 0 : undefined}
-                      className={`w-full bg-white rounded-2xl shadow-md flex items-center gap-4 p-4 hover:shadow-lg transition-all ${isCareer ? 'cursor-pointer' : ''}`}
+                      role={isClickable ? 'button' : undefined}
+                      tabIndex={isClickable ? 0 : undefined}
+                      className={`w-full bg-white rounded-xl md:rounded-2xl shadow-md flex items-center gap-3 md:gap-4 p-3 md:p-4 hover:shadow-lg transition-all ${isClickable ? 'cursor-pointer' : ''}`}
                     >
-                      <div className="flex-shrink-0 bg-emerald-100 rounded-xl p-2 flex items-center justify-center">
+                      <div className="flex-shrink-0 bg-emerald-100 rounded-lg md:rounded-xl p-1.5 md:p-2 flex items-center justify-center [&_svg]:w-6 [&_svg]:h-6 md:[&_svg]:w-8 md:[&_svg]:h-8">
                         {card.icon}
                       </div>
                       <div className="text-left">
-                        <div className="font-semibold text-lg text-emerald-700">{card.title}</div>
-                        <div className="text-gray-500 text-sm mt-1">{card.desc}</div>
+                        <div className="font-semibold text-base md:text-lg text-emerald-700">{card.title}</div>
+                        <div className="text-gray-500 text-xs md:text-sm mt-0.5 md:mt-1">{card.desc}</div>
                       </div>
                     </div>
                   );
