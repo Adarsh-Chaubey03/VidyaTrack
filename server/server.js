@@ -61,8 +61,11 @@ app.use(cors({
 }))
 
 // Explicitly handle OPTIONS preflight for all routes (fixes Vercel redirect issue)
-app.options('*', (req, res) => {
-    res.sendStatus(200);
+app.use((req, res, next) => {
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+    next();
 })
 
 // Authentication middleware will be applied per route as needed
