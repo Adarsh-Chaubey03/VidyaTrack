@@ -159,7 +159,7 @@ function CourseDetails() {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/user/purchase-course`,
+        `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/user/purchase-course`,
         { courseId: courseData._id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -306,8 +306,8 @@ function CourseDetails() {
                 onClick={() => handleEnroll()}
                 disabled={enrolling}
                 className={`w-full py-3.5 rounded-xl text-base font-bold transition-all duration-200 ${isEnrolled
-                    ? 'bg-white text-gray-900 hover:bg-gray-100'
-                    : 'bg-emerald-500 text-white hover:bg-emerald-600 active:scale-[0.98]'
+                  ? 'bg-white text-gray-900 hover:bg-gray-100'
+                  : 'bg-emerald-500 text-white hover:bg-emerald-600 active:scale-[0.98]'
                   } ${enrolling ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {isEnrolled ? '▶ Continue Learning' : isFree ? 'Enroll for Free' : 'Pay & Enroll'}
@@ -536,8 +536,8 @@ function CourseDetails() {
                     onClick={() => handleEnroll()}
                     disabled={enrolling}
                     className={`w-full py-3.5 rounded-xl text-base font-bold transition-all duration-200 shadow-sm ${isEnrolled
-                        ? 'bg-gray-900 text-white hover:bg-gray-800'
-                        : 'bg-emerald-500 text-white hover:bg-emerald-600 hover:shadow-emerald-200 hover:shadow-md active:scale-[0.98]'
+                      ? 'bg-gray-900 text-white hover:bg-gray-800'
+                      : 'bg-emerald-500 text-white hover:bg-emerald-600 hover:shadow-emerald-200 hover:shadow-md active:scale-[0.98]'
                       } ${enrolling ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     {enrolling ? (
@@ -592,8 +592,8 @@ function CourseDetails() {
             onClick={() => handleEnroll()}
             disabled={enrolling}
             className={`flex-1 py-3 rounded-xl text-sm font-bold transition ${isEnrolled
-                ? 'bg-gray-900 text-white'
-                : 'bg-emerald-500 text-white active:scale-[0.97]'
+              ? 'bg-gray-900 text-white'
+              : 'bg-emerald-500 text-white active:scale-[0.97]'
               } ${enrolling ? 'opacity-50' : ''}`}
           >
             {isEnrolled ? '▶ Continue' : isFree ? 'Enroll Free' : 'Pay & Enroll'}

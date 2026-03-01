@@ -52,7 +52,8 @@ app.use(cors({
         'http://localhost:3000',
         'http://localhost:5173',
         'https://vidya-track-xi.vercel.app',
-        'https://vidya-track-n45f.vercel.app'
+        'https://vidya-track-n45f.vercel.app',
+        'https://vidya-track-nd5f.vercel.app'
     ],
     credentials: true
 }))
