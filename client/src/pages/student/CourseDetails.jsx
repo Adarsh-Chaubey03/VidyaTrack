@@ -79,7 +79,7 @@ function CourseDetails() {
     calculateChapterTime,
     calculateCourseDuration,
     calculateNoOfLectures,
-    currency = '$',
+    currency = '₹',
   } = useContext(AppContext);
 
   useEffect(() => {
@@ -220,7 +220,7 @@ function CourseDetails() {
 
             {/* Short description */}
             <p className="text-base sm:text-lg text-gray-300 mb-5 leading-relaxed line-clamp-3"
-               dangerouslySetInnerHTML={{ __html: courseData.courseDescription?.slice(0, 200) + (courseData.courseDescription?.length > 200 ? '...' : '') }}
+              dangerouslySetInnerHTML={{ __html: courseData.courseDescription?.slice(0, 200) + (courseData.courseDescription?.length > 200 ? '...' : '') }}
             />
 
             {/* Meta row */}
@@ -305,11 +305,10 @@ function CourseDetails() {
               <button
                 onClick={() => handleEnroll()}
                 disabled={enrolling}
-                className={`w-full py-3.5 rounded-xl text-base font-bold transition-all duration-200 ${
-                  isEnrolled
+                className={`w-full py-3.5 rounded-xl text-base font-bold transition-all duration-200 ${isEnrolled
                     ? 'bg-white text-gray-900 hover:bg-gray-100'
                     : 'bg-emerald-500 text-white hover:bg-emerald-600 active:scale-[0.98]'
-                } ${enrolling ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  } ${enrolling ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {isEnrolled ? '▶ Continue Learning' : isFree ? 'Enroll for Free' : 'Pay & Enroll'}
               </button>
@@ -526,9 +525,8 @@ function CourseDetails() {
 
                   {/* Enrollment status message */}
                   {enrollmentMessage && (
-                    <div className={`p-3 rounded-lg text-sm font-medium ${
-                      enrollmentMessage.toLowerCase().includes('success') ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'
-                    }`}>
+                    <div className={`p-3 rounded-lg text-sm font-medium ${enrollmentMessage.toLowerCase().includes('success') ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'
+                      }`}>
                       {enrollmentMessage}
                     </div>
                   )}
@@ -537,11 +535,10 @@ function CourseDetails() {
                   <button
                     onClick={() => handleEnroll()}
                     disabled={enrolling}
-                    className={`w-full py-3.5 rounded-xl text-base font-bold transition-all duration-200 shadow-sm ${
-                      isEnrolled
+                    className={`w-full py-3.5 rounded-xl text-base font-bold transition-all duration-200 shadow-sm ${isEnrolled
                         ? 'bg-gray-900 text-white hover:bg-gray-800'
                         : 'bg-emerald-500 text-white hover:bg-emerald-600 hover:shadow-emerald-200 hover:shadow-md active:scale-[0.98]'
-                    } ${enrolling ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      } ${enrolling ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     {enrolling ? (
                       <span className="flex items-center justify-center gap-2">
@@ -594,11 +591,10 @@ function CourseDetails() {
           <button
             onClick={() => handleEnroll()}
             disabled={enrolling}
-            className={`flex-1 py-3 rounded-xl text-sm font-bold transition ${
-              isEnrolled
+            className={`flex-1 py-3 rounded-xl text-sm font-bold transition ${isEnrolled
                 ? 'bg-gray-900 text-white'
                 : 'bg-emerald-500 text-white active:scale-[0.97]'
-            } ${enrolling ? 'opacity-50' : ''}`}
+              } ${enrolling ? 'opacity-50' : ''}`}
           >
             {isEnrolled ? '▶ Continue' : isFree ? 'Enroll Free' : 'Pay & Enroll'}
           </button>

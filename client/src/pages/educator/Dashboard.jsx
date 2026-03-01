@@ -74,7 +74,7 @@ function Dashboard() {
         },
         {
             label: 'Total Earnings',
-            value: `${currency === 'USD' ? '$' : currency}${(dashboardData.totalEarnings || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+            value: `${currency}${(dashboardData.totalEarnings || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
             icon: DollarSign,
             color: 'text-violet-600',
             bg: 'bg-violet-50',

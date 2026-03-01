@@ -15,7 +15,7 @@ export const AppContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const currency = import.meta.env.VITE_CURRENCY || 'USD';
+  const currency = import.meta.env.VITE_CURRENCY || '₹';
 
   const { user, isAuthenticated } = useAuth();
 
