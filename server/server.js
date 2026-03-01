@@ -55,8 +55,15 @@ app.use(cors({
         'https://vidya-track-n45f.vercel.app',
         'https://vidya-track-nd5f.vercel.app'
     ],
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }))
+
+// Explicitly handle OPTIONS preflight for all routes (fixes Vercel redirect issue)
+app.options('*', (req, res) => {
+    res.sendStatus(200);
+})
 
 // Authentication middleware will be applied per route as needed
 console.log('✅ Custom authentication system configured');
