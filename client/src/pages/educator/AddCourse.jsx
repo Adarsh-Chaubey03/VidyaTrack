@@ -113,7 +113,7 @@ function AddCourse() {
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1.5">Price (₹)</label>
                     <div className="relative">
-                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-slate-400">$</span>
+                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-slate-400">₹</span>
                         <input
                             type="number"
                             name="price"
