@@ -123,7 +123,7 @@ function Navbar() {
                   return;
                 }
 
-                navigate('/educator-access/login');
+                navigate('/educator-access');
               }}
             >
               Educator
