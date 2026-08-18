@@ -24,7 +24,7 @@ const ResumeHub = lazy(() => import('./pages/student/resume/ResumeHub'));
 const ResumeBuilder = lazy(() => import('./pages/student/resume/ResumeBuilder'));
 const ReviewRequest = lazy(() => import('./pages/student/resume/ReviewRequest'));
 const ContactUs = lazy(() => import('./pages/student/ContactUs'));
-const PrivacyPolicy = lazy(() => import('./pages/student/PrivacyPolicy'));
+const PrivacyPolicy = lazy(() => import('./pages/student/PrivacyPage'));
 const TermsAndConditions = lazy(() => import('./pages/student/TermsAndConditions'));
 const FAQs = lazy(() => import('./pages/student/FAQs'));
 const Feedback = lazy(() => import('./pages/student/Feedback'));
