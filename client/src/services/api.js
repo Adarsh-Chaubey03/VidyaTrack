@@ -3,12 +3,13 @@ import axios from 'axios';
 // Create axios instance with default configuration
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api`,
-  timeout: 30000, // 30s — accounts for Vercel serverless cold starts
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
   withCredentials: true,
 });
+
 
 
 // Request interceptor to add auth token
