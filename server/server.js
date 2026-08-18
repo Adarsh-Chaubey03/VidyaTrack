@@ -43,30 +43,34 @@ app.use(async (req, res, next) => {
 });
 
 //middleware
+const allowedOrigins = [
+    'http://localhost:5174',
+    'http://localhost:5175',
+    'http://localhost:5176',
+    'http://localhost:5177',
+    'http://localhost:3000',
+    'http://localhost:5173',
+];
+
 app.use(cors({
-    origin: [
-        'http://localhost:5174',
-        'http://localhost:5175',
-        'http://localhost:5176',
-        'http://localhost:5177',
-        'http://localhost:3000',
-        'http://localhost:5173',
-        'https://vidya-track-xi.vercel.app',
-        'https://vidya-track-n45f.vercel.app',
-        'https://vidya-track-nd5f.vercel.app'
-    ],
+    origin: (origin, callback) => {
+        // Allow requests with no origin (e.g. mobile apps, curl)
+        if (!origin) return callback(null, true);
+        // Allow any vercel.app subdomain (covers all preview & production deployments)
+        if (/\.vercel\.app$/.test(origin)) return callback(null, true);
+        // Allow known localhost origins
+        if (allowedOrigins.includes(origin)) return callback(null, true);
+        callback(new Error(`CORS: Origin ${origin} not allowed`));
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    optionsSuccessStatus: 200
 }))
 
-// Explicitly handle OPTIONS preflight for all routes (fixes Vercel redirect issue)
-app.use((req, res, next) => {
-    if (req.method === 'OPTIONS') {
-        return res.sendStatus(200);
-    }
-    next();
-})
+// Enable pre-flight for all routes
+app.options('*', cors());
+
 
 // Authentication middleware will be applied per route as needed
 console.log('✅ Custom authentication system configured');
