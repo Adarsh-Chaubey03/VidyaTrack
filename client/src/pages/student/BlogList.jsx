@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, Clock, Eye, ChevronLeft, ChevronRight, PenLine, TrendingUp } from 'lucide-react';
+import { Search, Clock, Eye, ChevronLeft, ChevronRight, PenLine, BookOpen, TrendingUp } from 'lucide-react';
 import { apiService } from '../../services/api';
 import { SkeletonBlogList } from '../../components/skeleton/Skeleton';
 import { useAuth } from '../../context/AuthContext';
@@ -101,13 +101,22 @@ export default function BlogList() {
           </div>
 
           {isAuthenticated() && (
-            <Link
-              to="/blog/submit"
-              className="inline-flex items-center gap-2 mt-6 bg-white text-emerald-700 font-semibold px-6 py-2.5 rounded-xl hover:bg-emerald-50 transition shadow"
-            >
-              <PenLine size={18} />
-              Write an Article
-            </Link>
+            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                to="/blog/submit"
+                className="inline-flex items-center gap-2 bg-white text-emerald-700 font-semibold px-6 py-2.5 rounded-xl hover:bg-emerald-50 transition shadow"
+              >
+                <PenLine size={18} />
+                Write an Article
+              </Link>
+              <Link
+                to="/blog/my-posts"
+                className="inline-flex items-center gap-2 bg-white/10 border border-white/30 text-white font-semibold px-6 py-2.5 rounded-xl hover:bg-white/15 transition shadow backdrop-blur-sm"
+              >
+                <BookOpen size={18} />
+                My Articles
+              </Link>
+            </div>
           )}
         </div>
       </section>
