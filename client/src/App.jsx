@@ -16,6 +16,7 @@ const CourseDetails = lazy(() => import('./pages/student/CourseDetails'));
 const Player = lazy(() => import('./pages/student/Player'));
 const Mentor = lazy(() => import('./pages/student/Mentor'));
 const MentorProfile = lazy(() => import('./pages/student/MentorProfile'));
+const About = lazy(() => import('./pages/student/About'));
 const AIcareerCopilot = lazy(() => import('./pages/student/AIcareerCopilot'));
 
 // Resume system
@@ -83,6 +84,7 @@ const App = () => {
             </ProtectedRoute>
           } />
           <Route path='/loading/:path' element={<Loading />} />
+          <Route path='/about' element={<About />} />
           <Route path='/mentor' element={<Mentor />} />
           <Route path='/ai-career-copilot' element={<AIcareerCopilot />} />
 
