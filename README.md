@@ -23,7 +23,7 @@ VidyaTrack is a full-stack educational platform designed to centralize learning 
 
 - **Frontend**: [https://vidya-track-xi.vercel.app/](https://vidya-track-xi.vercel.app/)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [![Netlify Status](https://api.netlify.com/api/v1/badges/02d95b97-a97e-4ac4-94cd-3a9d0fb64e7e/deploy-status)](https://app.netlify.com/projects/vidya-track/deploys)  
-- **Backend**: ([https://vidyatrack-backend.vercel.app/](https://vidya-track-n45f.vercel.app/))
+- **Backend**: [https://vidya-track-n45f.vercel.app/](https://vidya-track-n45f.vercel.app/)
 
 *Replace `#` with actual deployment URL for the backend.*
 
