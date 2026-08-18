@@ -9,7 +9,6 @@ function Footer() {
                 </p>
                 <div className="flex items-center gap-4">
                     <a href="#" className="text-xs text-slate-400 hover:text-slate-600 transition-colors">Privacy</a>
-                    <a href="#" className="text-xs text-slate-400 hover:text-slate-600 transition-colors">Terms</a>
                     <a href="#" className="text-xs text-slate-400 hover:text-slate-600 transition-colors">Support</a>
                 </div>
             </div>

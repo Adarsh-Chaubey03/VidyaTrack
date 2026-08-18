@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ShieldAlert, ArrowLeft, LogOut, Loader2 } from 'lucide-react';
@@ -45,6 +45,23 @@ function RoleSwitchConfirm() {
 
     const isGoingToStudent = target === 'student';
     const isGoingToEducator = target === 'educator';
+
+    useEffect(() => {
+        if (!isAuthenticated()) return;
+
+        if (isGoingToEducator) {
+            if (isEducator()) {
+                navigate('/educator', { replace: true });
+            } else {
+                navigate('/educator-access', { replace: true });
+            }
+            return;
+        }
+
+        if (isGoingToStudent) {
+            navigate('/', { replace: true });
+        }
+    }, [isAuthenticated, isEducator, isGoingToEducator, isGoingToStudent, navigate]);
 
     // Determine current role label
     const currentRole = isEducator() ? 'Educator' : 'Student';

@@ -111,11 +111,19 @@ function Navbar() {
               onClick={() => {
                 if (isActiveEducator && isActiveEducator()) {
                   navigate('/educator');
-                } else if (isAuthenticated()) {
-                  navigate('/switch-role?target=educator');
-                } else {
-                  navigate('/educator-access');
+                  return;
                 }
+
+                if (isAuthenticated()) {
+                  if (user?.role === 'educator' && user?.educatorApproved) {
+                    navigate('/educator');
+                  } else {
+                    navigate('/educator-access');
+                  }
+                  return;
+                }
+
+                navigate('/educator-access/login');
               }}
             >
               Educator

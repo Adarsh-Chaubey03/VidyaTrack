@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { apiService } from '../../services/api';
 import {
@@ -135,16 +135,17 @@ const EducatorAccess = () => {
 
           {/* CTA Buttons */}
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              onClick={() => navigate('/educator-access/login')}
+            <Link
+              to={isAuthenticated() && isEducator() ? '/educator' : '/educator-access/login'}
               className="group flex items-center gap-3 bg-white text-emerald-800 px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
             >
               <LogIn className="w-5 h-5" />
               Login as Educator
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-            </button>
+            </Link>
 
             <button
+              type="button"
               onClick={() => {
                 if (!isAuthenticated()) {
                   navigate('/login', { state: { from: { pathname: '/educator-access/apply' } } });
