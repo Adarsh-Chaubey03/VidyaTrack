@@ -214,6 +214,19 @@ export const getCourseAnalytics = async (req, res) => {
     try {
         const { courseId } = req.params;
 
+        if (!mongoose.Types.ObjectId.isValid(courseId)) {
+            return res.status(400).json({ success: false, message: 'Invalid courseId' });
+        }
+
+        // Verify the requesting user is the educator who owns this course
+        const course = await Course.findById(courseId).select('educator').lean();
+        if (!course) {
+            return res.status(404).json({ success: false, message: 'Course not found' });
+        }
+        if (course.educator.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ success: false, message: 'Not authorized to view analytics for this course' });
+        }
+
         const progress = await CourseProgress.find({ courseId })
             .populate('userId', 'name email imageUrl');
 

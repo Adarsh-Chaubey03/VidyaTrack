@@ -206,8 +206,7 @@ export const educatorAccessLogin = async (req, res) => {
     }
 
     // Switch active role — enforces single active role
-    user.activeRole = "educator";
-    await user.save();
+    await User.findByIdAndUpdate(user._id, { activeRole: 'educator' });
 
     res.json({
       success: true,

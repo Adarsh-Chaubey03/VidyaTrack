@@ -300,7 +300,9 @@ export const getPaymentStatus = async (req, res) => {
 export const getPaymentHistory = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { status, referenceType, page = 1, limit = 20 } = req.query;
+    const { status, referenceType } = req.query;
+    const page  = Math.max(1, parseInt(req.query.page,  10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
 
     const filter = { userId };
     if (status) filter.status = status;
@@ -309,7 +311,8 @@ export const getPaymentHistory = async (req, res) => {
     const transactions = await PaymentTransaction.find(filter)
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
-      .limit(Number(limit));
+      .limit(limit)
+      .lean();
 
     const total = await PaymentTransaction.countDocuments(filter);
 
@@ -318,8 +321,8 @@ export const getPaymentHistory = async (req, res) => {
       data: {
         transactions,
         pagination: {
-          page: Number(page),
-          limit: Number(limit),
+          page,
+          limit,
           total,
           totalPages: Math.ceil(total / limit),
         },
