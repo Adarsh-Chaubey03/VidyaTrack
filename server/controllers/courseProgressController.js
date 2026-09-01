@@ -165,7 +165,8 @@ export const getUserProgress = async (req, res) => {
 
         const progress = await CourseProgress.find({ userId })
             .populate('courseId', 'courseTitle courseThumbnail courseDescription')
-            .sort({ lastAccessedAt: -1 });
+            .sort({ lastAccessedAt: -1 })
+            .lean();
 
         res.json({ success: true, progress });
     } catch (error) {
