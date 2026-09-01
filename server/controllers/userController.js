@@ -17,6 +17,55 @@ export const getUserData = async (req, res) => {
   }
 };
 
+// Update user profile (name and imageUrl only)
+// PUT /api/user/update
+// The frontend calls this via apiService.user.updateProfile(data)
+export const updateUserProfile = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    // Only allow safe, user-editable fields.
+    // Fields like role, email, password, educatorApproved are intentionally excluded
+    // and cannot be changed through this endpoint.
+    const { name, imageUrl } = req.body;
+
+    const updates = {};
+
+    if (name !== undefined) {
+      if (typeof name !== 'string' || name.trim().length < 2 || name.trim().length > 100) {
+        return res.status(400).json({ success: false, message: 'Name must be between 2 and 100 characters' });
+      }
+      updates.name = name.trim();
+    }
+
+    if (imageUrl !== undefined) {
+      if (typeof imageUrl !== 'string' || imageUrl.length > 2048) {
+        return res.status(400).json({ success: false, message: 'Invalid imageUrl' });
+      }
+      updates.imageUrl = imageUrl.trim();
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ success: false, message: 'No valid fields provided for update' });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: updates },
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!updatedUser) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    return res.json({ success: true, user: updatedUser });
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // User enrolled courses with lecture link
 export const userEnrolledCourses = async (req, res) => {
   try {

@@ -2,6 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import { protect } from '../middlewares/authMiddleware.js';
+import { authLimiter, registerLimiter } from '../middlewares/rateLimitMiddleware.js';
 
 const router = express.Router();
 
@@ -144,9 +145,9 @@ export const educatorLogin = async (req, res) => {
 };
 
 // ─── Routes ───────────────────────────────────────────────
-router.post('/register', register);
-router.post('/login', login);
-router.post('/educator-login', educatorLogin);
+router.post('/register',        registerLimiter, register);
+router.post('/login',           authLimiter,     login);
+router.post('/educator-login',  authLimiter,     educatorLogin);
 router.get('/me', protect, getMe);
 
 export default router;

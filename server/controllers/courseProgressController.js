@@ -1,9 +1,21 @@
+import mongoose from "mongoose";
 import CourseProgress from "../models/CourseProgress.js";
 import Course from "../models/Course.js";
 
 export const getCourseProgress = async (req, res) => {
     try {
         const { userId, courseId } = req.params;
+
+        // Authorization: users can only access their own progress.
+        // Educators/admins who need analytics should use getCourseAnalytics instead.
+        if (req.user._id.toString() !== userId) {
+            return res.status(403).json({ success: false, message: 'Not authorized to access this progress record' });
+        }
+
+        // Validate IDs before hitting the database
+        if (!mongoose.Types.ObjectId.isValid(courseId)) {
+            return res.status(400).json({ success: false, message: 'Invalid courseId' });
+        }
 
         let progress = await CourseProgress.findOne({ userId, courseId })
             .populate('courseId', 'courseTitle courseThumbnail');
