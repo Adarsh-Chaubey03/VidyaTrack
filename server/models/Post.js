@@ -27,5 +27,18 @@ postSchema.pre('save', function (next) {
   next();
 });
 
+// ── Indexes ─────────────────────────────────────────────────────────────────
+//
+// listPublishedPosts: { status: 'published' } + sort { createdAt: -1 }
+// The compound index covers both the filter and the sort in one scan, avoiding
+// an in-memory sort on the result set.
+postSchema.index({ status: 1, createdAt: -1 });
+
+// Tag filter on top of published status — used when tag= query param is passed.
+postSchema.index({ status: 1, tags: 1, createdAt: -1 });
+
+// Author's own posts — myPosts(): { authorId } + sort { updatedAt: -1 }
+postSchema.index({ authorId: 1, updatedAt: -1 });
+
 const Post = mongoose.model('Post', postSchema);
 export default Post;

@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Course from '../models/Course.js'
 import User from '../models/User.js'
 import { v2 as cloudinary } from 'cloudinary'
@@ -45,12 +46,11 @@ export const addCourse = async (req, res) => {
 
 export const getEducatorCourses = async (req, res) => {
     try {
-        const educatorId = req.user._id
-
-        const courses = await Course.find({ educator: educatorId })
-        return res.json({ success: true, courses })
+        const educatorId = req.user._id;
+        const courses = await Course.find({ educator: educatorId }).lean();
+        return res.json({ success: true, courses });
     } catch (error) {
-        res.json({ success: false, message: error.message })
+        res.status(500).json({ success: false, message: error.message });
     }
 }
 
@@ -58,45 +58,72 @@ export const getEducatorCourses = async (req, res) => {
 
 export const educatorDashboardData = async (req, res) => {
     try {
-        const educatorId = req.user._id
-        const courses = await Course.find({ educator: educatorId })
+        const educatorId = req.user._id;
+        const courses = await Course.find({ educator: educatorId }).lean();
         const totalCourses = courses.length;
 
-        const courseIds = courses.map(course => course._id);
-
-        // Calculate total earnings = sum of (coursePrice × number of enrolled students) for each course
-        let totalEarnings = 0;
-
-        // Collect unique enrolled students with their course titles
-        const enrolledStudentsData = [];
-        for (const course of courses) {
-            const enrolledCount = (course.enrolledStudent || []).length;
-            const effectivePrice = course.coursePrice - (course.coursePrice * (course.discount || 0) / 100);
-            totalEarnings += effectivePrice * enrolledCount;
-
-            const students = await User.find({
-                _id: { $in: course.enrolledStudent || [] }
-            }, 'name imageUrl')
-
-            students.forEach(element => {
-                enrolledStudentsData.push({
-                    courseTitle: course.courseTitle,
-                    student: element
-                });
+        if (totalCourses === 0) {
+            return res.json({
+                success: true,
+                dashboardData: { totalEarnings: 0, enrolledStudentsData: [], totalCourses: 0 }
             });
         }
 
+        // ── Collect all unique student IDs across every course ───────────────
+        // Previously: one User.find() per course inside a for-loop → N+1 problem.
+        // Fixed: collect all IDs first, then issue a SINGLE User.find().
+        const studentIdSet = new Set();
+        for (const course of courses) {
+            for (const sid of (course.enrolledStudent || [])) {
+                studentIdSet.add(sid.toString());
+            }
+        }
+
+        // One query for all students, regardless of how many courses the educator has
+        const studentIds = [...studentIdSet].map(id => new mongoose.Types.ObjectId(id));
+        const students = await User.find(
+            { _id: { $in: studentIds } },
+            'name imageUrl'
+        ).lean();
+
+        // Build O(1) lookup map: studentId → student document
+        const studentMap = {};
+        for (const s of students) {
+            studentMap[s._id.toString()] = s;
+        }
+
+        // ── Build the response payload ────────────────────────────────────────
+        let totalEarnings = 0;
+        const enrolledStudentsData = [];
+
+        for (const course of courses) {
+            const enrolled = course.enrolledStudent || [];
+            const enrolledCount = enrolled.length;
+            const effectivePrice = course.coursePrice - (course.coursePrice * (course.discount || 0) / 100);
+            totalEarnings += effectivePrice * enrolledCount;
+
+            for (const sid of enrolled) {
+                const student = studentMap[sid.toString()];
+                if (student) {
+                    enrolledStudentsData.push({
+                        courseTitle: course.courseTitle,
+                        student,
+                    });
+                }
+            }
+        }
+
         res.json({
-            success: true, 
+            success: true,
             dashboardData: {
-                totalEarnings, 
-                enrolledStudentsData, 
+                totalEarnings,
+                enrolledStudentsData,
                 totalCourses
             }
-        })
+        });
 
     } catch (error) {
-        res.json({ success: false, message: error.message })
+        res.status(500).json({ success: false, message: error.message });
     }
 }
 

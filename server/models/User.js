@@ -30,6 +30,19 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password);
 };
 
+// ── Indexes ─────────────────────────────────────────────────────────────────
+//
+// email already has a unique index from the schema definition above.
+//
+// role index — admin queries like getAllApplications populate users by role.
+// Low cardinality (3 values) but fast for targeted role lookups.
+userSchema.index({ role: 1 });
+
+// enrolledCourses $in scan — getEnrolledStudentData: User.find({ enrolledCourses: { $in: courseIds } })
+// A multikey index on enrolledCourses lets MongoDB use the index for $in queries
+// instead of doing a collection scan.
+userSchema.index({ enrolledCourses: 1 });
+
 const User = mongoose.model("User", userSchema);
 
 export default User

@@ -43,6 +43,35 @@ const courseSchema = new mongoose.Schema({
 
 }, { timestamps: true, minimize: false })
 
+// ── Indexes ─────────────────────────────────────────────────────────────────
+//
+// 1. Primary listing query: { isPublished: true } + sort by createdAt DESC
+//    getAllCourses default path hits this index for both the find() and countDocuments().
+//    isPublished first because it has very low cardinality (true/false) and filters
+//    out unpublished courses before sorting — keeps the working set small.
+courseSchema.index({ isPublished: 1, createdAt: -1 });
+
+// 2. Category + listing — supports category filter combined with date sort.
+//    Educator dashboard: Course.find({ educator: educatorId }) uses educator field.
+courseSchema.index({ isPublished: 1, category: 1, createdAt: -1 });
+
+// 3. Educator courses — used by getEducatorCourses and educatorDashboardData.
+//    educator is already selective enough; no need to include isPublished here
+//    since educator queries don't filter by isPublished.
+courseSchema.index({ educator: 1, createdAt: -1 });
+
+// 4. Price filter — supports price-asc / price-desc sorts and free/paid filter.
+courseSchema.index({ isPublished: 1, coursePrice: 1 });
+
+// 5. Level filter — supports level= query parameter.
+courseSchema.index({ isPublished: 1, level: 1, createdAt: -1 });
+
+// Write tradeoff: each index adds ~a few KB per document and slows inserts/updates
+// marginally. For a course catalog that is read-heavy and write-light, this is
+// an acceptable tradeoff. The popular sort uses an aggregation pipeline
+// ($addFields + $sort on enrolledCount) which cannot use a simple field index,
+// but benefits from the isPublished+createdAt index for the initial $match.
+
 const Course = mongoose.model('Course', courseSchema)
 
 export default Course;
