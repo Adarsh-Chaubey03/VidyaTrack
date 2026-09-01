@@ -47,7 +47,13 @@ export const getAllCourses = async (req, res) => {
         const skip = (pageNum - 1) * limitNum;
 
         // ── Build $match filter ──────────────────────────────────────────────
-        const matchStage = { isPublished: true };
+        const matchStage = {
+            isPublished: true,
+            // Only include courses whose educator field is a proper ObjectId.
+            // Legacy seed data may have string educator IDs (e.g. "demo-educator-1")
+            // which cause CastErrors in populate() and $lookup aggregations.
+            educator: { $type: 'objectId' },
+        };
 
         if (category && category !== 'all') {
             matchStage.category = category;
