@@ -69,7 +69,12 @@ export const updateUserProfile = async (req, res) => {
 // User enrolled courses with lecture link
 export const userEnrolledCourses = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).populate('enrolledCourses');
+    const user = await User.findById(req.user._id).populate({
+      path: 'enrolledCourses',
+      // Exclude the large courseContent array — the enrolled courses list page
+      // only needs metadata. Full content is fetched via /course/enrolled/:id.
+      select: '-courseContent',
+    }).lean();
 
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });

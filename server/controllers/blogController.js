@@ -41,7 +41,12 @@ function isSpammy(text) {
 // GET /api/posts?status=published&page=1&tag=&limit=12
 export const listPublishedPosts = async (req, res) => {
   try {
-    const { page = 1, limit = 12, tag } = req.query;
+    const rawPage  = parseInt(req.query.page,  10) || 1;
+    const rawLimit = parseInt(req.query.limit, 10) || 12;
+    const page  = Math.max(1, rawPage);
+    const limit = Math.min(50, Math.max(1, rawLimit));   // hard cap at 50
+    const { tag } = req.query;
+
     const filter = { status: 'published' };
     if (tag) filter.tags = tag;
 
@@ -49,11 +54,11 @@ export const listPublishedPosts = async (req, res) => {
     const posts = await Post.find(filter)
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
-      .limit(Number(limit))
+      .limit(limit)
       .populate('authorId', 'name imageUrl')
       .lean();
 
-    res.json({ success: true, posts, total, totalPages: Math.ceil(total / limit), page: Number(page) });
+    res.json({ success: true, posts, total, totalPages: Math.ceil(total / limit), page });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

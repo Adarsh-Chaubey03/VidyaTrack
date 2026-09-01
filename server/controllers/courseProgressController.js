@@ -60,6 +60,10 @@ export const updateLectureProgress = async (req, res) => {
         const { userId, courseId, chapterId, lectureId } = req.params;
         const { isCompleted, watchTime } = req.body;
 
+        if (req.user._id.toString() !== userId) {
+            return res.status(403).json({ success: false, message: 'Not authorized to update this progress record' });
+        }
+
         const progress = await CourseProgress.findOne({ userId, courseId });
         if (!progress) {
             return res.status(404).json({ success: false, message: 'Progress record not found' });
@@ -118,6 +122,10 @@ export const updateWatchTime = async (req, res) => {
         const { userId, courseId, chapterId, lectureId } = req.params;
         const { watchTime, totalWatchTime } = req.body;
 
+        if (req.user._id.toString() !== userId) {
+            return res.status(403).json({ success: false, message: 'Not authorized to update this progress record' });
+        }
+
         const progress = await CourseProgress.findOne({ userId, courseId });
         if (!progress) {
             return res.status(404).json({ success: false, message: 'Progress record not found' });
@@ -151,6 +159,10 @@ export const getUserProgress = async (req, res) => {
     try {
         const { userId } = req.params;
 
+        if (req.user._id.toString() !== userId) {
+            return res.status(403).json({ success: false, message: 'Not authorized to access this progress record' });
+        }
+
         const progress = await CourseProgress.find({ userId })
             .populate('courseId', 'courseTitle courseThumbnail courseDescription')
             .sort({ lastAccessedAt: -1 });
@@ -164,6 +176,10 @@ export const getUserProgress = async (req, res) => {
 export const resetCourseProgress = async (req, res) => {
     try {
         const { userId, courseId } = req.params;
+
+        if (req.user._id.toString() !== userId) {
+            return res.status(403).json({ success: false, message: 'Not authorized to reset this progress record' });
+        }
 
         const progress = await CourseProgress.findOne({ userId, courseId });
         if (!progress) {
