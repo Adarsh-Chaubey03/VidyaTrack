@@ -51,9 +51,12 @@ function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      setIsWhiteBarFixed(scrollTop > 60);
+      const fixed = scrollTop > 60;
+      // Only update state when the value actually changes — avoids re-rendering
+      // the Navbar on every single scroll event.
+      setIsWhiteBarFixed((prev) => (prev === fixed ? prev : fixed));
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 

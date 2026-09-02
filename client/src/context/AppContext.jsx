@@ -63,23 +63,44 @@ export const AppContextProvider = ({ children }) => {
 
       const result = await apiService.user.getProfile();
 
-      if (result.success && result.user.enrolledCourses) {
-        const enrolledCourseDetails = await Promise.all(
-          result.user.enrolledCourses.map(async (courseId) => {
-            try {
-              const courseResult = await apiService.courses.getById(courseId);
-              return courseResult.success ? courseResult.courseData : null;
-            } catch (error) {
-              return null;
-            }
-          })
-        );
+      if (result.success && result.user.enrolledCourses?.length) {
+        const ids = result.user.enrolledCourses;
 
-        setEnrolledCourses(enrolledCourseDetails.filter((course) => course !== null));
+        // Use the already-fetched allCourses list first (zero extra requests).
+        // Fall back to individual fetches only for IDs not in the local cache.
+        const fromCache = [];
+        const missing = [];
+
+        ids.forEach((id) => {
+          const idStr = typeof id === 'object' ? id.toString() : id;
+          const found = allCourses.find((c) => c._id === idStr || c._id === id);
+          if (found) {
+            fromCache.push(found);
+          } else {
+            missing.push(id);
+          }
+        });
+
+        let extra = [];
+        if (missing.length > 0) {
+          const fetched = await Promise.all(
+            missing.map(async (courseId) => {
+              try {
+                const r = await apiService.courses.getById(courseId);
+                return r.success ? r.courseData : null;
+              } catch {
+                return null;
+              }
+            })
+          );
+          extra = fetched.filter(Boolean);
+        }
+
+        setEnrolledCourses([...fromCache, ...extra]);
       } else {
         setEnrolledCourses([]);
       }
-    } catch (error) {
+    } catch {
       setEnrolledCourses([]);
     }
   };
@@ -181,7 +202,11 @@ export const AppContextProvider = ({ children }) => {
       setEnrolledCourses([]);
       setEducatorCourses([]);
     }
-  }, [user]);
+    // Depend on stable identifiers only — user._id and role — so this effect
+    // does NOT re-fire when the user object reference changes (e.g. after a
+    // context re-render) but the actual identity/role hasn't changed.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?._id, user?.role]);
 
   const refreshCourses = () => {
     fetchAllCourses();
