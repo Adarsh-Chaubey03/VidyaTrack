@@ -237,6 +237,24 @@ export const educatorApprovePost = async (req, res) => {
   }
 };
 
+// POST /api/posts/educator/:id/reject  — reject a pending post with a reason
+export const educatorRejectPost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ success: false, message: 'Post not found' });
+    if (post.status !== 'pending') {
+      return res.status(400).json({ success: false, message: `Post is not pending (current status: ${post.status})` });
+    }
+    post.status = 'rejected';
+    post.rejectionReason = (req.body.reason || '').trim();
+    await post.save();
+    console.log(`[telemetry] educator_post_rejected id=${post._id} educator=${req.user._id}`);
+    res.json({ success: true, post });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 // POST /api/admin/posts/:id/reject
 export const rejectPost = async (req, res) => {
   try {

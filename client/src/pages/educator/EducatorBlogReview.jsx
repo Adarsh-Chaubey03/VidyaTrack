@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
-  FileSearch, CheckCircle, Clock, Eye, Loader2,
-  FileText, AlertCircle, RefreshCw, User,
+  FileSearch, CheckCircle, XCircle, Clock, Eye, Loader2,
+  AlertCircle, RefreshCw, ChevronDown, ChevronUp,
 } from 'lucide-react';
 import { apiService } from '../../services/api';
 
@@ -9,8 +9,7 @@ export default function EducatorBlogReview() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [actionId, setActionId] = useState(null);
-  const [toast, setToast] = useState('');
+  const [toast, setToast] = useState({ msg: '', type: 'success' });
 
   const fetchPending = useCallback(async () => {
     setLoading(true);
@@ -25,28 +24,14 @@ export default function EducatorBlogReview() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchPending();
-  }, [fetchPending]);
+  useEffect(() => { fetchPending(); }, [fetchPending]);
 
-  const showToast = (msg) => {
-    setToast(msg);
-    setTimeout(() => setToast(''), 3000);
+  const showToast = (msg, type = 'success') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast({ msg: '', type: 'success' }), 3000);
   };
 
-  const handleApprove = async (id) => {
-    setActionId(id);
-    try {
-      await apiService.blog.educatorApprove(id);
-      // Remove from list immediately — no refresh needed
-      setPosts((prev) => prev.filter((p) => p._id !== id));
-      showToast('Article approved and published successfully.');
-    } catch (err) {
-      alert(err.response?.data?.message || 'Approval failed. Please try again.');
-    } finally {
-      setActionId(null);
-    }
-  };
+  const removePost = (id) => setPosts((prev) => prev.filter((p) => p._id !== id));
 
   return (
     <div>
@@ -74,10 +59,17 @@ export default function EducatorBlogReview() {
       </div>
 
       {/* Toast */}
-      {toast && (
-        <div className="mb-4 flex items-center gap-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl px-4 py-3 text-sm">
-          <CheckCircle size={16} className="flex-shrink-0" />
-          {toast}
+      {toast.msg && (
+        <div className={`mb-4 flex items-center gap-2 rounded-xl px-4 py-3 text-sm border ${
+          toast.type === 'success'
+            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+            : 'bg-red-50 text-red-700 border-red-200'
+        }`}>
+          {toast.type === 'success'
+            ? <CheckCircle size={16} className="flex-shrink-0" />
+            : <XCircle size={16} className="flex-shrink-0" />
+          }
+          {toast.msg}
         </div>
       )}
 
@@ -95,7 +87,6 @@ export default function EducatorBlogReview() {
           <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
         </div>
       ) : posts.length === 0 ? (
-        /* Empty state */
         <div className="text-center py-20 bg-white rounded-2xl border border-slate-200">
           <CheckCircle size={48} className="mx-auto text-emerald-300 mb-4" />
           <h3 className="text-lg font-semibold text-slate-700 mb-1">All caught up!</h3>
@@ -107,8 +98,8 @@ export default function EducatorBlogReview() {
             <ArticleCard
               key={post._id}
               post={post}
-              isActing={actionId === post._id}
-              onApprove={() => handleApprove(post._id)}
+              onRemove={removePost}
+              onToast={showToast}
             />
           ))}
         </div>
@@ -118,8 +109,14 @@ export default function EducatorBlogReview() {
 }
 
 /* ── Individual article review card ─────────────────────────────────────── */
-function ArticleCard({ post, isActing, onApprove }) {
+function ArticleCard({ post, onRemove, onToast }) {
   const [expanded, setExpanded] = useState(false);
+  const [actionId, setActionId] = useState(null); // 'approve' | 'reject' | null
+
+  // Reject inline state
+  const [showRejectForm, setShowRejectForm] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
+  const [rejectError, setRejectError] = useState('');
 
   const authorName = post.authorId?.name || 'Unknown Author';
   const authorInitial = authorName.charAt(0).toUpperCase();
@@ -127,15 +124,50 @@ function ArticleCard({ post, isActing, onApprove }) {
     day: 'numeric', month: 'short', year: 'numeric',
   });
 
+  const handleApprove = async () => {
+    setActionId('approve');
+    try {
+      await apiService.blog.educatorApprove(post._id);
+      onRemove(post._id);
+      onToast('Article approved and published successfully.', 'success');
+    } catch (err) {
+      onToast(err.response?.data?.message || 'Approval failed. Please try again.', 'error');
+    } finally {
+      setActionId(null);
+    }
+  };
+
+  const handleReject = async () => {
+    setRejectError('');
+    if (!rejectReason.trim()) {
+      setRejectError('Please provide a reason for rejection.');
+      return;
+    }
+    setActionId('reject');
+    try {
+      await apiService.blog.educatorReject(post._id, rejectReason.trim());
+      onRemove(post._id);
+      onToast('Article rejected. The student has been notified.', 'error');
+    } catch (err) {
+      onToast(err.response?.data?.message || 'Rejection failed. Please try again.', 'error');
+    } finally {
+      setActionId(null);
+    }
+  };
+
+  const cancelReject = () => {
+    setShowRejectForm(false);
+    setRejectReason('');
+    setRejectError('');
+  };
+
+  const isBusy = actionId !== null;
+
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-sm transition">
       {/* Hero image */}
       {post.heroImageUrl && (
-        <img
-          src={post.heroImageUrl}
-          alt={post.title}
-          className="w-full h-40 object-cover"
-        />
+        <img src={post.heroImageUrl} alt={post.title} className="w-full h-40 object-cover" />
       )}
 
       <div className="p-5">
@@ -184,25 +216,80 @@ function ArticleCard({ post, isActing, onApprove }) {
           </div>
         )}
 
+        {/* ── Reject inline form ── */}
+        {showRejectForm && (
+          <div className="mb-4 bg-red-50 rounded-xl p-4 border border-red-200">
+            <p className="text-sm font-semibold text-red-700 mb-2 flex items-center gap-1.5">
+              <XCircle size={14} /> Rejection Reason
+            </p>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="Provide clear feedback so the student can improve their article…"
+              rows={3}
+              maxLength={1000}
+              className="w-full rounded-lg border border-red-200 bg-white px-3 py-2.5 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-red-300 resize-none"
+            />
+            {rejectError && (
+              <p className="mt-1 text-xs text-red-600 flex items-center gap-1">
+                <AlertCircle size={12} /> {rejectError}
+              </p>
+            )}
+            <div className="flex items-center justify-end gap-2 mt-3">
+              <button
+                onClick={cancelReject}
+                disabled={isBusy}
+                className="text-sm text-slate-500 hover:text-slate-700 px-3 py-1.5 transition disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleReject}
+                disabled={isBusy}
+                className="flex items-center gap-1.5 bg-red-600 text-white text-sm font-semibold px-4 py-1.5 rounded-lg hover:bg-red-700 disabled:opacity-50 transition"
+              >
+                {actionId === 'reject'
+                  ? <><Loader2 size={13} className="animate-spin" /> Rejecting…</>
+                  : <><XCircle size={13} /> Confirm Reject</>
+                }
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Action row */}
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Approve */}
           <button
-            onClick={onApprove}
-            disabled={isActing}
+            onClick={handleApprove}
+            disabled={isBusy || showRejectForm}
             className="flex items-center gap-2 bg-emerald-600 text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition"
           >
-            {isActing
-              ? <Loader2 size={14} className="animate-spin" />
-              : <CheckCircle size={14} />
+            {actionId === 'approve'
+              ? <><Loader2 size={14} className="animate-spin" /> Approving…</>
+              : <><CheckCircle size={14} /> Approve & Publish</>
             }
-            Approve & Publish
           </button>
+
+          {/* Reject — toggles the inline form */}
+          {!showRejectForm ? (
+            <button
+              onClick={() => setShowRejectForm(true)}
+              disabled={isBusy}
+              className="flex items-center gap-2 border border-red-200 text-red-600 text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-red-50 hover:border-red-300 disabled:opacity-50 transition"
+            >
+              <XCircle size={14} /> Reject
+            </button>
+          ) : null}
+
+          {/* Preview content toggle */}
           <button
             onClick={() => setExpanded((v) => !v)}
-            className="flex items-center gap-2 border border-slate-200 text-slate-600 text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition"
+            className="flex items-center gap-2 border border-slate-200 text-slate-600 text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition ml-auto"
           >
             <Eye size={14} />
             {expanded ? 'Hide Content' : 'Preview Content'}
+            {expanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
           </button>
         </div>
       </div>

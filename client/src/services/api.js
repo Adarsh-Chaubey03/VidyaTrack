@@ -168,6 +168,7 @@ export const API_ENDPOINTS = {
     // Educator review
     EDUCATOR_PENDING: '/posts/educator/pending',
     EDUCATOR_APPROVE: (id) => `/posts/educator/${id}/approve`,
+    EDUCATOR_REJECT:  (id) => `/posts/educator/${id}/reject`,
   },
 
 };
@@ -479,6 +480,11 @@ export const apiService = {
 
     educatorApprove: async (id) => {
       const response = await api.post(API_ENDPOINTS.BLOG.EDUCATOR_APPROVE(id));
+      return response.data;
+    },
+
+    educatorReject: async (id, reason) => {
+      const response = await api.post(API_ENDPOINTS.BLOG.EDUCATOR_REJECT(id), { reason });
       return response.data;
     },
   },

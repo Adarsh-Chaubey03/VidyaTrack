@@ -11,6 +11,7 @@ import {
   uploadHeroImage,
   educatorListPending,
   educatorApprovePost,
+  educatorRejectPost,
   adminListPosts,
   approvePost,
   rejectPost,
@@ -40,6 +41,7 @@ router.post('/comments/:id/flag', protect, flagComment);         // POST /api/po
 /* ── Educator ──────────────────────────────────────────────── */
 router.get('/educator/pending',         protect, protectEducator, educatorListPending);    // GET  /api/posts/educator/pending
 router.post('/educator/:id/approve',    protect, protectEducator, educatorApprovePost);    // POST /api/posts/educator/:id/approve
+router.post('/educator/:id/reject',     protect, protectEducator, educatorRejectPost);     // POST /api/posts/educator/:id/reject
 
 /* ── Admin ─────────────────────────────────────────────────── */
 router.get('/admin/list',              protect, protectAdmin, adminListPosts);
