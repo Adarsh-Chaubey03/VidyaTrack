@@ -66,19 +66,27 @@ const MentorProfile = () => {
   const { isAuthenticated } = useAuth();
   const mentor = mentors.find((m) => m.id === parseInt(id));
 
-  const { getStatus, sendRequest, cancelRequest } = useMentorRequests();
+  const { getStatus, sendRequest, cancelRequest, resolveTeacherId } = useMentorRequests();
 
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successToast, setSuccessToast] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   if (!mentor) {
     navigate('/mentor');
     return null;
   }
 
-  const status = getStatus(mentor.id);
+  // Resolve static mentor name to a real MongoDB teacherId.
+  // Falls back to null when the teacher map hasn't loaded yet or the
+  // educator account doesn't exist in the DB.
+  const resolvedTeacherId = resolveTeacherId(mentor.name);
+
+  // getStatus is keyed by MongoDB teacherId (string); fall back to 'none'
+  // when the teacher isn't in the DB yet so the UI still renders cleanly.
+  const status = resolvedTeacherId ? getStatus(resolvedTeacherId) : 'none';
 
   /* Enriched data (will come from API later) */
   const mentorData = {
@@ -125,17 +133,31 @@ const MentorProfile = () => {
   const CTAIcon = cta.icon;
 
   /* ── Submit request ───────────────────────────────────────────────────── */
-  const handleSubmitRequest = (e) => {
+  const handleSubmitRequest = async (e) => {
     e.preventDefault();
+    setSubmitError('');
+
+    if (!resolvedTeacherId) {
+      setSubmitError('This mentor is not yet available for requests. Please try again later.');
+      return;
+    }
+
     setIsSubmitting(true);
-    setTimeout(() => {
-      sendRequest(mentor.id, message);
-      setIsSubmitting(false);
+    try {
+      const result = await sendRequest(resolvedTeacherId, message);
+      if (!result.success) {
+        setSubmitError(result.message || 'Failed to send request. Please try again.');
+        return;
+      }
       setShowRequestModal(false);
       setMessage('');
       setSuccessToast(true);
       setTimeout(() => setSuccessToast(false), 4000);
-    }, 1200);
+    } catch {
+      setSubmitError('Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   /* ════════════════════════════════════════════════════════════════════════ */
@@ -288,7 +310,7 @@ const MentorProfile = () => {
                   {cta.label}
                 </button>
                 {status === 'pending' && (
-                  <button onClick={() => cancelRequest(mentor.id)} className="w-full mt-2 text-xs text-slate-400 hover:text-red-500 transition-colors py-1">
+                  <button onClick={() => cancelRequest(resolvedTeacherId)} className="w-full mt-2 text-xs text-slate-400 hover:text-red-500 transition-colors py-1">
                     Cancel request
                   </button>
                 )}
