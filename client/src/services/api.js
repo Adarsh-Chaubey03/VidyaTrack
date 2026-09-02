@@ -131,6 +131,15 @@ export const API_ENDPOINTS = {
     HISTORY: '/payments/history',
   },
 
+  // Mentor endpoints
+  MENTOR: {
+    SEND_REQUEST:      '/mentors/request',
+    GET_TEACHERS:      '/mentors/teachers',
+    STUDENT_MENTORS:   '/student/dashboard/mentors',
+    TEACHER_REQUESTS:  '/teacher/dashboard/requests',
+    RESPOND:           (requestId) => `/teacher/requests/${requestId}/respond`,
+  },
+
   // Blog / Posts endpoints
   BLOG: {
     LIST: '/posts',
@@ -322,6 +331,44 @@ export const apiService = {
 
     getStats: async () => {
       const response = await api.get(API_ENDPOINTS.EDUCATOR_ACCESS.ADMIN_STATS);
+      return response.data;
+    },
+  },
+
+  // Mentor services
+  mentor: {
+    /** Send a mentorship request (student only) */
+    sendRequest: async (teacherId, introduction) => {
+      const response = await api.post(API_ENDPOINTS.MENTOR.SEND_REQUEST, {
+        teacherId,
+        introduction,
+      });
+      return response.data;
+    },
+
+    /** Get all approved educators (for teacherId resolution) */
+    getTeachers: async () => {
+      const response = await api.get(API_ENDPOINTS.MENTOR.GET_TEACHERS);
+      return response.data;
+    },
+
+    /** Get student's mentorship requests grouped by status */
+    getStudentMentors: async () => {
+      const response = await api.get(API_ENDPOINTS.MENTOR.STUDENT_MENTORS);
+      return response.data;
+    },
+
+    /** Get pending (or filtered) requests for the logged-in teacher */
+    getTeacherRequests: async (status = 'pending') => {
+      const response = await api.get(API_ENDPOINTS.MENTOR.TEACHER_REQUESTS, {
+        params: { status },
+      });
+      return response.data;
+    },
+
+    /** Accept or reject a mentorship request (teacher only) */
+    respondToRequest: async (requestId, status) => {
+      const response = await api.post(API_ENDPOINTS.MENTOR.RESPOND(requestId), { status });
       return response.data;
     },
   },

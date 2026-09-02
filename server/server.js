@@ -13,6 +13,7 @@ import paymentRouter from './routes/paymentRoutes.js';
 import { razorpayWebhook } from './controllers/paymentController.js';
 import blogRouter from './routes/blogRoutes.js';
 import feedbackRouter from './routes/feedbackRoutes.js';
+import mentorRouter from './routes/mentorRoutes.js';
 
 // ── Initialize express app ─────────────────────────────────────────────────
 const app = express();
@@ -143,6 +144,25 @@ app.use('/api/user',            userRouter);
 app.use('/api/payments',        paymentRouter);
 app.use('/api/posts',           blogRouter);
 app.use('/api/feedback',        feedbackRouter);
+
+// ── Mentorship routes ─────────────────────────────────────────────────────
+// All mentorship logic lives in mentorRouter.
+// Mount it at three prefixes so both the primary API paths and the
+// spec-exact URL aliases all work:
+//
+//  /api/mentors/request                         → sendMentorRequest
+//  /api/mentors/teachers                        → getApprovedTeachers
+//  /api/mentors/mentors (student)               → getStudentMentors
+//  /api/mentors/requests (teacher)              → getTeacherRequests
+//  /api/mentors/requests/:id/respond            → respondToRequest
+//
+//  /api/student/dashboard/mentors               → getStudentMentors  (spec URL)
+//  /api/teacher/dashboard/requests              → getTeacherRequests (spec URL)
+//  /api/teacher/requests/:id/respond            → respondToRequest   (spec URL)
+app.use('/api/mentors',           mentorRouter);
+app.use('/api/student/dashboard', mentorRouter);
+app.use('/api/teacher/dashboard', mentorRouter);
+app.use('/api/teacher',           mentorRouter);
 
 // ── 404 catch-all ─────────────────────────────────────────────────────────
 app.use((req, res) => {
