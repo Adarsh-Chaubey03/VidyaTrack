@@ -1,8 +1,18 @@
 import axios from 'axios';
 
+// Strip trailing slashes from the configured origin. If VITE_BACKEND_URL ends
+// with "/", naive concatenation yields "https://host//api/..." — Vercel then
+// 308-redirects that to the single-slash path, and browsers refuse to follow
+// redirects on a CORS preflight, so the request dies with a CORS error.
+const trimSlashes = (url) => String(url || '').replace(/\/+$/, '');
+
+const BACKEND_URL = trimSlashes(import.meta.env.VITE_BACKEND_URL) || 'http://localhost:5000';
+
+export const API_BASE_URL = trimSlashes(import.meta.env.VITE_API_URL) || `${BACKEND_URL}/api`;
+
 // Create axios instance with default configuration
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api`,
+  baseURL: API_BASE_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

@@ -5,7 +5,7 @@ import { SkeletonCourseDetail } from '../../components/skeleton/Skeleton';
 import { assets } from '../../assets/assets';
 import humanizeDuration from 'humanize-duration';
 import Footer from '../../components/student/Footer';
-import axios from 'axios';
+import { apiService } from '../../services/api';
 import PaymentModal from '../../components/payment/PaymentModal';
 
 /* ── Inline SVG Icons ── */
@@ -158,12 +158,8 @@ function CourseDetails() {
     setEnrollmentMessage(isFree || paid ? 'Enrolling you in the course...' : 'Processing payment...');
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/user/purchase-course`,
-        { courseId: courseData._id },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      if (response.data.success) {
+      const result = await apiService.user.purchaseCourse({ courseId: courseData._id });
+      if (result.success) {
         setEnrollmentMessage('Successfully enrolled! You can now start learning.');
         setEnrolledCourses((prev) =>
           prev.some((c) => c._id === courseData._id) ? prev : [...prev, courseData]
@@ -171,7 +167,7 @@ function CourseDetails() {
         // Auto-clear success message after 4s
         setTimeout(() => setEnrollmentMessage(''), 4000);
       } else {
-        setEnrollmentMessage(response.data.message || 'Failed to enroll');
+        setEnrollmentMessage(result.message || 'Failed to enroll');
       }
     } catch (error) {
       setEnrollmentMessage(error.response?.data?.message || error.message || 'Failed to enroll');
