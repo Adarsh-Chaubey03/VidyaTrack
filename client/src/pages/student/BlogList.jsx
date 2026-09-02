@@ -6,8 +6,6 @@ import { SkeletonBlogList } from '../../components/skeleton/Skeleton';
 import { useAuth } from '../../context/AuthContext';
 import Footer from '../../components/student/Footer';
 
-const TAGS = ['All', 'Career', 'React', 'JavaScript', 'Web Dev', 'Learning', 'Productivity', 'Tech', 'Beginners'];
-
 export default function BlogList() {
   const { isAuthenticated } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -55,11 +53,6 @@ export default function BlogList() {
     setSearchParams(params, { replace: true });
   }, [page, activeTag, search, setSearchParams]);
 
-  const handleTagClick = (tag) => {
-    setActiveTag(tag);
-    setPage(1);
-  };
-
   const filteredPosts = search.trim()
     ? posts.filter((post) => {
         const query = search.toLowerCase();
@@ -81,7 +74,7 @@ export default function BlogList() {
           <div className="absolute top-10 left-10 w-64 h-64 bg-white rounded-full blur-3xl" />
           <div className="absolute bottom-10 right-10 w-80 h-80 bg-emerald-400 rounded-full blur-3xl" />
         </div>
-        <div className="relative max-w-6xl mx-auto px-6 py-16 md:py-20 text-center">
+        <div className="relative max-w-6xl mx-auto px-6 py-10 md:py-12 text-center">
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm text-emerald-200 mb-4">
             <TrendingUp size={14} />
             Community Knowledge Hub
@@ -127,27 +120,6 @@ export default function BlogList() {
           )}
         </div>
       </section>
-
-      {/* ─── Tag filter ─── */}
-      {isAuthenticated() && (
-      <div className="max-w-6xl mx-auto px-6 pt-8 pb-2">
-        <div className="flex items-center gap-2 flex-wrap">
-          {TAGS.map((tag) => (
-            <button
-              key={tag}
-              onClick={() => handleTagClick(tag)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-                activeTag === tag
-                  ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'bg-white text-slate-600 border border-slate-200 hover:border-emerald-300 hover:text-emerald-600'
-              }`}
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
-      </div>
-      )}
 
       {/* ─── Posts Grid ─── */}
       <div className="max-w-6xl mx-auto px-6 py-8">
@@ -240,11 +212,11 @@ const PostCard = React.memo(function PostCard({ post }) {
       <div className="p-5 space-y-3">
         {/* Tags */}
         {post.tags?.length > 0 && (
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex gap-2 flex-nowrap overflow-hidden">
             {post.tags.slice(0, 3).map((t) => (
               <span
                 key={t}
-                className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700"
+                className="max-w-[40%] truncate whitespace-nowrap px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700"
               >
                 {t}
               </span>
