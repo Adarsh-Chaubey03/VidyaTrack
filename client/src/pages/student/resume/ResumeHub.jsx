@@ -3,11 +3,9 @@ import { FileText, Users, Sparkles, CheckCircle, ArrowRight } from 'lucide-react
 import Footer from '../../../components/student/Footer';
 
 const features = [
-  'ATS-optimized format — no tables, no graphics, pure semantic text',
-  'Instant PDF download — text-selectable and printer-friendly',
-  'Real-time ATS score with actionable improvement tips',
-  'Step-by-step guided builder with auto-save',
-  'Professional review by industry experts',
+  'ATS Optimized',
+  'Instant PDF',
+  'Expert Review',
 ];
 
 const ResumeHub = () => {
@@ -16,9 +14,9 @@ const ResumeHub = () => {
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
         {/* Hero */}
         <div className="bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-800 text-white">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 text-center">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 text-center">
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm
-              rounded-full px-4 py-1.5 text-sm font-medium mb-6 border border-white/20">
+              rounded-full px-4 py-1.5 text-sm font-medium mb-4 border border-white/20">
               <Sparkles size={14} />
               Resume Tools
             </div>
@@ -28,13 +26,13 @@ const ResumeHub = () => {
               <span className="text-emerald-300">Professional Resume</span>
             </h1>
 
-            <p className="text-emerald-100 text-base sm:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+            <p className="text-emerald-100 text-base sm:text-lg max-w-2xl mx-auto mb-6 leading-relaxed">
               Create an ATS-optimized resume that gets past screening systems, or get your
               existing resume reviewed by industry professionals.
             </p>
 
             {/* Feature pills */}
-            <div className="flex flex-wrap justify-center gap-2 mb-12 max-w-3xl mx-auto">
+            <div className="flex flex-nowrap justify-center gap-2 mb-8 max-w-3xl mx-auto overflow-hidden">
               {features.map((f) => (
                 <span
                   key={f}
