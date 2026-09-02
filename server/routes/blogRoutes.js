@@ -1,5 +1,5 @@
 import express from 'express';
-import { protect } from '../middlewares/authMiddleware.js';
+import { protect, protectEducator } from '../middlewares/authMiddleware.js';
 import { protectAdmin } from '../middlewares/adminMiddleware.js';
 import upload from '../configs/multer.js';
 import {
@@ -9,6 +9,8 @@ import {
   updatePost,
   myPosts,
   uploadHeroImage,
+  educatorListPending,
+  educatorApprovePost,
   adminListPosts,
   approvePost,
   rejectPost,
@@ -34,6 +36,10 @@ router.get('/me/list',           protect, myPosts);              // GET  /api/po
 router.post('/upload-image',     protect, upload.single('image'), uploadHeroImage);
 router.post('/:id/comments',    protect, addComment);            // POST /api/posts/:id/comments
 router.post('/comments/:id/flag', protect, flagComment);         // POST /api/posts/comments/:id/flag
+
+/* ── Educator ──────────────────────────────────────────────── */
+router.get('/educator/pending',         protect, protectEducator, educatorListPending);    // GET  /api/posts/educator/pending
+router.post('/educator/:id/approve',    protect, protectEducator, educatorApprovePost);    // POST /api/posts/educator/:id/approve
 
 /* ── Admin ─────────────────────────────────────────────────── */
 router.get('/admin/list',              protect, protectAdmin, adminListPosts);

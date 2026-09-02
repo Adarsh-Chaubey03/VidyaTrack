@@ -202,6 +202,41 @@ export const approvePost = async (req, res) => {
   }
 };
 
+/* ──────────────────────────────────────────────────────────────
+   Posts — Educator (approved teachers)
+   ────────────────────────────────────────────────────────────── */
+
+// GET /api/posts/educator/pending  — list all pending posts for review
+export const educatorListPending = async (req, res) => {
+  try {
+    const posts = await Post.find({ status: 'pending' })
+      .sort({ createdAt: -1 })
+      .populate('authorId', 'name email imageUrl')
+      .lean();
+    res.json({ success: true, posts });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// POST /api/posts/educator/:id/approve  — approve (publish) a pending post
+export const educatorApprovePost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ success: false, message: 'Post not found' });
+    if (post.status !== 'pending') {
+      return res.status(400).json({ success: false, message: `Post is not pending (current status: ${post.status})` });
+    }
+    post.status = 'published';
+    post.rejectionReason = undefined;
+    await post.save();
+    console.log(`[telemetry] educator_post_approved id=${post._id} educator=${req.user._id}`);
+    res.json({ success: true, post });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 // POST /api/admin/posts/:id/reject
 export const rejectPost = async (req, res) => {
   try {
