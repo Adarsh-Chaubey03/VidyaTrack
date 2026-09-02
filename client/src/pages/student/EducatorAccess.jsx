@@ -20,13 +20,16 @@ import { SkeletonEducatorAccess } from '../../components/skeleton/Skeleton';
 
 const EducatorAccess = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, isEducator, user } = useAuth();
+  const { isAuthenticated, isEducator, user, loading: authLoading } = useAuth();
   const [appStatus, setAppStatus] = useState(null);
   const [loading, setLoading] = useState(true);
+  const isLoggedIn = Boolean(user);
 
   useEffect(() => {
+    if (authLoading) return undefined;
+
     const fetchStatus = async () => {
-      if (isAuthenticated()) {
+      if (isLoggedIn) {
         try {
           const res = await apiService.educatorAccess.getStatus();
           if (res.success) setAppStatus(res);
@@ -37,7 +40,7 @@ const EducatorAccess = () => {
       setLoading(false);
     };
     fetchStatus();
-  }, []);
+  }, [authLoading, isLoggedIn]);
 
   // If already an approved educator, redirect straight to educator dashboard
   useEffect(() => {
@@ -55,7 +58,7 @@ const EducatorAccess = () => {
 
   const renderStatusBanner = () => {
     if (!appStatus?.hasApplication) return null;
-    const { status, reviewedAt } = appStatus.application;
+    const { status } = appStatus.application;
 
     if (status === 'pending') {
       return (
