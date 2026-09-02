@@ -355,7 +355,7 @@ const MentorProfile = () => {
       {/* ── Request Modal ──────────────────────────────────────────────── */}
       {showRequestModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={() => { setShowRequestModal(false); setMessage(''); }} />
+          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={() => { setShowRequestModal(false); setMessage(''); setSubmitError(''); }} />
           <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden" style={{ animation: 'scaleIn .2s ease-out' }}>
             {/* Header */}
             <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-5 text-white">
@@ -392,6 +392,12 @@ const MentorProfile = () => {
                   Your request will be reviewed by {mentor.name}. Average response time is {mentorData.responseTime}.
                 </p>
               </div>
+              {submitError && (
+                <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-100">
+                  <AlertCircle size={16} className="text-red-500 mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-red-700 leading-relaxed">{submitError}</p>
+                </div>
+              )}
               <div className="flex gap-3 pt-1">
                 <button type="button" onClick={() => { setShowRequestModal(false); setMessage(''); }} className="flex-1 px-4 py-2.5 text-sm font-medium border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-colors">
                   Cancel
