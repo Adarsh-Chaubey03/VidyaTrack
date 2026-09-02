@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../context/AppContext'
 import { apiService } from '../../services/api'
-import { Users, BookOpen, DollarSign, TrendingUp, AlertCircle, RefreshCw } from 'lucide-react'
+import { Users, BookOpen, DollarSign, TrendingUp, AlertCircle, RefreshCw, GraduationCap } from 'lucide-react'
 import { SkeletonEducatorDashboard } from '../../components/skeleton/Skeleton'
 
 function Dashboard() {
@@ -73,11 +73,18 @@ function Dashboard() {
             bg: 'bg-emerald-50',
         },
         {
+            label: 'Active Mentees',
+            value: dashboardData.totalMentees || 0,
+            icon: GraduationCap,
+            color: 'text-violet-600',
+            bg: 'bg-violet-50',
+        },
+        {
             label: 'Total Earnings',
             value: `${currency}${(dashboardData.totalEarnings || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
             icon: DollarSign,
-            color: 'text-violet-600',
-            bg: 'bg-violet-50',
+            color: 'text-amber-600',
+            bg: 'bg-amber-50',
         },
     ]
 
@@ -92,7 +99,7 @@ function Dashboard() {
             </div>
 
             {/* Stat cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {stats.map((stat) => {
                     const Icon = stat.icon
                     return (

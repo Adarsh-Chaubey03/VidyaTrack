@@ -292,6 +292,11 @@ export const apiService = {
       const response = await api.get(API_ENDPOINTS.EDUCATOR.STUDENTS);
       return response.data;
     },
+
+    getMentees: async () => {
+      const response = await api.get(API_ENDPOINTS.EDUCATOR.MENTEES);
+      return response.data;
+    },
   },
 
   // Educator Access services
