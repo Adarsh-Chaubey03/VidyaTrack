@@ -22,6 +22,9 @@ function TestimonialSection() {
                             <img
                                 src={testimonial.image}
                                 alt={testimonial.name}
+                                loading="lazy"
+                                width="56"
+                                height="56"
                                 className="w-14 h-14 rounded-full object-cover ring-2 ring-emerald-400 ring-offset-2"
                             />
                             <div>
@@ -44,6 +47,9 @@ function TestimonialSection() {
                                             : assets.star_blank
                                     }
                                     alt="star"
+                                    loading="lazy"
+                                    width="16"
+                                    height="16"
                                     className="w-4 h-4"
                                 />
                             ))}

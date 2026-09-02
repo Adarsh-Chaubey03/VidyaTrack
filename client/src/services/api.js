@@ -99,6 +99,7 @@ export const API_ENDPOINTS = {
   // User endpoints
   USER: {
     PROFILE: '/user/data',
+    ENROLLED_COURSES: '/user/enrolled-courses',
     UPDATE: '/user/update',
     PURCHASE_COURSE: '/user/purchase-course',
     ENROLL_FREE_COURSE: '/user/enroll-free-course',
@@ -264,6 +265,11 @@ export const apiService = {
   user: {
     getProfile: async () => {
       const response = await api.get(API_ENDPOINTS.USER.PROFILE);
+      return response.data;
+    },
+
+    getEnrolledCourses: async () => {
+      const response = await api.get(API_ENDPOINTS.USER.ENROLLED_COURSES);
       return response.data;
     },
 

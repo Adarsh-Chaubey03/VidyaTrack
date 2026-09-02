@@ -211,15 +211,9 @@ export default function BlogList() {
 }
 
 /* ── Individual Post Card ─────────────────────────────────────────────────── */
-function PostCard({ post }) {
+const PostCard = React.memo(function PostCard({ post }) {
   const authorName = post.authorId?.name || 'VidyaTrack Team';
   const authorInitial = authorName.charAt(0).toUpperCase();
-  const dateStr = new Date(post.createdAt).toLocaleDateString('en-IN', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
-
   return (
     <Link
       to={`/blog/${post.slug}`}
@@ -231,6 +225,9 @@ function PostCard({ post }) {
           <img
             src={post.heroImageUrl}
             alt={post.title}
+            loading="lazy"
+            width="640"
+            height="360"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         </div>
@@ -279,4 +276,4 @@ function PostCard({ post }) {
       </div>
     </Link>
   );
-}
+});

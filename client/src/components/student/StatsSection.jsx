@@ -48,24 +48,26 @@ const stats = [
   },
 ];
 
-function useCountUp(end, duration) {
+function useCountUp(end, duration, enabled) {
   const [count, setCount] = useState(0);
-  const start = useRef(0);
   useEffect(() => {
+    if (!enabled) return undefined;
+
     let startTimestamp = null;
+    let frameId;
     function step(timestamp) {
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      setCount(Math.floor(progress * (end - start.current) + start.current));
+      setCount(Math.floor(progress * end));
       if (progress < 1) {
-        requestAnimationFrame(step);
+        frameId = requestAnimationFrame(step);
       } else {
         setCount(end);
       }
     }
-    requestAnimationFrame(step);
-    // eslint-disable-next-line
-  }, [end, duration]);
+    frameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frameId);
+  }, [end, duration, enabled]);
   return count;
 }
 
@@ -74,8 +76,8 @@ const formatNumber = (num) => {
 };
 
 // Extracted so useCountUp is called at component top level (Rules of Hooks)
-const StatItem = ({ icon, label, value, suffix, duration }) => {
-  const count = useCountUp(value, duration);
+const StatItem = ({ icon, label, value, suffix, duration, active }) => {
+  const count = useCountUp(value, duration, active);
   return (
     <div className="flex flex-col items-center min-w-[100px] sm:min-w-[140px] md:min-w-[180px]">
       <div className="mb-1 sm:mb-2 [&_svg]:w-8 [&_svg]:h-8 sm:[&_svg]:w-10 sm:[&_svg]:h-10 md:[&_svg]:w-12 md:[&_svg]:h-12">{icon}</div>
@@ -88,15 +90,33 @@ const StatItem = ({ icon, label, value, suffix, duration }) => {
 };
 
 const StatsSection = () => {
+  const sectionRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || isVisible) return undefined;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true);
+        observer.disconnect();
+      }
+    }, { threshold: 0.1 });
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [isVisible]);
+
   return (
-    <section className="w-full py-8 sm:py-12 md:py-16 bg-emerald-500 relative overflow-hidden ">
+    <section ref={sectionRef} className="w-full py-8 sm:py-12 md:py-16 bg-emerald-500 relative overflow-hidden ">
       {/* Grid overlay */}
       <div className="absolute inset-0 pointer-events-none" style={{backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '40px 40px'}}></div>
       <div className="relative z-10 flex flex-col items-center justify-center px-4 md:px-0">
         <h2 className="text-white text-2xl sm:text-3xl md:text-5xl font-bold text-center mb-2 sm:mb-4">Empowering Learning: <br />Let's Spark Transformation </h2>
         <div className="flex flex-wrap justify-center gap-4 sm:gap-8 md:gap-12 mt-6 sm:mt-10 w-full max-w-6xl">
           {stats.map((stat) => (
-            <StatItem key={stat.label} {...stat} />
+            <StatItem key={stat.label} {...stat} active={isVisible} />
           ))}
         </div>
       </div>

@@ -52,6 +52,9 @@ function CourseCard({ course }) {
           src={thumbnailSrc}
           alt={course.courseTitle}
           className="w-full h-full object-cover"
+          loading="lazy"
+          width="640"
+          height="360"
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = assets.default_thumbnail;
@@ -90,11 +93,11 @@ function CourseCard({ course }) {
           <div className="flex gap-0.5">
             {[...Array(5)].map((_, i) => {
               if (i < fullStars) {
-                return <img key={i} src={assets.star} alt="" className="w-3.5 h-3.5" />;
+                return <img key={i} src={assets.star} alt="" loading="lazy" width="14" height="14" className="w-3.5 h-3.5" />;
               } else if (i === fullStars && hasHalfStar) {
-                return <img key={i} src={assets.star_blank} alt="" className="w-3.5 h-3.5 opacity-60" />;
+                return <img key={i} src={assets.star_blank} alt="" loading="lazy" width="14" height="14" className="w-3.5 h-3.5 opacity-60" />;
               }
-              return <img key={i} src={assets.star_blank} alt="" className="w-3.5 h-3.5" />;
+              return <img key={i} src={assets.star_blank} alt="" loading="lazy" width="14" height="14" className="w-3.5 h-3.5" />;
             })}
           </div>
           <span className="text-gray-400">({totalRatings})</span>
@@ -122,4 +125,4 @@ function CourseCard({ course }) {
   );
 }
 
-export default CourseCard;
+export default React.memo(CourseCard);

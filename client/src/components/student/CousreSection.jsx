@@ -65,21 +65,6 @@ const CourseSection = () => {
         </div>
       </div>
 
-      {/* Inline styles for the marquee — scoped keyframes */}
-      <style>{`
-        .marquee-track {
-          animation: seamless-scroll var(--duration, 30s) linear infinite;
-          will-change: transform;
-        }
-        .marquee-track:hover {
-          animation-play-state: paused;
-        }
-        @keyframes seamless-scroll {
-          0%   { transform: translateX(0); }
-          100% { transform: translateX(var(--marquee-distance, -50%)); }
-        }
-      `}</style>
-
       <Link
         to="/course-list"
         className="

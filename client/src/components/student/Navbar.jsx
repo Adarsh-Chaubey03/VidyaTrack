@@ -94,7 +94,7 @@ function Navbar() {
       <div className="w-full flex items-center justify-between px-4 sm:px-10 md:px-14 lg:px-36 py-2 md:py-3 border-b border-emerald-900/20 shadow-sm shadow-emerald-950/10" style={{ background: 'linear-gradient(90deg, #043927 0%, #064e3b 30%, #065f46 65%, #0d9488 100%)' }}>
         <div className="flex items-center gap-2 sm:gap-3">
           <Link to="/" onClick={scrollToTop} className="flex items-center">
-            <img src={assets.logo} alt="VidyaTrack Logo" className='w-28 sm:w-36 lg:w-44 cursor-pointer drop-shadow-[0_0_8px_rgba(255,255,255,0.25)]' style={{ filter: 'brightness(1.1) contrast(1.05)' }} />
+            <img src={assets.logo} alt="VidyaTrack Logo" width="176" height="40" decoding="async" className='w-28 sm:w-36 lg:w-44 cursor-pointer drop-shadow-[0_0_8px_rgba(255,255,255,0.25)]' style={{ filter: 'brightness(1.1) contrast(1.05)' }} />
           </Link>
           <div className="flex items-center gap-1 sm:gap-3 ml-1 sm:ml-2">
             <button

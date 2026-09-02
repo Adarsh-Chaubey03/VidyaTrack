@@ -61,42 +61,10 @@ export const AppContextProvider = ({ children }) => {
         return;
       }
 
-      const result = await apiService.user.getProfile();
+      const result = await apiService.user.getEnrolledCourses();
 
-      if (result.success && result.user.enrolledCourses?.length) {
-        const ids = result.user.enrolledCourses;
-
-        // Use the already-fetched allCourses list first (zero extra requests).
-        // Fall back to individual fetches only for IDs not in the local cache.
-        const fromCache = [];
-        const missing = [];
-
-        ids.forEach((id) => {
-          const idStr = typeof id === 'object' ? id.toString() : id;
-          const found = allCourses.find((c) => c._id === idStr || c._id === id);
-          if (found) {
-            fromCache.push(found);
-          } else {
-            missing.push(id);
-          }
-        });
-
-        let extra = [];
-        if (missing.length > 0) {
-          const fetched = await Promise.all(
-            missing.map(async (courseId) => {
-              try {
-                const r = await apiService.courses.getById(courseId);
-                return r.success ? r.courseData : null;
-              } catch {
-                return null;
-              }
-            })
-          );
-          extra = fetched.filter(Boolean);
-        }
-
-        setEnrolledCourses([...fromCache, ...extra]);
+      if (result.success) {
+        setEnrolledCourses(result.enrolledCourses || []);
       } else {
         setEnrolledCourses([]);
       }

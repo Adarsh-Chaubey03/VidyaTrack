@@ -175,7 +175,7 @@ export default function BlogDetail() {
         {/* Hero image */}
         {post.heroImageUrl && (
           <div className="rounded-2xl overflow-hidden mb-10 shadow-sm">
-            <img src={post.heroImageUrl} alt={post.title} className="w-full object-cover max-h-[480px]" />
+            <img src={post.heroImageUrl} alt={post.title} width="1280" height="720" decoding="async" className="w-full object-cover max-h-[480px]" />
           </div>
         )}
 
