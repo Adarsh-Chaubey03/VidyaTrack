@@ -110,6 +110,7 @@ export const API_ENDPOINTS = {
     COURSES: '/educator/courses',
     ADD_COURSE: '/educator/add-course',
     STUDENTS: '/educator/enrolledStudent',
+    MENTEES: '/educator/mentees',
   },
 
   // Educator Access / Application endpoints

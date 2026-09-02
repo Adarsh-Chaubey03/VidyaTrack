@@ -3,6 +3,7 @@ import Course from '../models/Course.js'
 import User from '../models/User.js'
 import { v2 as cloudinary } from 'cloudinary'
 import Purchase from '../models/Purchase.js'
+import MentorshipRequest from '../models/MentorshipRequest.js'
 
 export const updateRoleToEducator = async (req, res) => {
     try {
@@ -65,7 +66,12 @@ export const educatorDashboardData = async (req, res) => {
         if (totalCourses === 0) {
             return res.json({
                 success: true,
-                dashboardData: { totalEarnings: 0, enrolledStudentsData: [], totalCourses: 0 }
+                dashboardData: {
+                    totalEarnings: 0,
+                    enrolledStudentsData: [],
+                    totalCourses: 0,
+                    totalMentees: await MentorshipRequest.countDocuments({ teacherId: educatorId, status: 'accepted' }),
+                }
             });
         }
 
@@ -118,7 +124,8 @@ export const educatorDashboardData = async (req, res) => {
             dashboardData: {
                 totalEarnings,
                 enrolledStudentsData,
-                totalCourses
+                totalCourses,
+                totalMentees: await MentorshipRequest.countDocuments({ teacherId: educatorId, status: 'accepted' }),
             }
         });
 
@@ -181,3 +188,31 @@ export const getEnrolledStudentData = async (req, res) => {
         res.status(500).json({ success: false, message: error.message })
     }
 }
+
+// GET ACTIVE MENTEES FOR EDUCATOR
+// GET /api/educator/mentees
+// Returns students who have an accepted mentorship request with this educator.
+export const getMentees = async (req, res) => {
+    try {
+        const educatorId = req.user._id;
+
+        const accepted = await MentorshipRequest.find({ teacherId: educatorId, status: 'accepted' })
+            .populate('studentId', 'name email imageUrl')
+            .sort({ updatedAt: -1 })
+            .lean();
+
+        const mentees = accepted.map((r) => ({
+            student: r.studentId
+                ? { _id: r.studentId._id, name: r.studentId.name, email: r.studentId.email, imageUrl: r.studentId.imageUrl }
+                : null,
+            introduction: r.introduction,
+            acceptedOn: r.updatedAt,
+            requestId: r._id,
+        }));
+
+        res.json({ success: true, mentees });
+    } catch (error) {
+        console.error('getMentees error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
