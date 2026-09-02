@@ -367,7 +367,7 @@ const MentorProfile = () => {
                     <p className="text-xs text-emerald-100">{mentor.name} · {mentor.title}</p>
                   </div>
                 </div>
-                <button onClick={() => { setShowRequestModal(false); setMessage(''); }} className="text-white/70 hover:text-white transition">
+                <button onClick={() => { setShowRequestModal(false); setMessage(''); setSubmitError(''); }} className="text-white/70 hover:text-white transition">
                   <X size={20} />
                 </button>
               </div>
@@ -399,7 +399,7 @@ const MentorProfile = () => {
                 </div>
               )}
               <div className="flex gap-3 pt-1">
-                <button type="button" onClick={() => { setShowRequestModal(false); setMessage(''); }} className="flex-1 px-4 py-2.5 text-sm font-medium border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-colors">
+                <button type="button" onClick={() => { setShowRequestModal(false); setMessage(''); setSubmitError(''); }} className="flex-1 px-4 py-2.5 text-sm font-medium border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-colors">
                   Cancel
                 </button>
                 <button type="submit" disabled={isSubmitting || !message.trim()} className="flex-1 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2">
