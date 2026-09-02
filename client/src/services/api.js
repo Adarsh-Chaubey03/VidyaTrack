@@ -141,6 +141,14 @@ export const API_ENDPOINTS = {
     RESPOND:           (requestId) => `/teacher/requests/${requestId}/respond`,
   },
 
+  // Resume Review endpoints
+  RESUME_REVIEW: {
+    SUBMIT:   '/resume-reviews/submit',
+    MY_REVIEW: '/resume-reviews/my-review',
+    PENDING:  '/resume-reviews/pending',
+    REVIEW:   (id) => `/resume-reviews/${id}/review`,
+  },
+
   // Blog / Posts endpoints
   BLOG: {
     LIST: '/posts',
@@ -471,6 +479,35 @@ export const apiService = {
 
     educatorApprove: async (id) => {
       const response = await api.post(API_ENDPOINTS.BLOG.EDUCATOR_APPROVE(id));
+      return response.data;
+    },
+  },
+
+  // Resume Review services
+  resumeReview: {
+    /** Student: upload PDF + metadata, create/update pending review */
+    submit: async (formData) => {
+      const response = await api.post(API_ENDPOINTS.RESUME_REVIEW.SUBMIT, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return response.data;
+    },
+
+    /** Student: fetch own latest review record */
+    getMyReview: async () => {
+      const response = await api.get(API_ENDPOINTS.RESUME_REVIEW.MY_REVIEW);
+      return response.data;
+    },
+
+    /** Educator: list all pending review requests */
+    listPending: async () => {
+      const response = await api.get(API_ENDPOINTS.RESUME_REVIEW.PENDING);
+      return response.data;
+    },
+
+    /** Educator: submit score + feedback for a specific review */
+    submitReview: async (id, data) => {
+      const response = await api.post(API_ENDPOINTS.RESUME_REVIEW.REVIEW(id), data);
       return response.data;
     },
   },

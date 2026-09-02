@@ -14,6 +14,7 @@ import { razorpayWebhook } from './controllers/paymentController.js';
 import blogRouter from './routes/blogRoutes.js';
 import feedbackRouter from './routes/feedbackRoutes.js';
 import mentorRouter from './routes/mentorRoutes.js';
+import resumeReviewRouter from './routes/resumeReviewRoutes.js';
 
 // ── Initialize express app ─────────────────────────────────────────────────
 const app = express();
@@ -144,6 +145,7 @@ app.use('/api/user',            userRouter);
 app.use('/api/payments',        paymentRouter);
 app.use('/api/posts',           blogRouter);
 app.use('/api/feedback',        feedbackRouter);
+app.use('/api/resume-reviews',  resumeReviewRouter);
 
 // ── Mentorship routes ─────────────────────────────────────────────────────
 // All mentorship logic lives in mentorRouter.
