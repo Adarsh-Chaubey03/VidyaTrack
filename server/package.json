@@ -6,7 +6,8 @@
   "scripts": {
     "server": "nodemon",
     "start": "nodemon server.js",
-    "seed:educator": "node scripts/seedEducator.js"
+    "seed:educator": "node scripts/seedEducator.js",
+    "seed:mentors": "node scripts/seedMentors.js"
   },
   "keywords": [],
   "author": "",
