@@ -33,17 +33,6 @@ export default function BlogList() {
       const res = await apiService.blog.listPublished(params);
       let fetched = res.posts || [];
 
-      // Client-side title search
-      if (search.trim()) {
-        const q = search.toLowerCase();
-        fetched = fetched.filter(
-          (p) =>
-            p.title.toLowerCase().includes(q) ||
-            p.excerpt?.toLowerCase().includes(q) ||
-            p.tags?.some((t) => t.toLowerCase().includes(q))
-        );
-      }
-
       setPosts(fetched);
       setTotalPages(res.totalPages || 1);
     } catch (err) {
@@ -51,7 +40,7 @@ export default function BlogList() {
     } finally {
       setLoading(false);
     }
-  }, [page, activeTag, search]);
+  }, [page, activeTag]);
 
   useEffect(() => {
     fetchPosts();
@@ -70,6 +59,17 @@ export default function BlogList() {
     setActiveTag(tag);
     setPage(1);
   };
+
+  const filteredPosts = search.trim()
+    ? posts.filter((post) => {
+        const query = search.toLowerCase();
+        return (
+          post.title.toLowerCase().includes(query) ||
+          post.excerpt?.toLowerCase().includes(query) ||
+          post.tags?.some((tag) => tag.toLowerCase().includes(query))
+        );
+      })
+    : posts;
 
   if (loading) return <SkeletonBlogList />;
 
@@ -163,7 +163,7 @@ export default function BlogList() {
               Log In
             </a>
           </div>
-        ) : posts.length === 0 ? (
+        ) : filteredPosts.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">📝</div>
             <h3 className="text-xl font-semibold text-slate-700 mb-2">No articles found</h3>
@@ -175,7 +175,7 @@ export default function BlogList() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
+            {filteredPosts.map((post) => (
               <PostCard key={post._id} post={post} />
             ))}
           </div>
