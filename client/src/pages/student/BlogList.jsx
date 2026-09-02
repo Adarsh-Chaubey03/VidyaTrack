@@ -20,6 +20,11 @@ export default function BlogList() {
   const [activeTag, setActiveTag] = useState(searchParams.get('tag') || 'All');
 
   const fetchPosts = useCallback(async () => {
+    // Don't fetch if not authenticated — we show the login prompt instead
+    if (!isAuthenticated()) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const params = { page, limit: 9 };
@@ -88,7 +93,8 @@ export default function BlogList() {
             Explore articles written by our community — learn, share, and grow together.
           </p>
 
-          {/* Search */}
+          {/* Search — only shown to authenticated users */}
+          {isAuthenticated() && (
           <div className="max-w-xl mx-auto relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
             <input
@@ -99,6 +105,7 @@ export default function BlogList() {
               className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/95 backdrop-blur text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-lg"
             />
           </div>
+          )}
 
           {isAuthenticated() && (
             <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -122,6 +129,7 @@ export default function BlogList() {
       </section>
 
       {/* ─── Tag filter ─── */}
+      {isAuthenticated() && (
       <div className="max-w-6xl mx-auto px-6 pt-8 pb-2">
         <div className="flex items-center gap-2 flex-wrap">
           {TAGS.map((tag) => (
@@ -139,10 +147,23 @@ export default function BlogList() {
           ))}
         </div>
       </div>
+      )}
 
       {/* ─── Posts Grid ─── */}
       <div className="max-w-6xl mx-auto px-6 py-8">
-        {posts.length === 0 ? (
+        {!isAuthenticated() ? (
+          <div className="text-center py-20">
+            <div className="text-6xl mb-4">🔒</div>
+            <h3 className="text-xl font-semibold text-slate-700 mb-2">Login to view articles</h3>
+            <p className="text-slate-500 mb-6">Sign in to read articles written by our community.</p>
+            <a
+              href="/login"
+              className="inline-flex items-center gap-2 bg-emerald-600 text-white font-semibold px-6 py-2.5 rounded-xl hover:bg-emerald-700 transition shadow"
+            >
+              Log In
+            </a>
+          </div>
+        ) : posts.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">📝</div>
             <h3 className="text-xl font-semibold text-slate-700 mb-2">No articles found</h3>
@@ -161,7 +182,7 @@ export default function BlogList() {
         )}
 
         {/* ─── Pagination ─── */}
-        {totalPages > 1 && (
+        {isAuthenticated() && totalPages > 1 && (
           <div className="flex items-center justify-center gap-3 pt-10">
             <button
               disabled={page <= 1}

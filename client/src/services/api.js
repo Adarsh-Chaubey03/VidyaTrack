@@ -157,6 +157,9 @@ export const API_ENDPOINTS = {
     ADMIN_COMMENTS: '/posts/admin/comments',
     ADMIN_APPROVE_COMMENT: (id) => `/posts/admin/comments/${id}/approve`,
     ADMIN_DELETE_COMMENT: (id) => `/posts/admin/comments/${id}`,
+    // Educator review
+    EDUCATOR_PENDING: '/posts/educator/pending',
+    EDUCATOR_APPROVE: (id) => `/posts/educator/${id}/approve`,
   },
 
 };
@@ -457,6 +460,17 @@ export const apiService = {
 
     adminDeleteComment: async (id) => {
       const response = await api.delete(API_ENDPOINTS.BLOG.ADMIN_DELETE_COMMENT(id));
+      return response.data;
+    },
+
+    // Educator review
+    educatorListPending: async () => {
+      const response = await api.get(API_ENDPOINTS.BLOG.EDUCATOR_PENDING);
+      return response.data;
+    },
+
+    educatorApprove: async (id) => {
+      const response = await api.post(API_ENDPOINTS.BLOG.EDUCATOR_APPROVE(id));
       return response.data;
     },
   },

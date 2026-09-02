@@ -1,13 +1,14 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, PlusCircle, BookOpen, Users, X, GraduationCap } from 'lucide-react';
+import { LayoutDashboard, PlusCircle, BookOpen, Users, X, GraduationCap, FileSearch } from 'lucide-react';
 
 const menuItems = [
-    { name: 'Dashboard',  path: '/educator',                    icon: LayoutDashboard },
-    { name: 'Add Course', path: '/educator/add-courses',        icon: PlusCircle      },
-    { name: 'My Courses', path: '/educator/my-courses',         icon: BookOpen        },
-    { name: 'Students',   path: '/educator/student-enrolled',   icon: Users           },
-    { name: 'Mentoring',  path: '/educator/mentor-requests',    icon: GraduationCap   },
+    { name: 'Dashboard',       path: '/educator',                        icon: LayoutDashboard },
+    { name: 'Add Course',      path: '/educator/add-courses',            icon: PlusCircle      },
+    { name: 'My Courses',      path: '/educator/my-courses',             icon: BookOpen        },
+    { name: 'Students',        path: '/educator/student-enrolled',       icon: Users           },
+    { name: 'Mentoring',       path: '/educator/mentor-requests',        icon: GraduationCap   },
+    { name: 'Review Articles', path: '/educator/review-articles',        icon: FileSearch      },
 ];
 
 function Sidebar({ isOpen, onClose }) {

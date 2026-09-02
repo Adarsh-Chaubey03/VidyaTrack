@@ -47,6 +47,7 @@ const AddCourse = lazy(() => import('./pages/educator/AddCourse'));
 const StudentEnrolled = lazy(() => import('./pages/educator/StudentEnrolled'));
 const AdminApplications = lazy(() => import('./pages/educator/AdminApplications'));
 const MentorRequests = lazy(() => import('./pages/educator/MentorRequests'));
+const EducatorBlogReview = lazy(() => import('./pages/educator/EducatorBlogReview'));
 
 // Blog pages
 const BlogList = lazy(() => import('./pages/student/BlogList'));
@@ -166,6 +167,7 @@ const App = () => {
               <Route path='add-courses' element={<AddCourse />} />
               <Route path='student-enrolled' element={<StudentEnrolled />} />
               <Route path='mentor-requests' element={<MentorRequests />} />
+              <Route path='review-articles' element={<EducatorBlogReview />} />
             </Route>
           </Route>
         </Routes>
