@@ -140,7 +140,7 @@ const StudyChat = ({ variant = 'page', onClose }) => {
             {/* ── Header ─────────────────────────────────────────────── */}
             {/* Corner rounding is left to the parent's overflow-hidden so the
                 same markup works full-bleed and inside a rounded card. */}
-            <header className={`flex items-center gap-3 px-4 py-3 border-b border-slate-200 bg-white shrink-0 ${variant === 'fill' ? 'sticky top-[52px] md:top-[60px] z-20' : ''}`}>
+            <header className={`flex items-center gap-3 px-4 py-3 border-b border-slate-200 bg-white shrink-0`}>
                 <AiAvatar />
                 <div className="flex-1 min-w-0">
                     <h2 className="text-sm font-semibold text-slate-900 leading-tight truncate">

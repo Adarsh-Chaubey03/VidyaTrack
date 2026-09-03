@@ -204,8 +204,6 @@ const renderStudentContext = (profile) => {
 export const buildSuggestions = (profile) => {
     const chips = [];
 
-    chips.push('How do I prepare for a MERN developer role?');
-
     if (profile?.enrolledCount > 0) {
         chips.push('Suggest improvements in my skills');
     } else {

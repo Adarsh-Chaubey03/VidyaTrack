@@ -90,6 +90,7 @@ const App = () => {
           <Route path='/about' element={<About />} />
           <Route path='/mentor' element={<Mentor />} />
           <Route path='/ai-career-copilot' element={<AIcareerCopilot />} />
+          <Route path='/copilot' element={<AIcareerCopilot />} />
 
           {/* Resume System */}
           <Route path='/resume' element={<ResumeHub />} />
