@@ -221,7 +221,7 @@ const StudyChat = ({ variant = 'page', onClose }) => {
                         ) : (
                             <div key={m.id} className="flex items-start gap-2.5">
                                 <AiAvatar />
-                                <div className="max-w-[85%] min-w-0 bg-white border border-slate-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
+                                <div className="max-w-[85%] min-w-0 bg-white border border-slate-200 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm text-left">
                                     <MarkdownLite text={m.content} />
                                 </div>
                             </div>
