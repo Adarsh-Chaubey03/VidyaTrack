@@ -265,12 +265,7 @@ const StudyChat = ({ variant = 'page', onClose }) => {
 
             {/* ── Composer ───────────────────────────────────────────── */}
             <div className={`shrink-0 border-t border-slate-200 px-3 py-3 ${variant === 'fill' ? 'bg-slate-50' : 'bg-white'}`}>
-                {/* Follow-up chips, once a conversation is under way */}
-                {!isEmpty && !sending && suggestions.length > 0 && (
-                    <div className="mb-2.5 -mx-0.5 overflow-x-auto">
-                        <SuggestionChips items={suggestions.slice(0, 3)} onPick={submit} disabled={sending} />
-                    </div>
-                )}
+
 
                 <form
                     onSubmit={(e) => { e.preventDefault(); submit(); }}
