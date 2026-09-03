@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import useMentorRequests from '../../hooks/useMentorRequests';
+import { useAuth } from '../../context/AuthContext';
 import MentorDetailPanel from './MentorDetailPanel';
 import {
   Clock,
@@ -104,6 +105,7 @@ export default function MentorDashboard() {
     error,
     refetch,
   } = useMentorRequests();
+  const { userId } = useAuth();
 
   const [activeTab, setActiveTab]           = useState('requested');
   const [selectedTeacherId, setSelectedTeacherId] = useState(null);
@@ -117,7 +119,7 @@ export default function MentorDashboard() {
 
   // Detail panel — build a mentor-shaped object from the API teacher data
   const selectedRequest = selectedTeacherId
-    ? [...pendingRequests, ...acceptedRequests].find((r) => r.teacherId === selectedTeacherId)
+    ? [...pendingRequests, ...acceptedRequests].find((r) => (r.teacherId || r.teacher?.id) === selectedTeacherId)
     : null;
 
   // Adapt API teacher data to the shape MentorDetailPanel expects
@@ -138,6 +140,7 @@ export default function MentorDashboard() {
       <MentorDetailPanel
         mentor={selectedMentor}
         request={selectedRequest}
+        studentId={userId}
         onBack={() => setSelectedTeacherId(null)}
         onCancelMentoring={() => {
           cancelMentoring(selectedTeacherId);

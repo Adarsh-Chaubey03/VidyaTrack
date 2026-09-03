@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, PlusCircle, BookOpen, Users, X, GraduationCap, FileSearch, ClipboardList } from 'lucide-react';
+import { LayoutDashboard, PlusCircle, BookOpen, Users, X, GraduationCap, MessageSquare, FileSearch, ClipboardList } from 'lucide-react';
 
 const menuItems = [
     { name: 'Dashboard',       path: '/educator',                        icon: LayoutDashboard },
@@ -8,6 +8,7 @@ const menuItems = [
     { name: 'My Courses',      path: '/educator/my-courses',             icon: BookOpen        },
     { name: 'Students',        path: '/educator/student-enrolled',       icon: Users           },
     { name: 'Mentoring',       path: '/educator/mentor-requests',        icon: GraduationCap   },
+    { name: 'Schedule & Chat', path: '/educator/mentor-workspace',       icon: MessageSquare   },
     { name: 'Review Articles', path: '/educator/review-articles',        icon: FileSearch      },
     { name: 'Resume Reviews',  path: '/educator/resume-reviews',         icon: ClipboardList   },
 ];

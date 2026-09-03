@@ -54,14 +54,6 @@ export const protectStudent = async (req, res, next) => {
             }
         }
 
-        // Verify activeRole matches
-        if (req.user.activeRole && req.user.activeRole !== 'user') {
-            return res.status(403).json({
-                success: false,
-                message: 'Your active role is not Student. Please switch roles first.'
-            });
-        }
-
         next();
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -69,7 +61,7 @@ export const protectStudent = async (req, res, next) => {
 }
 
 // ─── Educator-route guard ─────────────────────────────────
-// Defense-in-depth: checks DB role + approval + JWT role claim + activeRole
+// Defense-in-depth: checks DB role + approval and the session JWT role claim.
 // Use AFTER protect middleware.
 export const protectEducator = async (req, res, next) => {
     try {
@@ -94,18 +86,8 @@ export const protectEducator = async (req, res, next) => {
             }
         }
 
-        // Check activeRole — ensures single-role enforcement
-        if (req.user.activeRole && req.user.activeRole !== 'educator') {
-            return res.status(403).json({
-                success: false,
-                message: 'Your active role is not educator. Please switch roles first.'
-            });
-        }
-
         next();
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
 }
-
-

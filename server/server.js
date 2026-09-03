@@ -14,6 +14,7 @@ import { razorpayWebhook } from './controllers/paymentController.js';
 import blogRouter from './routes/blogRoutes.js';
 import feedbackRouter from './routes/feedbackRoutes.js';
 import mentorRouter from './routes/mentorRoutes.js';
+import mentorWorkspaceRouter from './routes/mentorWorkspaceRoutes.js';
 import resumeReviewRouter from './routes/resumeReviewRoutes.js';
 import aiRouter from './routes/aiRoutes.js';
 
@@ -167,6 +168,7 @@ app.use('/api/mentors',           mentorRouter);
 app.use('/api/student/dashboard', mentorRouter);
 app.use('/api/teacher/dashboard', mentorRouter);
 app.use('/api/teacher',           mentorRouter);
+app.use('/api/mentor-workspace',  mentorWorkspaceRouter);
 
 // ── 404 catch-all ─────────────────────────────────────────────────────────
 app.use((req, res) => {

@@ -144,7 +144,11 @@ export const login = async (req, res) => {
 export const getMe = async (req, res) => {
     try {
         const user = await User.findById(req.user._id).select('-password');
-        res.json({ success: true, data: user });
+        // activeRole is session-scoped by the JWT; the database value is shared
+        // across tabs and can be changed by another login.
+        const data = user.toObject();
+        data.activeRole = req.tokenPayload?.role || data.activeRole || 'user';
+        res.json({ success: true, data });
     } catch (error) {
         console.error('Get me error:', error);
         res.status(500).json({ success: false, message: error.message });
@@ -165,4 +169,3 @@ router.post('/educator-login',  authLimiter,     educatorLogin);
 router.get('/me', protect, getMe);
 
 export default router;
-

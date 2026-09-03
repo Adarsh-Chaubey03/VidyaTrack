@@ -142,6 +142,19 @@ export const API_ENDPOINTS = {
     RESPOND:           (requestId) => `/teacher/requests/${requestId}/respond`,
   },
 
+  MENTOR_WORKSPACE: {
+    CONVERSATION: '/mentor-workspace/conversation',
+    MESSAGES: '/mentor-workspace/messages',
+    STUDENT_SLOTS: (mentorId) => `/mentor-workspace/student/slots/${mentorId}`,
+    STUDENT_BOOKINGS: '/mentor-workspace/student/bookings',
+    BOOKINGS: '/mentor-workspace/bookings',
+    NOTES: '/mentor-workspace/notes',
+    NOTE: (id) => `/mentor-workspace/notes/${id}`,
+    MENTOR_CONVERSATIONS: '/mentor-workspace/mentor/conversations',
+    MENTOR_SLOTS: '/mentor-workspace/mentor/slots',
+    MENTOR_SLOT: (id) => `/mentor-workspace/mentor/slots/${id}`,
+  },
+
   // Resume Review endpoints
   RESUME_REVIEW: {
     SUBMIT:   '/resume-reviews/submit',
@@ -374,6 +387,22 @@ export const apiService = {
         introduction,
       });
       return response.data;
+    },
+
+    workspace: {
+      getConversation: async (studentId, mentorId) => (await api.get(API_ENDPOINTS.MENTOR_WORKSPACE.CONVERSATION, { params: { studentId, mentorId } })).data,
+      sendMessage: async (data) => (await api.post(API_ENDPOINTS.MENTOR_WORKSPACE.MESSAGES, data)).data,
+      getSlots: async (mentorId) => (await api.get(API_ENDPOINTS.MENTOR_WORKSPACE.STUDENT_SLOTS(mentorId))).data,
+      bookSlot: async (slotId) => (await api.post(API_ENDPOINTS.MENTOR_WORKSPACE.STUDENT_BOOKINGS, { slotId })).data,
+      getBookings: async () => (await api.get(API_ENDPOINTS.MENTOR_WORKSPACE.BOOKINGS)).data,
+      getNotes: async () => (await api.get(API_ENDPOINTS.MENTOR_WORKSPACE.NOTES)).data,
+      createNote: async (data) => (await api.post(API_ENDPOINTS.MENTOR_WORKSPACE.NOTES, data)).data,
+      updateNote: async (id, data) => (await api.patch(API_ENDPOINTS.MENTOR_WORKSPACE.NOTE(id), data)).data,
+      deleteNote: async (id) => (await api.delete(API_ENDPOINTS.MENTOR_WORKSPACE.NOTE(id))).data,
+      getMentorConversations: async () => (await api.get(API_ENDPOINTS.MENTOR_WORKSPACE.MENTOR_CONVERSATIONS)).data,
+      getMentorSlots: async () => (await api.get(API_ENDPOINTS.MENTOR_WORKSPACE.MENTOR_SLOTS)).data,
+      createMentorSlot: async (data) => (await api.post(API_ENDPOINTS.MENTOR_WORKSPACE.MENTOR_SLOTS, data)).data,
+      updateMentorSlot: async (id, status) => (await api.patch(API_ENDPOINTS.MENTOR_WORKSPACE.MENTOR_SLOT(id), { status })).data,
     },
 
     /** Get all approved educators (for teacherId resolution) */
