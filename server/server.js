@@ -15,6 +15,7 @@ import blogRouter from './routes/blogRoutes.js';
 import feedbackRouter from './routes/feedbackRoutes.js';
 import mentorRouter from './routes/mentorRoutes.js';
 import resumeReviewRouter from './routes/resumeReviewRoutes.js';
+import aiRouter from './routes/aiRoutes.js';
 
 // ── Initialize express app ─────────────────────────────────────────────────
 const app = express();
@@ -146,6 +147,7 @@ app.use('/api/payments',        paymentRouter);
 app.use('/api/posts',           blogRouter);
 app.use('/api/feedback',        feedbackRouter);
 app.use('/api/resume-reviews',  resumeReviewRouter);
+app.use('/api/ai',              aiRouter);
 
 // ── Mentorship routes ─────────────────────────────────────────────────────
 // All mentorship logic lives in mentorRouter.

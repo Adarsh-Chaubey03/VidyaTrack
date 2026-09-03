@@ -60,3 +60,28 @@ export const generalLimiter = rateLimit({
     },
     skip: () => process.env.RATE_LIMIT_SKIP === 'true',
 });
+
+// ── AI chat limiter ────────────────────────────────────────────────────────
+//
+// Applied to: POST /api/ai/chat  (after `protect`, so req.user is available)
+//
+// Every request here costs a paid Gemini call, so this limit protects spend as
+// much as it protects the server. 20 messages per 5 minutes is far more than a
+// student reading answers can consume, but it stops a stuck retry loop or a
+// scripted client from draining the API quota.
+//
+// Keyed by user id, not IP: a college lab or campus NAT puts many legitimate
+// students behind one address, and IP-keying would throttle them collectively.
+// Falls back to IP only if somehow reached unauthenticated.
+export const aiChatLimiter = rateLimit({
+    windowMs: 5 * 60 * 1000,     // 5 minutes
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    keyGenerator: (req) => (req.user?._id ? `u:${req.user._id}` : `ip:${req.ip}`),
+    message: {
+        success: false,
+        message: 'You are sending messages too quickly. Please wait a minute and try again.',
+    },
+    skip: () => process.env.RATE_LIMIT_SKIP === 'true',
+});
