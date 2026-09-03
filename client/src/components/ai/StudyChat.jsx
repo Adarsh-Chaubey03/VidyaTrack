@@ -264,7 +264,7 @@ const StudyChat = ({ variant = 'page', onClose }) => {
             </div>
 
             {/* ── Composer ───────────────────────────────────────────── */}
-            <div className="shrink-0 border-t border-slate-200 bg-white px-3 py-3">
+            <div className={`shrink-0 border-t border-slate-200 px-3 py-3 ${variant === 'fill' ? 'bg-slate-50' : 'bg-white'}`}>
                 {/* Follow-up chips, once a conversation is under way */}
                 {!isEmpty && !sending && suggestions.length > 0 && (
                     <div className="mb-2.5 -mx-0.5 overflow-x-auto">
@@ -274,7 +274,7 @@ const StudyChat = ({ variant = 'page', onClose }) => {
 
                 <form
                     onSubmit={(e) => { e.preventDefault(); submit(); }}
-                    className="flex items-end gap-2"
+                    className={`flex items-end gap-2 ${variant === 'fill' ? 'w-full max-w-3xl mx-auto' : ''}`}
                 >
                     <label htmlFor="study-chat-input" className="sr-only">
                         Ask a study question
