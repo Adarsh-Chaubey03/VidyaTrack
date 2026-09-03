@@ -17,7 +17,9 @@ VidyaTrack is a full-stack educational platform designed to centralize learning 
 - **Resource Sharing Platform**: Facilitates peer-to-peer exchange of books and materials.
 - **Student Dashboard**: Personalized tracking of learning progress and activities.
 - **Educator Dashboard**: Monitors earnings, course performance, and mentorship sessions.
-- **Chatbot Integration**: Real-time assistance and support for users via an interactive chatbot.
+- **AI Study Assistant**: Gemini-powered chatbot available through the Copilot page and floating chat widget, providing contextual DSA, CS fundamentals, and placement-preparation guidance.
+
+
 
 ## 🚀 Deployment Links
 
