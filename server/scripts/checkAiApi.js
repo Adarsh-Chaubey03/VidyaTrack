@@ -100,6 +100,9 @@ const run = async () => {
     ];
 
     for (const [label, msg] of studyCases) {
+        // Pace the suite: firing every case back-to-back trips the Gemini
+        // per-minute quota, which is a property of the test, not the product.
+        await new Promise((r) => setTimeout(r, 7000));
         const t0 = Date.now();
         const r = await post('/api/ai/chat', { message: msg, conversationId }, token);
         const ms = Date.now() - t0;
@@ -117,6 +120,7 @@ const run = async () => {
     check('conversation id was issued', Boolean(conversationId), String(conversationId));
 
     /* ── CONVERSATION CONTEXT ─────────────────────────────── */
+    await new Promise((r) => setTimeout(r, 7000));
     const followUp = await post('/api/ai/chat', { message: 'Give me one practice problem for that.', conversationId }, token);
     check('follow-up in an existing conversation is answered',
         followUp.status === 200 && followUp.body?.category === 'study',
@@ -161,8 +165,12 @@ const run = async () => {
     check('DELETE /api/ai/session clears history', cleared.status === 200 && left === 0, `left=${left}`);
 
     /* ── RATE LIMIT (rapid repeated requests) ─────────────── */
+    // Opt-in: the burst consumes the whole 20-per-5-minute budget, which would
+    // make an immediately-following run fail for the wrong reason.
     if (process.env.RATE_LIMIT_SKIP === 'true') {
         console.log('SKIP  rate limit check (RATE_LIMIT_SKIP=true)');
+    } else if (process.env.CHECK_RATE_LIMIT !== '1') {
+        console.log('SKIP  rate limit check (set CHECK_RATE_LIMIT=1 to run it)');
     } else {
         // Off-topic messages are cheap and still pass through the limiter.
         const burst = await Promise.all(

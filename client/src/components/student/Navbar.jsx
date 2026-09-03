@@ -218,7 +218,7 @@ function Navbar() {
           {isAuthenticated() && <NavLink to="/my-dashboard" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>My Dashboard</NavLink>}
           <NavLink to="/course-list" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Courses</NavLink>
           <NavLink to="/mentor" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Mentor</NavLink>
-          <NavLink to="/blog" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Blog</NavLink>
+          <NavLink to="/copilot" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Copilot</NavLink>
           <NavLink to="/resume" className={({ isActive }) => isActive ? 'text-emerald-600 font-bold' : undefined}>Resume</NavLink>
         </div>
         <div className='hidden md:flex items-center gap-4'>
@@ -281,7 +281,7 @@ function Navbar() {
             {isAuthenticated() && <Link to="/my-dashboard" onClick={toggleMobileMenu}>My Dashboard</Link>}
             <Link to="/course-list" onClick={toggleMobileMenu}>Courses</Link>
             <Link to="/mentor" onClick={toggleMobileMenu}>Mentor</Link>
-            <Link to="/blog" onClick={toggleMobileMenu}>Blog</Link>
+            <Link to="/copilot" onClick={toggleMobileMenu}>Copilot</Link>
             <Link to="/resume" onClick={toggleMobileMenu}>Resume</Link>
           </motion.div>
         )}

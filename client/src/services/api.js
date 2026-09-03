@@ -172,6 +172,12 @@ export const API_ENDPOINTS = {
     EDUCATOR_REJECT:  (id) => `/posts/educator/${id}/reject`,
   },
 
+  // AI Study Assistant endpoints
+  AI: {
+    CHAT: '/ai/chat',
+    SESSION: '/ai/session',
+  },
+
 };
 
 // API service functions
@@ -520,6 +526,37 @@ export const apiService = {
     /** Educator: submit score + feedback for a specific review */
     submitReview: async (id, data) => {
       const response = await api.post(API_ENDPOINTS.RESUME_REVIEW.REVIEW(id), data);
+      return response.data;
+    },
+  },
+
+  // AI Study Assistant services
+  ai: {
+    /**
+     * Ask the study assistant a question.
+     *
+     * Overrides the 10s default timeout: a Gemini answer takes ~4-6s normally
+     * and the server allows up to 30s plus one retry, so the client must wait
+     * longer than the server does or it would abort answers that are on their way.
+     */
+    chat: async ({ message, conversationId }, { signal } = {}) => {
+      const response = await api.post(
+        API_ENDPOINTS.AI.CHAT,
+        { message, conversationId: conversationId || undefined },
+        { timeout: 70000, signal }
+      );
+      return response.data;
+    },
+
+    /** Bootstrap the chat UI: latest conversation + suggestion chips. */
+    getSession: async () => {
+      const response = await api.get(API_ENDPOINTS.AI.SESSION);
+      return response.data;
+    },
+
+    /** Delete every stored conversation for the signed-in student. */
+    clearSession: async () => {
+      const response = await api.delete(API_ENDPOINTS.AI.SESSION);
       return response.data;
     },
   },

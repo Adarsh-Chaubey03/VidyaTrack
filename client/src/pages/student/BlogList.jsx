@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Search, Clock, Eye, ChevronLeft, ChevronRight, PenLine, BookOpen, TrendingUp } from 'lucide-react';
 import { apiService } from '../../services/api';
@@ -46,13 +46,18 @@ export default function BlogList() {
     fetchPosts();
   }, [fetchPosts]);
 
-  // Sync params to URL
+  // Sync params to URL — debounce search so typing doesn't trigger a navigation on every keystroke
+  const searchDebounceRef = useRef(null);
   useEffect(() => {
-    const params = {};
-    if (page > 1) params.page = page;
-    if (activeTag !== 'All') params.tag = activeTag;
-    if (search) params.q = search;
-    setSearchParams(params, { replace: true });
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    searchDebounceRef.current = setTimeout(() => {
+      const params = {};
+      if (page > 1) params.page = page;
+      if (activeTag !== 'All') params.tag = activeTag;
+      if (search) params.q = search;
+      setSearchParams(params, { replace: true });
+    }, 400);
+    return () => clearTimeout(searchDebounceRef.current);
   }, [page, activeTag, search, setSearchParams]);
 
   const handleTagClick = (tag) => {
