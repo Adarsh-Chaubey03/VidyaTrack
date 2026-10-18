@@ -22,11 +22,8 @@ VidyaTrack is a full-stack educational platform designed to centralize learning 
 
 
 ## 🚀 Deployment Links
+Live Demo: [https://www.vidyatrack.online/](https://www.vidyatrack.online/?utm_source=chatgpt.com)
 
-- **Frontend**: [https://vidya-track-xi.vercel.app/](https://vidya-track-xi.vercel.app/)  
-- **Backend**: [https://vidya-track-n45f.vercel.app/](https://vidya-track-n45f.vercel.app/)
-
-*Replace `#` with actual deployment URL for the backend.*
 
 ## 🛠 Running Locally
 
