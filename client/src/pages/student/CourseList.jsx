@@ -116,7 +116,7 @@ function CourseList() {
 
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #e8f5ee 0%, #f0faf4 30%, #f7fdf9 100%)' }}>
             {/* Header */}
             <div className="bg-white border-b border-gray-200">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -266,41 +266,6 @@ function CourseList() {
                                                         <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                                                     </svg>
                                                 )}
-                                            </span>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        {/* ── Level ── */}
-                        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                                <div className="flex items-center gap-2">
-                                    <span className="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center">
-                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
-                                        </svg>
-                                    </span>
-                                    <span className="text-sm font-bold text-gray-900">Level</span>
-                                </div>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5"><polyline points="18 15 12 9 6 15"/></svg>
-                            </div>
-                            <div className="divide-y divide-gray-50">
-                                {LEVELS.map(level => {
-                                    const isActive = selectedLevel === level;
-                                    return (
-                                        <button
-                                            key={level}
-                                            onClick={() => { setSelectedLevel(isActive ? '' : level); setCurrentPage(1); }}
-                                            className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors"
-                                        >
-                                            {/* Radio circle */}
-                                            <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isActive ? 'border-emerald-500' : 'border-gray-300'}`}>
-                                                {isActive && <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />}
-                                            </span>
-                                            <span className={`flex-1 text-sm capitalize ${isActive ? 'text-emerald-700 font-semibold' : 'text-gray-700'}`}>
-                                                {level}
                                             </span>
                                         </button>
                                     );

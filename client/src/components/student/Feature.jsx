@@ -4,45 +4,6 @@ import { Link } from 'react-router-dom';
 /* ── Card definitions ── */
 const features = [
   {
-    key: 'mentor',
-    title: 'Mentor',
-    desc: 'Connect with experienced mentors to guide your learning journey and career decisions.',
-    linkLabel: 'Know More',
-    to: '/mentor',
-    /* icon */
-    iconColor: '#f97316',
-    iconBg: '#fff7ed',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-        <circle cx="9" cy="7" r="4"/>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
-      </svg>
-    ),
-    /* decorative blob gradient */
-    blob: 'radial-gradient(circle at 85% 10%, #fde68a55 0%, #fb923c22 40%, transparent 70%)',
-    linkColor: 'text-orange-500 hover:text-orange-600',
-  },
-  {
-    key: 'resume',
-    title: 'Resume',
-    desc: 'Build and polish your resume with expert tips and easy-to-use tools.',
-    linkLabel: 'Know More',
-    to: '/resume',
-    iconColor: '#3b82f6',
-    iconBg: '#eff6ff',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-        <line x1="16" y1="13" x2="8" y2="13"/>
-        <line x1="16" y1="17" x2="8" y2="17"/>
-      </svg>
-    ),
-    blob: 'radial-gradient(circle at 85% 10%, #bfdbfe55 0%, #93c5fd22 40%, transparent 70%)',
-    linkColor: 'text-blue-600 hover:text-blue-700',
-  },
-  {
     key: 'courses',
     title: 'Courses',
     desc: 'Explore courses to boost your skills. Find the perfect fit for your goals!',
@@ -58,6 +19,24 @@ const features = [
     ),
     blob: 'radial-gradient(circle at 85% 10%, #a7f3d055 0%, #6ee7b722 40%, transparent 70%)',
     linkColor: 'text-emerald-600 hover:text-emerald-700',
+  },
+  {
+    key: 'mentor',
+    title: 'Mentor',
+    desc: 'Connect with experienced mentors to guide your learning journey and career decisions.',
+    linkLabel: 'Know More',
+    to: '/mentor',
+    iconColor: '#f97316',
+    iconBg: '#fff7ed',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+    ),
+    blob: 'radial-gradient(circle at 85% 10%, #fde68a55 0%, #fb923c22 40%, transparent 70%)',
+    linkColor: 'text-orange-500 hover:text-orange-600',
   },
   {
     key: 'blog',
