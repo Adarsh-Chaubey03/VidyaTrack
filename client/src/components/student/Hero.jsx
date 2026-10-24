@@ -120,16 +120,13 @@ function Hero() {
           </div>
         </div>
 
-        {/* RIGHT column: image card */}
+        {/* RIGHT column: image only, no card wrapper */}
         <div className="flex-shrink-0 w-full md:w-[44%] lg:w-[42%] relative mt-4 md:mt-0">
-          <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/40 border border-white/10">
-            <img
-              src={assets.hero_img}
-              alt="Mentoring session"
-              className="w-full h-64 sm:h-72 md:h-80 object-cover object-center"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
-          </div>
+          <img
+            src={assets.hero_img}
+            alt="Mentoring session"
+            className="w-full h-64 sm:h-72 md:h-80 object-cover object-center"
+          />
 
           {/* Badge top-left */}
           <div className="absolute top-4 left-4 bg-[#0d2b1e]/90 backdrop-blur-sm border border-white/10 rounded-xl px-3 py-2 flex items-center gap-2 shadow-lg">

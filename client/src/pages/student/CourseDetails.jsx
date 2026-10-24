@@ -349,7 +349,7 @@ function CourseDetails() {
           {/* ══════════ RIGHT SIDEBAR ══════════ */}
           <aside className="w-full lg:w-[300px] shrink-0 mt-8 lg:mt-0">
             <div className="sticky top-24">
-              <div className="bg-[#0d3d28] border border-[#1a4030] rounded-2xl overflow-hidden shadow-2xl">
+              <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-md">
 
                 {/* Thumbnail */}
                 <div className="aspect-video overflow-hidden">
@@ -364,14 +364,14 @@ function CourseDetails() {
                 <div className="p-5 space-y-4">
                   {/* Price */}
                   {isFree ? (
-                    <p className="text-2xl font-extrabold text-white">Free</p>
+                    <p className="text-2xl font-extrabold text-gray-900">Free</p>
                   ) : (
                     <div className="flex items-baseline gap-3">
-                      <span className="text-2xl font-extrabold text-white">{currency}{discountedPrice}</span>
+                      <span className="text-2xl font-extrabold text-gray-900">{currency}{discountedPrice}</span>
                       {discount > 0 && (
                         <>
-                          <span className="text-sm text-gray-500 line-through">{currency}{coursePrice.toFixed(2)}</span>
-                          <span className="text-xs font-bold text-emerald-400">{discount}% off</span>
+                          <span className="text-sm text-gray-400 line-through">{currency}{coursePrice.toFixed(2)}</span>
+                          <span className="text-xs font-bold text-emerald-600">{discount}% off</span>
                         </>
                       )}
                     </div>
@@ -379,7 +379,7 @@ function CourseDetails() {
 
                   {/* Message */}
                   {enrollmentMessage && (
-                    <div className={`p-3 rounded-lg text-xs font-medium ${enrollmentMessage.toLowerCase().includes('success') ? 'bg-emerald-900/60 text-emerald-300 border border-emerald-700' : 'bg-red-900/40 text-red-300 border border-red-700'}`}>
+                    <div className={`p-3 rounded-lg text-xs font-medium ${enrollmentMessage.toLowerCase().includes('success') ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-600 border border-red-200'}`}>
                       {enrollmentMessage}
                     </div>
                   )}
@@ -390,14 +390,14 @@ function CourseDetails() {
                     disabled={enrolling}
                     className={`w-full py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
                       isEnrolled
-                        ? 'bg-white text-[#042d1e] hover:bg-gray-100'
-                        : 'bg-emerald-400 hover:bg-emerald-300 text-[#042d1e]'
+                        ? 'bg-gray-900 text-white hover:bg-gray-800'
+                        : 'bg-emerald-500 hover:bg-emerald-400 text-white'
                     } ${enrolling ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     {enrolling
                       ? <><svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Enrolling...</>
                       : isEnrolled ? '▶  Continue Learning'
-                      : isFree ? <> Enroll Now  →</>
+                      : isFree ? 'Enroll Now  →'
                       : 'Pay & Enroll'
                     }
                   </button>
@@ -405,13 +405,13 @@ function CourseDetails() {
                   {/* Includes list */}
                   <ul className="space-y-2.5 pt-1">
                     {[
-                      { icon: <CheckSmall />, text: 'Full lifetime access' },
-                      { icon: <CheckSmall />, text: 'Mentor-reviewed assignments' },
-                      { icon: <CheckSmall />, text: 'Certificate of completion' },
-                      { icon: <CheckSmall />, text: 'Access on mobile & desktop' },
+                      { text: 'Full lifetime access' },
+                      { text: 'Mentor-reviewed assignments' },
+                      { text: 'Certificate of completion' },
+                      { text: 'Access on mobile & desktop' },
                     ].map((item, i) => (
-                      <li key={i} className="flex items-center gap-2.5 text-gray-300 text-sm">
-                        {item.icon}
+                      <li key={i} className="flex items-center gap-2.5 text-gray-600 text-sm">
+                        <CheckSmall />
                         {item.text}
                       </li>
                     ))}
@@ -424,18 +424,18 @@ function CourseDetails() {
       </div>
 
       {/* ── Mobile floating bar ── */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#0d3d28] border-t border-[#1a4030] z-50 px-4 py-3">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50 px-4 py-3">
         <div className="flex items-center gap-3 max-w-lg mx-auto">
           <div className="flex-1">
             {isFree
-              ? <span className="text-lg font-bold text-emerald-400">Free</span>
-              : <span className="text-lg font-bold text-white">{currency}{discountedPrice}</span>}
+              ? <span className="text-lg font-bold text-emerald-600">Free</span>
+              : <span className="text-lg font-bold text-gray-900">{currency}{discountedPrice}</span>}
           </div>
           <button
             onClick={() => handleEnroll()}
             disabled={enrolling}
             className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition ${
-              isEnrolled ? 'bg-white text-[#042d1e]' : 'bg-emerald-400 text-[#042d1e]'
+              isEnrolled ? 'bg-gray-900 text-white' : 'bg-emerald-500 text-white'
             } ${enrolling ? 'opacity-50' : ''}`}
           >
             {isEnrolled ? '▶ Continue' : isFree ? 'Enroll Free' : 'Pay & Enroll'}
