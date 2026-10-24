@@ -87,18 +87,30 @@ app.use(async (req, res, next) => {
 });
 
 // ── CORS ───────────────────────────────────────────────────────────────────
+const defaultCorsOrigins = [
+    'http://localhost:5174',
+    'http://localhost:5175',
+    'http://localhost:5176',
+    'http://localhost:5177',
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'https://vidya-track-xi.vercel.app',
+    'https://vidya-track-n45f.vercel.app',
+    'https://vidya-track-nd5f.vercel.app',
+    'https://vidyatrack.online',
+    'https://www.vidyatrack.online'
+];
+
+const corsOrigins = [
+    ...defaultCorsOrigins,
+    ...(process.env.CORS_ORIGINS || '')
+        .split(',')
+        .map((origin) => origin.trim().replace(/\/+$/, ''))
+        .filter(Boolean)
+];
+
 app.use(cors({
-    origin: [
-        'http://localhost:5174',
-        'http://localhost:5175',
-        'http://localhost:5176',
-        'http://localhost:5177',
-        'http://localhost:3000',
-        'http://localhost:5173',
-        'https://vidya-track-xi.vercel.app',
-        'https://vidya-track-n45f.vercel.app',
-        'https://vidya-track-nd5f.vercel.app'
-    ],
+    origin: corsOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
