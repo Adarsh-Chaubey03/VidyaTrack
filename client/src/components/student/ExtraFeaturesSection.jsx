@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import mentorSpotlightImage from '../../assets/s1.png';
+import resumeSpotlightImage from '../../assets/s2.png';
+import copilotSpotlightImage from '../../assets/s3.png';
 
 /* ── Spotlight slide data ── */
 const slides = [
@@ -14,7 +17,7 @@ const slides = [
     /* Quote-mark icon bg */
     iconBg: '#e0f2fe',
     iconStroke: '#0ea5e9',
-    image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600&h=400&fit=crop&crop=center',
+    image: mentorSpotlightImage,
   },
   {
     key: 'resume',
@@ -26,7 +29,7 @@ const slides = [
     btnColor: 'bg-blue-600 hover:bg-blue-700',
     iconBg: '#dbeafe',
     iconStroke: '#2563eb',
-    image: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=600&h=400&fit=crop&crop=center',
+    image: resumeSpotlightImage,
   },
   {
     key: 'copilot',
@@ -38,7 +41,7 @@ const slides = [
     btnColor: 'bg-cyan-600 hover:bg-cyan-700',
     iconBg: '#cffafe',
     iconStroke: '#0891b2',
-    image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=400&fit=crop&crop=center',
+    image: copilotSpotlightImage,
   },
 ];
 
