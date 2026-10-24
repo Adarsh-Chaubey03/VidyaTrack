@@ -121,11 +121,11 @@ function Hero() {
         </div>
 
         {/* RIGHT column: image only, no card wrapper */}
-        <div className="flex-shrink-0 w-full md:w-[48%] lg:w-[46%] relative mt-4 md:mt-0">
+        <div className="flex-shrink-0 w-full md:w-[48%] lg:w-[46%] mt-4 md:mt-0">
           <img
             src={assets.hero_img}
             alt="Mentoring session"
-            className="w-full h-72 sm:h-80 md:h-96 object-cover object-center"
+            className="w-full h-auto object-contain"
           />
         </div>
       </div>
