@@ -1,79 +1,120 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Facebook, Twitter, Linkedin, Mail } from 'lucide-react';
+import { Twitter, Linkedin, Instagram, Mail } from 'lucide-react';
+import { assets } from '../../assets/assets';
+
+/* ── Small icon helpers for link rows ── */
+const BookIcon   = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>;
+const UsersIcon  = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
+const EditIcon   = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>;
+const HelpIcon   = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>;
+const HeadsetIcon= () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>;
+const FileIcon   = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>;
+const ShieldIcon = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>;
+const MsgIcon    = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>;
+const MailIcon2  = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>;
+
+const LINK_CLS = 'flex items-center gap-2.5 text-gray-400 hover:text-emerald-400 text-sm transition-colors duration-150';
 
 function Footer() {
   return (
-    <footer className="w-full bg-[#042d1e] border-t border-[#1a3d2b] pt-8 md:pt-12 pb-4 flex flex-col items-center justify-center">
-      <div className="w-full flex justify-center items-center px-1 md:px-2">
-        <div className="rounded-2xl md:rounded-3xl bg-emerald-50 shadow-2xl p-4 md:p-6 flex flex-col gap-4 md:gap-8 max-w-8xl w-full mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-          {/* Brand Section */}
-            <div className="flex flex-col items-center text-center col-span-2 md:col-span-1">
-              <h2 className="text-xl md:text-2xl font-extrabold text-emerald-600 mb-1 md:mb-2">VidyaTrack</h2>
-              <p className="text-gray-600 mb-2 md:mb-4 text-xs md:text-sm">
-                Empowering learners with world-class education anywhere, anytime.
-              </p>
-              <div className="flex gap-2 md:gap-3 justify-center">
-                <a href="#" className="bg-emerald-100 hover:bg-emerald-200 text-emerald-600 rounded-full p-2 transition">
-                  <Facebook size={18} />
+    <footer className="w-full bg-[#042d1e]">
+      {/* ── Main content ── */}
+      <div className="w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 lg:px-20 pt-14 pb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
+
+          {/* ── Brand ── */}
+          <div className="flex flex-col gap-4">
+            <Link to="/" className="flex items-center">
+              <img
+                src={assets.logo}
+                alt="VidyaTrack"
+                className="w-32 sm:w-36"
+                style={{ filter: 'brightness(1.1)' }}
+              />
+            </Link>
+            <p className="text-gray-400 text-sm leading-relaxed max-w-[220px]">
+              Empowering learners with world-class education anywhere, anytime.
+            </p>
+            {/* Social icons — dark rounded squares, matching image */}
+            <div className="flex items-center gap-2 mt-1">
+              {[
+                { icon: <Linkedin size={16} />,   href: '#' },
+                { icon: <Twitter size={16} />,    href: '#' },
+                { icon: <Instagram size={16} />,  href: '#' },
+                { icon: <Mail size={16} />,       href: '#' },
+              ].map(({ icon, href }, i) => (
+                <a
+                  key={i}
+                  href={href}
+                  className="w-9 h-9 rounded-xl bg-[#0d3d28] hover:bg-emerald-700 flex items-center justify-center text-gray-300 hover:text-white transition-colors duration-150"
+                >
+                  {icon}
                 </a>
-                <a href="#" className="bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full p-2 transition">
-                  <Twitter size={18} />
-                </a>
-                <a href="#" className="bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full p-2 transition">
-                  <Linkedin size={18} />
-                </a>
-                <a href="#" className="bg-pink-100 hover:bg-pink-200 text-pink-500 rounded-full p-2 transition">
-                  <Mail size={18} />
-                </a>
-              </div>
+              ))}
             </div>
-            {/* Explore Section */}
-            <div className="flex flex-col items-center text-center">
-              <h3 className="text-base md:text-lg font-bold text-emerald-600 mb-2 md:mb-4">Explore</h3>
-              <ul className="space-y-1 md:space-y-2 text-sm">
-                <li><Link to="/course-list" className="hover:text-emerald-600 transition cursor-pointer">Courses</Link></li>
-                <li><Link to="/about" className="hover:text-emerald-600 transition cursor-pointer">About Us</Link></li>
-                <li><Link to="/blog" className="hover:text-emerald-600 transition cursor-pointer">Blog</Link></li>
-                <li><Link to="/faqs" className="hover:text-emerald-600 transition cursor-pointer">FAQs</Link></li>
+          </div>
+
+          {/* ── Explore ── */}
+          <div className="flex flex-col gap-4">
+            <h3 className="text-white text-base font-bold">Explore</h3>
+            <ul className="flex flex-col gap-3">
+              <li><Link to="/course-list" className={LINK_CLS}><BookIcon />Courses</Link></li>
+              <li><Link to="/about"       className={LINK_CLS}><UsersIcon />About Us</Link></li>
+              <li><Link to="/blog"        className={LINK_CLS}><EditIcon />Blog</Link></li>
+              <li><Link to="/faqs"        className={LINK_CLS}><HelpIcon />FAQs</Link></li>
             </ul>
           </div>
-            {/* Support Section */}
-            <div className="flex flex-col items-center text-center">
-              <h3 className="text-base md:text-lg font-bold text-emerald-600 mb-2 md:mb-4">Support</h3>
-              <ul className="space-y-1 md:space-y-2 text-sm">
-                <li><Link to="/contact" className="hover:text-emerald-600 transition cursor-pointer">Contact Us</Link></li>
-                <li><Link to="/terms" className="hover:text-emerald-600 transition cursor-pointer">Terms of Service</Link></li>
-                <li><Link to="/privacy-policy" className="hover:text-emerald-600 transition cursor-pointer">Privacy Policy</Link></li>
-                <li><Link to="/feedback" className="hover:text-emerald-600 transition cursor-pointer">Feedback</Link></li>
+
+          {/* ── Support ── */}
+          <div className="flex flex-col gap-4">
+            <h3 className="text-white text-base font-bold">Support</h3>
+            <ul className="flex flex-col gap-3">
+              <li><Link to="/contact"        className={LINK_CLS}><HeadsetIcon />Contact Us</Link></li>
+              <li><Link to="/terms"          className={LINK_CLS}><FileIcon />Terms of Service</Link></li>
+              <li><Link to="/privacy-policy" className={LINK_CLS}><ShieldIcon />Privacy Policy</Link></li>
+              <li><Link to="/feedback"       className={LINK_CLS}><MsgIcon />Feedback</Link></li>
             </ul>
           </div>
-            {/* Newsletter Section */}
-            <div className="flex flex-col items-center text-center mr-1 col-span-2 md:col-span-1">
-              <h3 className="text-base md:text-lg font-bold text-emerald-600 mb-2 md:mb-4">Stay Updated</h3>
-              <p className="text-gray-600 mb-2 md:mb-4 text-xs md:text-sm">
-                Join our newsletter for the latest updates and offers.
-              </p>
-              <form className="w-full max-w-xs flex flex-col gap-2">
-                <input
-                  type="email"
-                  placeholder="Your email address"
-                  className="w-full px-3 md:px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-400 outline-none text-sm"
-                />
+
+          {/* ── Stay Updated ── */}
+          <div className="flex flex-col gap-4">
+            <h3 className="text-white text-base font-bold">Stay Updated</h3>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Join our newsletter for the latest updates, learning resources, and offers.
+            </p>
+            <form
+              className="flex items-center gap-0 bg-[#0d3d28] border border-[#1a5438] rounded-xl overflow-hidden pr-1 py-1 pl-3"
+              onSubmit={e => e.preventDefault()}
+            >
+              <MailIcon2 />
+              <input
+                type="email"
+                placeholder="Your email address"
+                className="flex-1 bg-transparent text-sm text-gray-300 placeholder-gray-500 outline-none ml-2"
+              />
               <button
                 type="submit"
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg py-2 transition"
+                className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-semibold rounded-lg px-4 py-2 transition-colors duration-150 shrink-0"
               >
-                  Subscribe
+                Subscribe <span className="text-base leading-none">→</span>
               </button>
             </form>
           </div>
+
         </div>
-      {/* Footer Bottom */}
-          <div className="flex flex-col md:flex-row justify-between items-center border-t border-gray-200 pt-3 md:pt-4">
-            <p className="text-xs md:text-sm text-gray-500">&copy; {new Date().getFullYear()} VidyaTrack. All rights reserved.</p>
-            <p className="text-xs md:text-sm text-gray-400 mt-1 md:mt-0">Made by Adarsh Chaubey</p>
+      </div>
+
+      {/* ── Bottom bar ── */}
+      <div className="border-t border-[#1a3d2b]">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 lg:px-20 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <p className="text-gray-500 text-xs sm:text-sm">
+            &copy; {new Date().getFullYear()} VidyaTrack. All rights reserved.
+          </p>
+          <div className="flex items-center gap-1.5">
+            <div className="w-px h-4 bg-[#1a3d2b] hidden sm:block mx-2" />
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#10b981" stroke="none"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
+            <p className="text-gray-500 text-xs sm:text-sm">Made by Adarsh Chaubey</p>
           </div>
         </div>
       </div>

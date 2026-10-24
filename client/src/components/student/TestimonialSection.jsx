@@ -4,11 +4,18 @@ import { assets, dummyTestimonial } from '../../assets/assets';
 function TestimonialSection() {
     return (
         <div className='pb-14 px-8 md:px-20 mt-10'>
-            <h2 className='text-3xl font-semibold text-gray-800 dark:text-white'>Testimonials</h2>
-        
-                <p className='md:text-base text-sm text-gray-600 dark:text-gray-400 mt-3 max-w-2xl mx-auto text-center'>
-                    Hear from our students who have benefited from our expert courses and transformed their careers.
-                </p>
+            {/* Badge */}
+            <div className="inline-flex items-center border border-gray-300 bg-white rounded-full px-3 py-1 mb-4">
+                <span className="text-gray-500 text-xs font-semibold tracking-widest uppercase">Testimonials</span>
+            </div>
+
+            <h2 className='text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight max-w-[560px] mb-3'>
+                Hear from students who transformed their careers
+            </h2>
+
+            <p className='text-gray-400 text-sm sm:text-base max-w-md'>
+                Real outcomes from real learners — placed at companies you know.
+            </p>
            
 
 
