@@ -121,41 +121,12 @@ function Hero() {
         </div>
 
         {/* RIGHT column: image only, no card wrapper */}
-        <div className="flex-shrink-0 w-full md:w-[44%] lg:w-[42%] relative mt-4 md:mt-0">
+        <div className="flex-shrink-0 w-full md:w-[48%] lg:w-[46%] relative mt-4 md:mt-0">
           <img
             src={assets.hero_img}
             alt="Mentoring session"
-            className="w-full h-64 sm:h-72 md:h-80 object-cover object-center"
+            className="w-full h-72 sm:h-80 md:h-96 object-cover object-center"
           />
-
-          {/* Badge top-left */}
-          <div className="absolute top-4 left-4 bg-[#0d2b1e]/90 backdrop-blur-sm border border-white/10 rounded-xl px-3 py-2 flex items-center gap-2 shadow-lg">
-            <div className="w-7 h-7 rounded-full bg-emerald-700/60 flex items-center justify-center">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
-              </svg>
-            </div>
-            <div>
-              <p className="text-white text-xs font-bold leading-tight">50+ Mentors</p>
-              <p className="text-gray-400 text-[10px] leading-tight">from top companies</p>
-            </div>
-          </div>
-
-          {/* Badge bottom-right */}
-          <div className="absolute bottom-4 right-4 bg-[#0d2b1e]/90 backdrop-blur-sm border border-white/10 rounded-xl px-3 py-2 flex items-center gap-2 shadow-lg">
-            <div className="w-7 h-7 rounded-full bg-orange-700/60 flex items-center justify-center">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fb923c" strokeWidth="2">
-                <circle cx="12" cy="12" r="10"/>
-                <polygon points="10 8 16 12 10 16 10 8" fill="#fb923c" stroke="none"/>
-              </svg>
-            </div>
-            <div>
-              <p className="text-white text-xs font-bold leading-tight">1,200+ Lectures</p>
-              <p className="text-gray-400 text-[10px] leading-tight">recorded &amp; on-demand</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
