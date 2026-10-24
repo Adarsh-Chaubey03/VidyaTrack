@@ -124,7 +124,7 @@ function Hero() {
         <div className="flex-shrink-0 w-full md:w-[44%] lg:w-[42%] relative mt-4 md:mt-0">
           <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/40 border border-white/10">
             <img
-              src={assets.mentor_bg}
+              src={assets.hero_img}
               alt="Mentoring session"
               className="w-full h-64 sm:h-72 md:h-80 object-cover object-center"
             />

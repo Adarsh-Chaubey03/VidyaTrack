@@ -50,6 +50,7 @@ import b2 from './b2.jpg';
 import g1 from './g1.jpg';
 import g2 from './g2.jpg';
 import default_thumbnail from './dthumbnaail.png';
+import hero_img from './hero.png';
 
 
 export const assets = {
@@ -104,7 +105,8 @@ export const assets = {
     learning,
     eduLogo,
     mentor_bg,
-    default_thumbnail
+    default_thumbnail,
+    hero_img,
 }
 
 export const dummyEducatorData = {

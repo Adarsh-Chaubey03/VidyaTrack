@@ -121,10 +121,10 @@ function ExploreCategories() {
             <span className="text-gray-500 text-xs font-semibold tracking-widest uppercase">Explore Categories</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight max-w-md">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight max-w-lg">
             Browse our wide range of tech courses by topic
           </h2>
-          <p className="text-gray-500 text-sm mt-2 max-w-sm leading-relaxed">
+          <p className="text-amber-600 text-sm mt-2 max-w-sm leading-relaxed">
             Handpicked tracks built with industry mentors — from fundamentals to production-grade skills.
           </p>
         </div>

@@ -4,7 +4,7 @@ import { Facebook, Twitter, Linkedin, Mail } from 'lucide-react';
 
 function Footer() {
   return (
-    <footer className="w-full bg-gradient-to-br from-emerald-50 to-emerald-100 border-t border-gray-200 pt-8 md:pt-12 pb-4 flex flex-col items-center justify-center">
+    <footer className="w-full bg-[#0d2b1e] border-t border-[#1a3d2b] pt-8 md:pt-12 pb-4 flex flex-col items-center justify-center">
       <div className="w-full flex justify-center items-center px-1 md:px-2">
         <div className="rounded-2xl md:rounded-3xl bg-white shadow-2xl p-4 md:p-6 flex flex-col gap-4 md:gap-8 max-w-8xl w-full mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
