@@ -235,10 +235,10 @@ function Mentor() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-4xl mx-auto">
+          <div className="flex flex-row items-center gap-0 max-w-4xl mx-auto overflow-x-auto">
             {STEPS.map((step, i) => (
               <React.Fragment key={step.num}>
-                <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-sm transition-shadow">
+                <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-sm transition-shadow flex-1 min-w-[180px]">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${step.color}`}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d={step.iconPath}/>
@@ -248,10 +248,9 @@ function Mentor() {
                   <h3 className="text-base font-bold text-gray-900 mb-2">{step.title}</h3>
                   <p className="text-sm text-gray-500 leading-relaxed">{step.desc}</p>
                 </div>
-                {/* Arrow between cards on desktop */}
                 {i < STEPS.length - 1 && (
-                  <div className="hidden md:flex items-center justify-center -mx-8 relative z-10">
-                    <svg width="32" height="16" viewBox="0 0 32 16" fill="none">
+                  <div className="flex items-center justify-center px-3 shrink-0">
+                    <svg width="28" height="16" viewBox="0 0 32 16" fill="none">
                       <path d="M0 8h28M22 2l6 6-6 6" stroke="#d1d5db" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </div>
