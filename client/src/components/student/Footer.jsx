@@ -84,18 +84,22 @@ function Footer() {
               Join our newsletter for the latest updates, learning resources, and offers.
             </p>
             <form
-              className="flex items-center gap-0 bg-[#0d3d28] border border-[#1a5438] rounded-xl overflow-hidden pr-1 py-1 pl-3"
+              className="flex flex-col gap-2"
               onSubmit={e => e.preventDefault()}
             >
-              <MailIcon2 />
-              <input
-                type="email"
-                placeholder="Your email address"
-                className="flex-1 bg-transparent text-sm text-gray-300 placeholder-gray-500 outline-none ml-2"
-              />
+              {/* Email input row */}
+              <div className="flex items-center gap-2 bg-[#0d3d28] border border-[#1a5438] rounded-xl px-3 py-2.5">
+                <MailIcon2 />
+                <input
+                  type="email"
+                  placeholder="Your email address"
+                  className="flex-1 bg-transparent text-sm text-gray-300 placeholder-gray-500 outline-none ml-1.5"
+                />
+              </div>
+              {/* Subscribe button — full width below */}
               <button
                 type="submit"
-                className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-semibold rounded-lg px-4 py-2 transition-colors duration-150 shrink-0"
+                className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-semibold rounded-xl px-4 py-2.5 transition-colors duration-150"
               >
                 Subscribe <span className="text-base leading-none">→</span>
               </button>
