@@ -127,13 +127,13 @@ function Navbar() {
         {/* CENTER: Nav links */}
         <div className="hidden md:flex items-center gap-1 lg:gap-2">
           <NavLink to="/" end className={navCls}>Home</NavLink>
+          {isAuthenticated() && (
+            <NavLink to="/my-dashboard" className={navCls}>Dashboard</NavLink>
+          )}
           <NavLink to="/course-list" className={navCls}>Courses</NavLink>
           <NavLink to="/mentor" className={navCls}>Mentor</NavLink>
           <NavLink to="/copilot" className={navCls}>Copilot</NavLink>
           <NavLink to="/resume" className={navCls}>Resume</NavLink>
-          {isAuthenticated() && (
-            <NavLink to="/my-dashboard" className={navCls}>Dashboard</NavLink>
-          )}
         </div>
 
         {/* RIGHT: Bell + Auth buttons */}
