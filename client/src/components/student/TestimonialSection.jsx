@@ -14,7 +14,7 @@ function TestimonialSection() {
             </h2>
 
             <p className='text-gray-400 text-sm sm:text-base max-w-md'>
-                Real outcomes from real learners — placed at companies you know.
+                Real outcomes from real learners, placed at companies you know.
             </p>
            
 

@@ -88,7 +88,7 @@ function Hero() {
 
           {/* Subtitle */}
           <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-6 max-w-md">
-            Don't journey solo — unlock your potential with 1:1 mentorship and
+            Don't journey solo. Unlock your potential with 1:1 mentorship and
             career-building tools from top experts in tech, business, and beyond.
           </p>
 
@@ -108,9 +108,9 @@ function Hero() {
 
             <div className="flex items-center gap-3">
               <div className="flex -space-x-2.5">
-                <img src={assets.profile_img_1} alt="" className="w-8 h-8 rounded-full border-2 border-[#053d28] object-cover" />
-                <img src={assets.profile_img_2} alt="" className="w-8 h-8 rounded-full border-2 border-[#053d28] object-cover" />
-                <img src={assets.profile_img_3} alt="" className="w-8 h-8 rounded-full border-2 border-[#053d28] object-cover" />
+                <img src={assets.b1} alt="" className="w-8 h-8 rounded-full border-2 border-[#053d28] object-cover" />
+                <img src={assets.b2} alt="" className="w-8 h-8 rounded-full border-2 border-[#053d28] object-cover" />
+                <img src={assets.g1} alt="" className="w-8 h-8 rounded-full border-2 border-[#053d28] object-cover" />
               </div>
               <div className="text-left">
                 <p className="text-white text-xs font-semibold leading-tight">4.7 average mentor rating</p>

@@ -125,7 +125,7 @@ function ExploreCategories() {
             Browse our wide range of tech courses by topic
           </h2>
           <p className="text-amber-600 text-sm mt-2 max-w-sm leading-relaxed">
-            Handpicked tracks built with industry mentors — from fundamentals to production-grade skills.
+            Handpicked tracks built with industry mentors, from fundamentals to production-grade skills.
           </p>
         </div>
 
@@ -171,4 +171,3 @@ function ExploreCategories() {
 }
 
 export default ExploreCategories;
-

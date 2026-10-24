@@ -155,7 +155,7 @@ function Feature() {
           <span className="text-emerald-500">learning</span> to placed
         </h2>
         <p className="text-gray-500 text-sm sm:text-base max-w-md leading-relaxed">
-          Mentorship, courses, AI guidance and resume craft — every tool here points
+          Mentorship, courses, AI guidance and resume craft. Every tool here points
           at one outcome: your next role.
         </p>
       </div>

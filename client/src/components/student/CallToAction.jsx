@@ -27,7 +27,7 @@ function CallToAction() {
       </h2>
 
       <p className="text-emerald-100/90 text-sm sm:text-base max-w-xl mb-8 leading-relaxed">
-        Join thousands of learners who are already building the future they want — with courses, mentors, and AI-powered tools all in one place.
+        Join thousands of learners who are already building the future they want, with courses, mentors, and AI-powered tools all in one place.
       </p>
 
       <div className="flex flex-wrap gap-4 justify-center">
