@@ -104,10 +104,10 @@ function ExploreCategories() {
 
   const filtered = useMemo(() => {
     if (!allCourses) return [];
-    if (activeTab === 'all') return allCourses.slice(0, 8);
+    if (activeTab === 'all') return allCourses.slice(0, 4);
     return allCourses
       .filter(c => (c.category || c.courseCategory || '').toLowerCase() === activeTab)
-      .slice(0, 8);
+      .slice(0, 4);
   }, [allCourses, activeTab]);
 
   return (
@@ -171,3 +171,4 @@ function ExploreCategories() {
 }
 
 export default ExploreCategories;
+
