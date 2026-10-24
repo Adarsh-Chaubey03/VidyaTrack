@@ -149,9 +149,9 @@ function CourseList() {
                             </p>
                         </div>
 
-                        <div className="flex items-center gap-3">
-                            {/* Search box */}
-                            <div className="relative flex-1 sm:w-64">
+                        <div className="flex items-center gap-2 flex-1 sm:flex-none sm:justify-end">
+                            {/* Search box — wider, pushes left */}
+                            <div className="relative flex-1 sm:w-56 lg:w-72">
                                 <input
                                     type="text"
                                     placeholder="Search courses..."
@@ -164,16 +164,38 @@ function CourseList() {
                                 </svg>
                             </div>
 
-                            {/* Sort */}
-                            <select
-                                value={selectedSort}
-                                onChange={(e) => { setSelectedSort(e.target.value); setCurrentPage(1); }}
-                                className="px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white hidden sm:block"
-                            >
-                                {SORT_OPTIONS.map(opt => (
-                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                ))}
-                            </select>
+                            {/* Level dropdown — right of search */}
+                            <div className="hidden sm:block relative">
+                                <select
+                                    value={selectedLevel}
+                                    onChange={(e) => { setSelectedLevel(e.target.value); setCurrentPage(1); }}
+                                    className="appearance-none pl-3 pr-8 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-gray-700 cursor-pointer"
+                                >
+                                    <option value="">Level</option>
+                                    {LEVELS.map(l => (
+                                        <option key={l} value={l} className="capitalize">{l.charAt(0).toUpperCase() + l.slice(1)}</option>
+                                    ))}
+                                </select>
+                                <svg className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+
+                            {/* Sort dropdown */}
+                            <div className="hidden sm:block relative">
+                                <select
+                                    value={selectedSort}
+                                    onChange={(e) => { setSelectedSort(e.target.value); setCurrentPage(1); }}
+                                    className="appearance-none pl-3 pr-8 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-gray-700 cursor-pointer"
+                                >
+                                    {SORT_OPTIONS.map(opt => (
+                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                    ))}
+                                </select>
+                                <svg className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
 
                             {/* Mobile filter toggle */}
                             <button

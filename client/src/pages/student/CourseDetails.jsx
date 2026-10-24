@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
 import { SkeletonCourseDetail } from '../../components/skeleton/Skeleton';
-import { assets } from '../../assets/assets';
+import { assets, dummyCourses } from '../../assets/assets';
 import humanizeDuration from 'humanize-duration';
 import Footer from '../../components/student/Footer';
 import { apiService } from '../../services/api';
@@ -84,26 +84,57 @@ function CourseDetails() {
   } = useContext(AppContext);
 
   useEffect(() => {
-    // First try to find in already-loaded courses
+    // Helper: extract course from any API response shape
+    const extractCourse = (result) => {
+      if (!result) return null;
+      // { success, course } or { course }
+      if (result.course) return result.course;
+      // { success, courseData }
+      if (result.courseData) return result.courseData;
+      // { success, data }
+      if (result.data && result.data._id) return result.data;
+      // result itself is the course
+      if (result._id) return result;
+      return null;
+    };
+
     const cached = allCourses.find((c) => c._id === id);
-    if (cached && cached.courseContent?.length > 0) {
+
+    // If cached course already has courseContent, use it immediately
+    if (cached?.courseContent?.length > 0) {
       setCourseData(cached);
-    } else {
-      // Fetch full course detail from API (includes courseContent)
-      apiService.courses.getById(id)
-        .then(result => {
-          if (result.success && result.course) {
-            setCourseData(result.course);
-          } else if (result.course) {
-            setCourseData(result.course);
-          } else if (cached) {
-            setCourseData(cached);
-          }
-        })
-        .catch(() => {
-          if (cached) setCourseData(cached);
-        });
+      return;
     }
+
+    // Try API fetch for full detail
+    apiService.courses.getById(id)
+      .then(result => {
+        const course = extractCourse(result);
+        if (course?.courseContent?.length > 0) {
+          setCourseData(course);
+        } else if (course) {
+          // API returned course but no content — merge with dummy if available
+          const dummy = dummyCourses.find(d => d._id === id);
+          setCourseData(dummy ? { ...course, courseContent: dummy.courseContent } : course);
+        } else if (cached) {
+          // fallback to cached list item
+          const dummy = dummyCourses.find(d => d._id === id);
+          setCourseData(dummy ? { ...cached, courseContent: dummy.courseContent } : cached);
+        } else {
+          // Last resort: use dummy directly
+          const dummy = dummyCourses.find(d => d._id === id);
+          if (dummy) setCourseData(dummy);
+        }
+      })
+      .catch(() => {
+        // API failed — use cached or dummy
+        const dummy = dummyCourses.find(d => d._id === id);
+        if (cached) {
+          setCourseData(dummy ? { ...cached, courseContent: dummy.courseContent } : cached);
+        } else if (dummy) {
+          setCourseData(dummy);
+        }
+      });
   }, [allCourses, id]);
 
   /* ── Computed ── */
@@ -317,7 +348,9 @@ function CourseDetails() {
                 })}
               </div>
               {(!courseData.courseContent || courseData.courseContent.length === 0) && (
-                <p className="text-gray-400 text-sm py-4">No curriculum available yet.</p>
+                <div className="bg-white border border-gray-200 rounded-xl px-4 py-6 text-center">
+                  <p className="text-gray-400 text-sm">Curriculum is being prepared. Check back soon.</p>
+                </div>
               )}
               {totalChapters > 3 && (
                 <button onClick={toggleAll} className="mt-3 text-emerald-600 text-sm font-semibold hover:text-emerald-700 transition">
