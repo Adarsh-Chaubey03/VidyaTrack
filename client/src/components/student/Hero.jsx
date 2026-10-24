@@ -1,104 +1,168 @@
-import React from 'react'
-import SearchBar from './SearchBar'
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext.jsx';
+import { assets } from '../../assets/assets';
+import SearchBar from './SearchBar';
 
 function Hero() {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+
+  const handleGetStarted = () => {
+    if (isAuthenticated()) {
+      const el = document.getElementById('our-services');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/login');
+    }
+  };
+
   return (
     <div
-      className='pt-8 pb-8 md:pt-14 md:pb-12 flex flex-col items-center justify-center w-full px-5 md:px-0 space-y-4 md:space-y-6 text-center relative overflow-hidden'
+      className="w-full relative overflow-hidden"
       style={{
-        background: 'linear-gradient(160deg, #022c22 0%, #064e3b 30%, #065f46 55%, #0d9488 100%)',
+        background: 'linear-gradient(160deg,#042d1e 0%,#053d28 30%,#064e3b 65%,#075c45 100%)',
       }}
     >
-      {/* ── Subtle AI-themed SVG decorations ── */}
+      {/* ── Decorative background SVGs ── */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <svg className="absolute top-10 left-8 w-36 h-36 opacity-[0.13]" viewBox="0 0 160 160" fill="none">
+          <circle cx="30" cy="30" r="3.5" fill="white"/>
+          <circle cx="70" cy="15" r="3" fill="white"/>
+          <circle cx="115" cy="38" r="3.5" fill="white"/>
+          <circle cx="48" cy="72" r="3" fill="white"/>
+          <circle cx="92" cy="82" r="3.5" fill="white"/>
+          <circle cx="132" cy="68" r="3" fill="white"/>
+          <line x1="30" y1="30" x2="70" y2="15" stroke="white" strokeWidth="0.9"/>
+          <line x1="70" y1="15" x2="115" y2="38" stroke="white" strokeWidth="0.9"/>
+          <line x1="30" y1="30" x2="48" y2="72" stroke="white" strokeWidth="0.9"/>
+          <line x1="70" y1="15" x2="92" y2="82" stroke="white" strokeWidth="0.9"/>
+          <line x1="115" y1="38" x2="132" y2="68" stroke="white" strokeWidth="0.9"/>
+          <line x1="48" y1="72" x2="92" y2="82" stroke="white" strokeWidth="0.9"/>
+          <line x1="92" y1="82" x2="132" y2="68" stroke="white" strokeWidth="0.9"/>
+        </svg>
+        <svg className="absolute bottom-10 right-8 w-40 h-40 opacity-[0.11]" viewBox="0 0 128 128" fill="none">
+          <circle cx="64" cy="64" r="4" fill="white"/>
+          <circle cx="26" cy="38" r="3" fill="white"/>
+          <circle cx="102" cy="38" r="3" fill="white"/>
+          <circle cx="26" cy="90" r="3" fill="white"/>
+          <circle cx="102" cy="90" r="3" fill="white"/>
+          <circle cx="64" cy="14" r="2.5" fill="white"/>
+          <circle cx="64" cy="114" r="2.5" fill="white"/>
+          <line x1="64" y1="64" x2="26" y2="38" stroke="white" strokeWidth="0.8"/>
+          <line x1="64" y1="64" x2="102" y2="38" stroke="white" strokeWidth="0.8"/>
+          <line x1="64" y1="64" x2="26" y2="90" stroke="white" strokeWidth="0.8"/>
+          <line x1="64" y1="64" x2="102" y2="90" stroke="white" strokeWidth="0.8"/>
+          <line x1="64" y1="64" x2="64" y2="14" stroke="white" strokeWidth="0.8"/>
+          <line x1="64" y1="64" x2="64" y2="114" stroke="white" strokeWidth="0.8"/>
+          <line x1="26" y1="38" x2="64" y2="14" stroke="white" strokeWidth="0.6"/>
+          <line x1="102" y1="38" x2="64" y2="14" stroke="white" strokeWidth="0.6"/>
+          <line x1="26" y1="90" x2="64" y2="114" stroke="white" strokeWidth="0.6"/>
+          <line x1="102" y1="90" x2="64" y2="114" stroke="white" strokeWidth="0.6"/>
+          <line x1="26" y1="38" x2="26" y2="90" stroke="white" strokeWidth="0.6"/>
+          <line x1="102" y1="38" x2="102" y2="90" stroke="white" strokeWidth="0.6"/>
+        </svg>
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 60% 55% at 30% 60%,rgba(16,185,129,0.07) 0%,transparent 70%)' }} />
+      </div>
 
-      {/* Top-left: circuit / brain node cluster */}
-      <svg className="absolute top-6 left-6 w-40 h-40 opacity-[0.06] pointer-events-none" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="30" cy="30" r="4" fill="white"/>
-        <circle cx="70" cy="20" r="3" fill="white"/>
-        <circle cx="110" cy="40" r="4" fill="white"/>
-        <circle cx="50" cy="70" r="3.5" fill="white"/>
-        <circle cx="90" cy="80" r="4" fill="white"/>
-        <circle cx="130" cy="70" r="3" fill="white"/>
-        <circle cx="30" cy="110" r="3" fill="white"/>
-        <circle cx="70" cy="120" r="4" fill="white"/>
-        <circle cx="110" cy="110" r="3.5" fill="white"/>
-        <line x1="30" y1="30" x2="70" y2="20" stroke="white" strokeWidth="0.8"/>
-        <line x1="70" y1="20" x2="110" y2="40" stroke="white" strokeWidth="0.8"/>
-        <line x1="30" y1="30" x2="50" y2="70" stroke="white" strokeWidth="0.8"/>
-        <line x1="70" y1="20" x2="90" y2="80" stroke="white" strokeWidth="0.8"/>
-        <line x1="110" y1="40" x2="130" y2="70" stroke="white" strokeWidth="0.8"/>
-        <line x1="50" y1="70" x2="90" y2="80" stroke="white" strokeWidth="0.8"/>
-        <line x1="90" y1="80" x2="130" y2="70" stroke="white" strokeWidth="0.8"/>
-        <line x1="30" y1="110" x2="70" y2="120" stroke="white" strokeWidth="0.8"/>
-        <line x1="70" y1="120" x2="110" y2="110" stroke="white" strokeWidth="0.8"/>
-        <line x1="50" y1="70" x2="30" y2="110" stroke="white" strokeWidth="0.8"/>
-        <line x1="90" y1="80" x2="70" y2="120" stroke="white" strokeWidth="0.8"/>
-        <line x1="130" y1="70" x2="110" y2="110" stroke="white" strokeWidth="0.8"/>
-      </svg>
+      {/* ── Hero content ── */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-10 md:px-14 lg:px-20 pt-10 pb-16 md:pt-12 md:pb-20 flex flex-col md:flex-row items-center gap-10 md:gap-8">
 
-      {/* Top-right: small brain icon */}
-      <svg className="absolute top-10 right-10 w-24 h-24 opacity-[0.05] pointer-events-none" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M32 8c-4 0-7 2-9 5-3-1-7 0-9 3s-2 7 0 10c-3 2-5 6-4 10s4 7 8 8c1 4 4 7 8 8h12c4-1 7-4 8-8 4-1 7-4 8-8s-1-8-4-10c2-3 2-7 0-10s-6-4-9-3c-2-3-5-5-9-5z" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
-        <path d="M32 8v48M22 18c3 4 3 10 0 14M42 18c-3 4-3 10 0 14" stroke="white" strokeWidth="1" strokeLinecap="round"/>
-      </svg>
+        {/* LEFT column */}
+        <div className="flex-1 flex flex-col items-start text-left max-w-xl">
+          {/* Trusted badge */}
+          <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 mb-6">
+            <span className="text-emerald-400 text-sm">★</span>
+            <span className="text-white/80 text-xs sm:text-sm font-medium tracking-wide uppercase">
+              Trusted by 10,000+ Learners
+            </span>
+          </div>
 
-      {/* Bottom-left: data / chip pattern */}
-      <svg className="absolute bottom-8 left-8 w-32 h-32 opacity-[0.05] pointer-events-none" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="40" y="40" width="48" height="48" rx="6" stroke="white" strokeWidth="1.5"/>
-        <rect x="52" y="52" width="24" height="24" rx="3" stroke="white" strokeWidth="1"/>
-        {/* pins top */}
-        <line x1="52" y1="40" x2="52" y2="28" stroke="white" strokeWidth="1"/><line x1="64" y1="40" x2="64" y2="28" stroke="white" strokeWidth="1"/><line x1="76" y1="40" x2="76" y2="28" stroke="white" strokeWidth="1"/>
-        {/* pins bottom */}
-        <line x1="52" y1="88" x2="52" y2="100" stroke="white" strokeWidth="1"/><line x1="64" y1="88" x2="64" y2="100" stroke="white" strokeWidth="1"/><line x1="76" y1="88" x2="76" y2="100" stroke="white" strokeWidth="1"/>
-        {/* pins left */}
-        <line x1="40" y1="52" x2="28" y2="52" stroke="white" strokeWidth="1"/><line x1="40" y1="64" x2="28" y2="64" stroke="white" strokeWidth="1"/><line x1="40" y1="76" x2="28" y2="76" stroke="white" strokeWidth="1"/>
-        {/* pins right */}
-        <line x1="88" y1="52" x2="100" y2="52" stroke="white" strokeWidth="1"/><line x1="88" y1="64" x2="100" y2="64" stroke="white" strokeWidth="1"/><line x1="88" y1="76" x2="100" y2="76" stroke="white" strokeWidth="1"/>
-      </svg>
+          {/* Headline */}
+          <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold text-white leading-tight mb-4">
+            Empower Your Future:{' '}
+            <span className="text-emerald-400">
+              Personalized Growth &amp; Career Tools
+            </span>
+          </h1>
 
-      {/* Bottom-right: network graph dots */}
-      <svg className="absolute bottom-6 right-6 w-36 h-36 opacity-[0.06] pointer-events-none" viewBox="0 0 144 144" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="72" cy="72" r="5" fill="white"/>
-        <circle cx="30" cy="40" r="3" fill="white"/>
-        <circle cx="114" cy="40" r="3" fill="white"/>
-        <circle cx="30" cy="104" r="3" fill="white"/>
-        <circle cx="114" cy="104" r="3" fill="white"/>
-        <circle cx="72" cy="20" r="2.5" fill="white"/>
-        <circle cx="72" cy="124" r="2.5" fill="white"/>
-        <circle cx="20" cy="72" r="2.5" fill="white"/>
-        <circle cx="124" cy="72" r="2.5" fill="white"/>
-        <line x1="72" y1="72" x2="30" y2="40" stroke="white" strokeWidth="0.7"/>
-        <line x1="72" y1="72" x2="114" y2="40" stroke="white" strokeWidth="0.7"/>
-        <line x1="72" y1="72" x2="30" y2="104" stroke="white" strokeWidth="0.7"/>
-        <line x1="72" y1="72" x2="114" y2="104" stroke="white" strokeWidth="0.7"/>
-        <line x1="72" y1="72" x2="72" y2="20" stroke="white" strokeWidth="0.7"/>
-        <line x1="72" y1="72" x2="72" y2="124" stroke="white" strokeWidth="0.7"/>
-        <line x1="72" y1="72" x2="20" y2="72" stroke="white" strokeWidth="0.7"/>
-        <line x1="72" y1="72" x2="124" y2="72" stroke="white" strokeWidth="0.7"/>
-        <line x1="30" y1="40" x2="72" y2="20" stroke="white" strokeWidth="0.5"/>
-        <line x1="114" y1="40" x2="72" y2="20" stroke="white" strokeWidth="0.5"/>
-        <line x1="30" y1="104" x2="72" y2="124" stroke="white" strokeWidth="0.5"/>
-        <line x1="114" y1="104" x2="72" y2="124" stroke="white" strokeWidth="0.5"/>
-        <line x1="30" y1="40" x2="20" y2="72" stroke="white" strokeWidth="0.5"/>
-        <line x1="30" y1="104" x2="20" y2="72" stroke="white" strokeWidth="0.5"/>
-        <line x1="114" y1="40" x2="124" y2="72" stroke="white" strokeWidth="0.5"/>
-        <line x1="114" y1="104" x2="124" y2="72" stroke="white" strokeWidth="0.5"/>
-      </svg>
+          {/* Subtitle */}
+          <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-6 max-w-md">
+            Don't journey solo — unlock your potential with 1:1 mentorship and
+            career-building tools from top experts in tech, business, and beyond.
+          </p>
 
-      {/* Soft radial glow overlay */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 40%, rgba(16,185,129,0.12) 0%, transparent 70%)' }} />
+          {/* Search bar */}
+          <div className="w-full max-w-md mb-7">
+            <SearchBar />
+          </div>
 
-      <h1 className='text-2xl sm:text-3xl md:text-5xl font-bold text-white max-w-3xl mx-auto relative z-10'>
-        Empower Your Future: <span className='text-emerald-400'>Personalized Growth & Career Tools</span>
-      </h1>
-      <p className='text-gray-300 text-sm sm:text-base md:text-lg text-gray-200 max-w-2xl mx-auto z-10 px-2'>
-        Don't Journey Solo—Unlock Your Potential with 1:1 Mentorship and Career-Building Tools from Top Experts in Tech, Business, and Beyond!
-      </p>
-      <div className='z-10'>
-        <SearchBar/>
+          {/* Get Started + social proof */}
+          <div className="flex flex-wrap items-center gap-5">
+            <button
+              onClick={handleGetStarted}
+              className="flex items-center gap-2 bg-white text-[#042d1e] font-bold text-sm sm:text-base rounded-full px-6 py-2.5 hover:bg-gray-100 transition shadow-md"
+            >
+              Get Started <span>→</span>
+            </button>
+
+            <div className="flex items-center gap-3">
+              <div className="flex -space-x-2.5">
+                <img src={assets.profile_img_1} alt="" className="w-8 h-8 rounded-full border-2 border-[#053d28] object-cover" />
+                <img src={assets.profile_img_2} alt="" className="w-8 h-8 rounded-full border-2 border-[#053d28] object-cover" />
+                <img src={assets.profile_img_3} alt="" className="w-8 h-8 rounded-full border-2 border-[#053d28] object-cover" />
+              </div>
+              <div className="text-left">
+                <p className="text-white text-xs font-semibold leading-tight">4.7 average mentor rating</p>
+                <p className="text-gray-400 text-xs leading-tight">500+ sessions completed</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT column: image card */}
+        <div className="flex-shrink-0 w-full md:w-[44%] lg:w-[42%] relative mt-4 md:mt-0">
+          <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/40 border border-white/10">
+            <img
+              src={assets.mentor_bg}
+              alt="Mentoring session"
+              className="w-full h-64 sm:h-72 md:h-80 object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+          </div>
+
+          {/* Badge top-left */}
+          <div className="absolute top-4 left-4 bg-[#0d2b1e]/90 backdrop-blur-sm border border-white/10 rounded-xl px-3 py-2 flex items-center gap-2 shadow-lg">
+            <div className="w-7 h-7 rounded-full bg-emerald-700/60 flex items-center justify-center">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <div>
+              <p className="text-white text-xs font-bold leading-tight">50+ Mentors</p>
+              <p className="text-gray-400 text-[10px] leading-tight">from top companies</p>
+            </div>
+          </div>
+
+          {/* Badge bottom-right */}
+          <div className="absolute bottom-4 right-4 bg-[#0d2b1e]/90 backdrop-blur-sm border border-white/10 rounded-xl px-3 py-2 flex items-center gap-2 shadow-lg">
+            <div className="w-7 h-7 rounded-full bg-orange-700/60 flex items-center justify-center">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fb923c" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polygon points="10 8 16 12 10 16 10 8" fill="#fb923c" stroke="none"/>
+              </svg>
+            </div>
+            <div>
+              <p className="text-white text-xs font-bold leading-tight">1,200+ Lectures</p>
+              <p className="text-gray-400 text-[10px] leading-tight">recorded &amp; on-demand</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Hero
+export default Hero;
