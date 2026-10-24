@@ -114,7 +114,7 @@ function ExploreCategories() {
     <section className="w-full bg-[#f0f2f0] py-12 sm:py-16 px-5 sm:px-10 md:px-14 lg:px-20">
 
       {/* ── Header row ── */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6 text-left">
         <div>
           {/* Badge */}
           <div className="inline-flex items-center border border-gray-300 bg-white rounded-full px-3 py-1 mb-3">

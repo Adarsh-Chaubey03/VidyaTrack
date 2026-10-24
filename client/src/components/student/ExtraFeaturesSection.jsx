@@ -81,7 +81,7 @@ function ExtraFeaturesSection() {
     <section className="w-full bg-[#f0f2f0] py-12 sm:py-16 px-5 sm:px-10 md:px-14 lg:px-20">
 
       {/* ── Section header ── */}
-      <div className="flex items-start justify-between mb-8">
+      <div className="flex items-start justify-between mb-8 text-left">
         <div>
           {/* Badge */}
           <div className="inline-flex items-center border border-gray-300 bg-white rounded-full px-3 py-1 mb-3">

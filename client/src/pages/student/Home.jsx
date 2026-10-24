@@ -10,7 +10,7 @@ import ChatWidget from '../../components/ai/ChatWidget';
 
 function Home() {
     return (
-        <div className='flex flex-col items-center text-center'>
+        <div className='flex flex-col items-center'>
             <Hero />
             <Feature />
             <StatsSection />

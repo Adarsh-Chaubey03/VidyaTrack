@@ -165,7 +165,7 @@ function Feature() {
       className="w-full bg-[#f0f2f0] py-12 sm:py-16 px-5 sm:px-10 md:px-14 lg:px-20 scroll-mt-16"
     >
       {/* ── Section header ── */}
-      <div className="mb-8 sm:mb-10">
+      <div className="mb-8 sm:mb-10 text-left">
         {/* Badge */}
         <div className="inline-flex items-center border border-gray-300 rounded-full px-3 py-1 mb-4">
           <span className="text-gray-500 text-xs font-semibold tracking-widest uppercase">Our Top Services</span>

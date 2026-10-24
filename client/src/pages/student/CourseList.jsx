@@ -193,74 +193,144 @@ function CourseList() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex gap-6">
                 {/* Sidebar — Desktop */}
                 <aside className="hidden sm:block w-64 shrink-0">
-                    <div className="sticky top-24 space-y-6">
+                    <div className="sticky top-24 space-y-3">
+
                         {/* Clear all */}
                         {hasActiveFilters && (
                             <button
                                 onClick={clearAllFilters}
-                                className="w-full text-sm text-red-500 hover:text-red-600 font-medium py-2 px-3 rounded-lg border border-red-200 hover:bg-red-50 transition-colors"
+                                className="w-full text-sm text-red-500 hover:text-red-600 font-medium py-2 px-3 rounded-xl border border-red-200 hover:bg-red-50 transition-colors"
                             >
                                 ✕ Clear All Filters
                             </button>
                         )}
 
-                        {/* Categories */}
-                        <div>
-                            <h3 className="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Categories</h3>
-                            <div className="space-y-1">
-                                {categories.map(cat => (
-                                    <button
-                                        key={cat.slug}
-                                        onClick={() => { setSelectedCategory(selectedCategory === cat.slug ? '' : cat.slug); setCurrentPage(1); }}
-                                        className={`w-full text-left text-sm px-3 py-1.5 rounded-lg transition-colors ${selectedCategory === cat.slug
-                                            ? 'bg-emerald-100 text-emerald-700 font-medium'
-                                            : 'text-gray-600 hover:bg-gray-100'
-                                            }`}
-                                    >
-                                        {cat.icon} {cat.name}
-                                        {cat.courseCount > 0 && <span className="text-xs text-gray-400 ml-1">({cat.courseCount})</span>}
-                                    </button>
-                                ))}
+                        {/* ── Categories ── */}
+                        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                                <div className="flex items-center gap-2">
+                                    <span className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                                        </svg>
+                                    </span>
+                                    <span className="text-sm font-bold text-gray-900">Categories</span>
+                                </div>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                            </div>
+                            <div className="divide-y divide-gray-50">
+                                {categories.map(cat => {
+                                    const isActive = selectedCategory === cat.slug;
+                                    return (
+                                        <button
+                                            key={cat.slug}
+                                            onClick={() => { setSelectedCategory(isActive ? '' : cat.slug); setCurrentPage(1); }}
+                                            className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${isActive ? 'bg-emerald-50' : 'hover:bg-gray-50'}`}
+                                        >
+                                            {/* Category emoji icon in colored rounded square */}
+                                            <span className="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center text-base flex-shrink-0">
+                                                {cat.icon || '📚'}
+                                            </span>
+                                            <span className={`flex-1 text-sm ${isActive ? 'text-emerald-700 font-semibold' : 'text-gray-700'}`}>
+                                                {cat.name}
+                                            </span>
+                                            <span className="text-xs text-gray-400 bg-gray-100 rounded-full px-2 py-0.5 min-w-[24px] text-center">
+                                                {cat.courseCount ?? 0}
+                                            </span>
+                                            {/* Checkbox */}
+                                            <span className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 border ${isActive ? 'bg-emerald-500 border-emerald-500' : 'border-gray-300'}`}>
+                                                {isActive && (
+                                                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                                                        <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                                                    </svg>
+                                                )}
+                                            </span>
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
 
-                        {/* Level */}
-                        <div>
-                            <h3 className="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Level</h3>
-                            <div className="space-y-1">
-                                {LEVELS.map(level => (
-                                    <button
-                                        key={level}
-                                        onClick={() => { setSelectedLevel(selectedLevel === level ? '' : level); setCurrentPage(1); }}
-                                        className={`w-full text-left text-sm px-3 py-1.5 rounded-lg capitalize transition-colors ${selectedLevel === level
-                                            ? 'bg-emerald-100 text-emerald-700 font-medium'
-                                            : 'text-gray-600 hover:bg-gray-100'
-                                            }`}
-                                    >
-                                        {level}
-                                    </button>
-                                ))}
+                        {/* ── Level ── */}
+                        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                                <div className="flex items-center gap-2">
+                                    <span className="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+                                        </svg>
+                                    </span>
+                                    <span className="text-sm font-bold text-gray-900">Level</span>
+                                </div>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                            </div>
+                            <div className="divide-y divide-gray-50">
+                                {LEVELS.map(level => {
+                                    const isActive = selectedLevel === level;
+                                    return (
+                                        <button
+                                            key={level}
+                                            onClick={() => { setSelectedLevel(isActive ? '' : level); setCurrentPage(1); }}
+                                            className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors"
+                                        >
+                                            {/* Radio circle */}
+                                            <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isActive ? 'border-emerald-500' : 'border-gray-300'}`}>
+                                                {isActive && <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />}
+                                            </span>
+                                            <span className={`flex-1 text-sm capitalize ${isActive ? 'text-emerald-700 font-semibold' : 'text-gray-700'}`}>
+                                                {level}
+                                            </span>
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
 
-                        {/* Price */}
-                        <div>
-                            <h3 className="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Price</h3>
-                            <div className="space-y-1">
-                                {[{ value: 'free', label: '🆓 Free' }, { value: 'paid', label: '💰 Paid' }].map(opt => (
-                                    <button
-                                        key={opt.value}
-                                        onClick={() => { setSelectedPrice(selectedPrice === opt.value ? '' : opt.value); setCurrentPage(1); }}
-                                        className={`w-full text-left text-sm px-3 py-1.5 rounded-lg transition-colors ${selectedPrice === opt.value
-                                            ? 'bg-emerald-100 text-emerald-700 font-medium'
-                                            : 'text-gray-600 hover:bg-gray-100'
-                                            }`}
-                                    >
-                                        {opt.label}
-                                    </button>
-                                ))}
+                        {/* ── Price ── */}
+                        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                                <div className="flex items-center gap-2">
+                                    <span className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                                        </svg>
+                                    </span>
+                                    <span className="text-sm font-bold text-gray-900">Price</span>
+                                </div>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                            </div>
+                            <div className="divide-y divide-gray-50">
+                                {[
+                                    { value: 'free',  label: 'Free', badge: { text: 'FREE', bg: 'bg-blue-500' } },
+                                    { value: 'paid',  label: 'Paid', badge: { text: '💰', bg: 'bg-amber-400' } },
+                                ].map(opt => {
+                                    const isActive = selectedPrice === opt.value;
+                                    return (
+                                        <button
+                                            key={opt.value}
+                                            onClick={() => { setSelectedPrice(isActive ? '' : opt.value); setCurrentPage(1); }}
+                                            className={`w-full flex items-center gap-3 px-4 py-2.5 transition-colors ${isActive ? 'bg-emerald-50' : 'hover:bg-gray-50'}`}
+                                        >
+                                            <span className={`${opt.badge.bg} text-white text-[10px] font-bold rounded px-1.5 py-0.5 flex-shrink-0`}>
+                                                {opt.badge.text}
+                                            </span>
+                                            <span className={`flex-1 text-sm ${isActive ? 'text-emerald-700 font-semibold' : 'text-gray-700'}`}>
+                                                {opt.label}
+                                            </span>
+                                            {/* Checkbox */}
+                                            <span className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 border ${isActive ? 'bg-emerald-500 border-emerald-500' : 'border-gray-300'}`}>
+                                                {isActive && (
+                                                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                                                        <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                                                    </svg>
+                                                )}
+                                            </span>
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
+
                     </div>
                 </aside>
 
